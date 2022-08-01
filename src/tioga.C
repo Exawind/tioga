@@ -391,12 +391,8 @@ void tioga::dataUpdate_AMR()
   //
   //this->writeData(nvar,0);
   pc_cart->clearPackets2(sndPack,rcvPack);
-  TIOGA_FREE(rcvPack);
-  for(k=0;k<nsend;k++) {
-     TIOGA_FREE(sndPack[k].intData);
-     TIOGA_FREE(sndPack[k].realData);
-  }
   TIOGA_FREE(sndPack);
+  TIOGA_FREE(rcvPack);
 
   if (integerRecords) TIOGA_FREE(integerRecords);
   if (realRecords) TIOGA_FREE(realRecords);

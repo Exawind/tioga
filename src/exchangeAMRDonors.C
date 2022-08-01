@@ -290,10 +290,6 @@ void tioga::exchangeAMRDonors(void)
   TIOGA_FREE(obreceptors);
   TIOGA_FREE(imap);
   TIOGA_FREE(icount);
-  for(i=0;i<nsend;i++) {
-      TIOGA_FREE(sndPack[i].intData);
-      TIOGA_FREE(sndPack[i].realData);
-  }
   TIOGA_FREE(sndPack);
   TIOGA_FREE(rcvPack);
 }
