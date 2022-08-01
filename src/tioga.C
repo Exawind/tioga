@@ -759,7 +759,7 @@ tioga::~tioga()
   if (cb) delete [] cb;
   if (cg) delete [] cg;
   if (qblock) TIOGA_FREE(qblock);
-  if (myid==0) printf("#tioga :successfully cleared all the memory accessed\n");
+  if (myid==0) printf("Tioga exited successfully\n");
 };
 
 void tioga::register_amr_grid(TIOGA::AMRMeshInfo* minfo)
