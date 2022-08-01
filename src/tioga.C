@@ -390,7 +390,7 @@ void tioga::dataUpdate_AMR()
   // release all memory
   //
   //this->writeData(nvar,0);
-  pc_cart->clearPackets2(sndPack,rcvPack);
+  pc_cart->clearPackets(sndPack,rcvPack);
   TIOGA_FREE(sndPack);
   TIOGA_FREE(rcvPack);
   if (integerRecords) TIOGA_FREE(integerRecords);
