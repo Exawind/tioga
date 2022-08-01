@@ -127,7 +127,7 @@ void CartGrid::registerData(int nfin,int *idata,double *rdata,int ngridsin)
    if (myid==0) fclose(fp);
 
    // Create AMRMeshInfo object so that it can be accessed on device in future
-   create_mesh_info();
+   // create_mesh_info();
 };
 
 //
