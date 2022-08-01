@@ -212,7 +212,7 @@ void tioga::exchangeAMRDonors(void)
 	}
     }
   for(i=0;i<ncart;i++) cb[i].processDonors(holeMap,nmesh);
-  pc_cart->clearPackets2(sndPack,rcvPack);  
+  pc_cart->clearPackets(sndPack,rcvPack);  
   for(i=0;i<nsend;i++)
     {
       if (icount[i] > 0) 
@@ -276,7 +276,7 @@ void tioga::exchangeAMRDonors(void)
 
   for(int ib=0;ib<nblocks;ib++)
     mblocks[ib]->setCartIblanks();
-  pc_cart->clearPackets2(sndPack,rcvPack);
+  pc_cart->clearPackets(sndPack,rcvPack);
   //
   for(int ib=0;ib<nblocks;ib++)
    mblocks[ib]->findInterpListCart();
@@ -327,7 +327,7 @@ void tioga::checkComm(void)
     }
   //
   pc_cart->sendRecvPackets(sndPack,rcvPack);
-  pc_cart->clearPackets2(sndPack,rcvPack);
+  pc_cart->clearPackets(sndPack,rcvPack);
   TIOGA_FREE(sndMap);
   TIOGA_FREE(rcvMap);
   TIOGA_FREE(sndPack);

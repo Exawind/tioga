@@ -63,7 +63,6 @@ class parallelComm
   void initPackets(PACKET *sndPack, PACKET *rcvPack);
 
   void clearPackets(PACKET *sndPack, PACKET *rcvPack);
-  void clearPackets2(PACKET *sndPack, PACKET *rcvPack);
   
 };
   
