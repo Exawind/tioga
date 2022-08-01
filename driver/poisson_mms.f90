@@ -24,6 +24,7 @@ program poissonMMS
   integer :: ib,iter,ngrids,irefine,nref,ndof,ntypes,nv2,i,jmax,jmax2
   integer :: mexclude,nfringe
   integer :: mdim(3)
+  integer :: iargc
   !
   logical :: testSolver,saveout
   !
