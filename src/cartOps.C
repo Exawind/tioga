@@ -386,7 +386,6 @@ void MeshBlock::getInterpolatedSolutionAMR(int *nints,int *nreals,int **intData,
 		     // }
 		    }
 		}
-	      //writeqnode_(&myid,qq,&nvar);
 	      (*intData)[icount++]=interpListCart[i].receptorInfo[0];
 	      (*intData)[icount++]=1+interpListCart[i].receptorInfo[2];
 	      (*intData)[icount++]=interpListCart[i].receptorInfo[1];

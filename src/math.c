@@ -293,41 +293,72 @@ void computeNodalWeights(double xv[8][3],double *xp,double frac[8],int nvert)
     }
 }
 
-void cellvolume_(double*, double[][3], int[][6], int[][24], int*, int*);
-
-double computeCellVolume(double xv[8][3],int nvert)
-{
- double vol;
- int itype;
- int nfaces;
- int numverts[4][6]={3,3,3,3,0,0,4,3,3,3,3,0,3,4,4,4,3,0,4,4,4,4,4,4};
- int faceInfo[4][24]={1,2,3,0,1,4,2,0,2,4,3,0,1,3,4,0,0,0,0,0,0,0,0,0,
-                       1,2,3,4,1,5,2,0,2,5,3,0,4,3,5,0,1,4,5,0,0,0,0,0,
-                       1,2,3,0,1,4,5,2,2,5,6,3,1,3,6,4,4,6,5,0,0,0,0,0,
-                       1,2,3,4,1,5,6,2,2,6,7,3,3,7,8,4,1,4,8,5,5,8,7,6};
- switch(nvert)
-   {
-   case 4:
-     itype=0;
-     nfaces=4;
-     break;
-   case 5:
-     itype=1;
-     nfaces=5;
-     break;
-   case 6:
-     itype=2;
-     nfaces=5;
-     break;
-   case 8:
-     itype=3;
-     nfaces=6;
-     break;
-   }
-     
- cellvolume_(&vol,xv,&numverts[itype],&faceInfo[itype],&nfaces,&nvert);
- return vol;
+double scalarProduct(double a[3], double b[3], double c[3]) {
+  return (a[0] * b[1] * c[2] - a[0] * b[2] * c[1] + a[1] * b[2] * c[0] -
+          a[1] * b[0] * c[2] + a[2] * b[0] * c[1] - a[2] * b[1] * c[0]);
 }
+
+double cellVolume(double xc[8][3], int numverts[6], int fconn[6][4],
+                  int nfaces) {
+  double vol = 0.0;
+  for (int iface = 0; iface < nfaces; iface++) {
+    if (numverts[iface] == 3) {
+      vol = vol - 0.5 * scalarProduct(&xc[fconn[iface][1]][0],
+                                      &xc[fconn[iface][2]][0],
+                                      &xc[fconn[iface][3]][0]);
+    } else {
+      vol = vol - 0.25 * scalarProduct(&xc[fconn[iface][1]][0],
+                                       &xc[fconn[iface][2]][0],
+                                       &xc[fconn[iface][3]][0]);
+      vol = vol - 0.25 * scalarProduct(&xc[fconn[iface][1]][0],
+                                       &xc[fconn[iface][3]][0],
+                                       &xc[fconn[iface][4]][0]);
+      vol = vol - 0.25 * scalarProduct(&xc[fconn[iface][1]][0],
+                                       &xc[fconn[iface][2]][0],
+                                       &xc[fconn[iface][4]][0]);
+      vol = vol - 0.25 * scalarProduct(&xc[fconn[iface][2]][0],
+                                       &xc[fconn[iface][3]][0],
+                                       &xc[fconn[iface][4]][0]);
+    }
+  }
+  vol = vol / 3.0;
+  return vol;
+}
+
+double computeCellVolume(double xv[8][3], int nvert) {
+  int itype = 0;
+  int nfaces = 0;
+  int numverts[4][6] = {3, 3, 3, 3, 0, 0, 4, 3, 3, 3, 3, 0,
+                        3, 4, 4, 4, 3, 0, 4, 4, 4, 4, 4, 4};
+  int faceInfo[4][24] = {
+      1, 2, 3, 0, 1, 4, 2, 0, 2, 4, 3, 0, 1, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      1, 2, 3, 4, 1, 5, 2, 0, 2, 5, 3, 0, 4, 3, 5, 0, 1, 4, 5, 0, 0, 0, 0, 0,
+      1, 2, 3, 0, 1, 4, 5, 2, 2, 5, 6, 3, 1, 3, 6, 4, 4, 6, 5, 0, 0, 0, 0, 0,
+      1, 2, 3, 4, 1, 5, 6, 2, 2, 6, 7, 3, 3, 7, 8, 4, 1, 4, 8, 5, 5, 8, 7, 6};
+
+  switch (nvert) {
+  case 4:
+    itype = 0;
+    nfaces = 4;
+    break;
+  case 5:
+    itype = 1;
+    nfaces = 5;
+    break;
+  case 6:
+    itype = 2;
+    nfaces = 5;
+    break;
+  case 8:
+    itype = 3;
+    nfaces = 6;
+    break;
+  }
+
+  double vol = cellVolume(xv, &numverts[itype], &faceInfo[itype], nfaces);
+  return vol;
+}
+
 double tdot_product(double a[3],double b[3],double c[3])
 {
   int k;

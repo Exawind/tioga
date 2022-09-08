@@ -1,4 +1,3 @@
-
 /* This file is part of the Tioga software library */
 
 /* Tioga  is a tool for overset grid assembly on parallel distributed systems */
@@ -17,9 +16,9 @@
 /* You should have received a copy of the GNU Lesser General Public */
 /* License along with this library; if not, write to the Free Software */
 /* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
+#include <algorithm>
 #include "codetypes.h"
-
-extern void median_(int *,double *,int *,double *);
+#include "buildADTrecursion.h"
 
 void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIntegers,
 		       int *elementsAvailable,int *adtCount,int side,int parent,
@@ -27,7 +26,6 @@ void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIn
 {
   
   int nd=ndim/2;  
-  double coordmid;
   int i,j;
   int dimcut;
   int nleft;
@@ -48,7 +46,8 @@ void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIn
     // reorder elements with nleft elements to
     // the left of median of adtWork
     //
-    median_(elementsAvailable,adtWork,&nav,&coordmid);
+    std::sort(elementsAvailable, elementsAvailable + nav,
+              [&](const int &a, const int &b) { return (adtWork[a] < adtWork[b]); });
     nleft=(nav+1)/2;
     (*adtCount)++;
     ii=(*adtCount)*4;

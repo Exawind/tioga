@@ -1,13 +1,8 @@
 add_library(tioga)
 
 target_sources(tioga PRIVATE
-  # Fortran sources
-  kaiser.f
-  cellVolume.f90
-  median.F90
-
   # C sources
-  buildADTrecursion.c
+  kaiser.c
   linklist.c
   math.c
   utils.c
@@ -18,6 +13,7 @@ target_sources(tioga PRIVATE
   CartGrid.C
   MeshBlock.C
   bookKeeping.C
+  buildADTrecursion.C
   cartOps.C
   checkContainment.C
   dataUpdate.C
@@ -52,19 +48,11 @@ if (TIOGA_OUTPUT_STATS)
   target_compile_definitions(tioga PUBLIC TIOGA_OUTPUT_STATS)
 endif()
 
-target_link_libraries(tioga INTERFACE ${MPI_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(tioga PUBLIC MPI::MPI_CXX)
+
 if (TIOGA_ENABLE_ARBORX)
-  target_link_libraries(tioga PRIVATE ArborX::ArborX)
-endif()
-
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(tioga PROPERTIES
-    COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(tioga PROPERTIES
-    LINK_FLAGS "${MPI_LINK_FLAGS}")
+  target_compile_definitions(tioga PUBLIC TIOGA_USE_ARBORX)
+  target_link_libraries(tioga PUBLIC ArborX::ArborX)
 endif()
 
 if (TIOGA_ENABLE_CUDA)
@@ -90,10 +78,6 @@ if (TIOGA_ENABLE_HIP)
   target_compile_options(tioga PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:-x hip>)
 endif()
-
-# Enable position independent code
-set_target_properties(tioga PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
 
 file(GLOB TIOGA_HEADERS *.h)
 install(TARGETS tioga
