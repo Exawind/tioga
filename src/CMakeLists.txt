@@ -4,7 +4,6 @@ target_sources(tioga PRIVATE
   # Fortran sources
   kaiser.f
   cellVolume.f90
-  median.F90
 
   # C sources
   buildADTrecursion.c
