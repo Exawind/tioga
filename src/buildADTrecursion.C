@@ -19,6 +19,7 @@
 /* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
 #include <algorithm>
 #include "codetypes.h"
+#include "buildADTrecursion.h"
 
 void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIntegers,
 		       int *elementsAvailable,int *adtCount,int side,int parent,
