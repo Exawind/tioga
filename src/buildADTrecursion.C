@@ -48,12 +48,11 @@ void buildADTrecursion(double *coord, double *adtReals, double *adtWork,
     // reorder elements with nleft elements to
     // the left of median of adtWork
     //
-    std::nth_element(elementsAvailable, elementsAvailable + (nav / 2),
-                     elementsAvailable + nav, [&](const int &a, const int &b) {
-                       return (adtWork[a] < adtWork[b]);
-                     });
-
     nleft = (nav + 1) / 2;
+    std::nth_element(
+        elementsAvailable, elementsAvailable + nleft, elementsAvailable + nav,
+        [&](const int &a, const int &b) { return (adtWork[a] < adtWork[b]); });
+
     (*adtCount)++;
     ii = (*adtCount) * 4;
     adtIntegers[ii] = elementsAvailable[nleft - 1];
