@@ -49,7 +49,9 @@ void buildADTrecursion(double *coord, double *adtReals, double *adtWork,
     // the left of median of adtWork
     //
     std::nth_element(elementsAvailable, elementsAvailable + (nav / 2),
-                     elementsAvailable + nav);
+                     elementsAvailable + nav, [&](const int &a, const int &b) {
+                       return (adtWork[a] < adtWork[b]);
+                     });
 
     nleft = (nav + 1) / 2;
     (*adtCount)++;
