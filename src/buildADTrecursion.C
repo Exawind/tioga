@@ -1,4 +1,3 @@
-
 /* This file is part of the Tioga software library */
 
 /* Tioga  is a tool for overset grid assembly on parallel distributed systems */
@@ -18,8 +17,7 @@
 /* License along with this library; if not, write to the Free Software */
 /* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
 #include "codetypes.h"
-
-extern void median_(int *,double *,int *,double *);
+#include "median.h"
 
 void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIntegers,
 		       int *elementsAvailable,int *adtCount,int side,int parent,
@@ -48,7 +46,13 @@ void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIn
     // reorder elements with nleft elements to
     // the left of median of adtWork
     //
-    median_(elementsAvailable,adtWork,&nav,&coordmid);
+    // Should be possible to do this in C++ but it doesn't sort exactly like Fortran
+    // std::nth_element(elementsAvailable, elementsAvailable + nleft,
+    //                  elementsAvailable + nav, [&](const int a, const int b) {
+    //                    return (adtWork[a] < adtWork[b]);
+    //                  });
+    // However, we currently perform the previous Fortran sort routine verbatim
+    median(elementsAvailable,adtWork,nav,coordmid);
     nleft=(nav+1)/2;
     (*adtCount)++;
     ii=(*adtCount)*4;
@@ -114,4 +118,3 @@ void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIn
     }
   }
 }
-
