@@ -4,10 +4,8 @@ target_sources(tioga PRIVATE
   # Fortran sources
   kaiser.f
   cellVolume.f90
-  median.F90
 
   # C sources
-  buildADTrecursion.c
   linklist.c
   math.c
   utils.c
@@ -18,6 +16,7 @@ target_sources(tioga PRIVATE
   CartGrid.C
   MeshBlock.C
   bookKeeping.C
+  buildADTrecursion.C
   cartOps.C
   checkContainment.C
   dataUpdate.C
@@ -29,6 +28,7 @@ target_sources(tioga PRIVATE
   highOrder.C
   holeMap.C
   linCartInterp.C
+  median.C
   parallelComm.C
   search.C
   searchADTrecursion.C
