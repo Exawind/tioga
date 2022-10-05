@@ -4,27 +4,27 @@ double scalarProduct(double a1, double a2, double a3, double b1, double b2, doub
 
 // Converted verbatim from cellVolume.f90
 void cellVolume(double* vol, double xc[8][3], int numverts[6], int fconn[6][4], int nfaces, int nvert){
-  vol = 0.0;
+  *vol = 0.0;
   for (int iface = 1; iface <= nfaces; iface++) {
     if (numverts[iface-1] == 3) {
-    vol=vol-0.5* scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
+    *vol=*vol-0.5* scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
                                xc[fconn[iface-1][2-1]-1][1-1], xc[fconn[iface-1][2-1]-1][2-1], xc[fconn[iface-1][2-1]-1][3-1],
                                xc[fconn[iface-1][3-1]-1][1-1], xc[fconn[iface-1][3-1]-1][2-1], xc[fconn[iface-1][3-1]-1][3-1]);
     }else{
-    vol=vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
+    *vol=*vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
                                xc[fconn[iface-1][2-1]-1][1-1], xc[fconn[iface-1][2-1]-1][2-1], xc[fconn[iface-1][2-1]-1][3-1],
                                xc[fconn[iface-1][3-1]-1][1-1], xc[fconn[iface-1][3-1]-1][2-1], xc[fconn[iface-1][3-1]-1][3-1]);
-    vol=vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
+    *vol=*vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
                                xc[fconn[iface-1][3-1]-1][1-1], xc[fconn[iface-1][3-1]-1][3-1], xc[fconn[iface-1][3-1]-1][3-1],
                                xc[fconn[iface-1][4-1]-1][1-1], xc[fconn[iface-1][4-1]-1][2-1], xc[fconn[iface-1][4-1]-1][3-1]);
-    vol=vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
+    *vol=*vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
                                xc[fconn[iface-1][2-1]-1][1-1], xc[fconn[iface-1][2-1]-1][2-1], xc[fconn[iface-1][2-1]-1][3-1],
                                xc[fconn[iface-1][4-1]-1][1-1], xc[fconn[iface-1][4-1]-1][2-1], xc[fconn[iface-1][4-1]-1][3-1]);
-    vol=vol-0.25*scalarProduct(xc[fconn[iface-1][2-1]-1][1-1], xc[fconn[iface-1][2-1]-1][2-1], xc[fconn[iface-1][2-1]-1][3-1],
+    *vol=*vol-0.25*scalarProduct(xc[fconn[iface-1][2-1]-1][1-1], xc[fconn[iface-1][2-1]-1][2-1], xc[fconn[iface-1][2-1]-1][3-1],
                                xc[fconn[iface-1][3-1]-1][1-1], xc[fconn[iface-1][3-1]-1][2-1], xc[fconn[iface-1][3-1]-1][3-1],
                                xc[fconn[iface-1][4-1]-1][1-1], xc[fconn[iface-1][4-1]-1][2-1], xc[fconn[iface-1][4-1]-1][3-1]);
 
     }
   }
-  vol = vol / 3.0;
+  *vol = *vol / 3.0;
 }
