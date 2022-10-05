@@ -3,12 +3,12 @@ add_library(tioga)
 target_sources(tioga PRIVATE
   # Fortran sources
   kaiser.f
-  cellVolume.f90
 
   # C sources
   linklist.c
   math.c
   utils.c
+  cellVolume.c
 
   # CXX sources
   ADT.C
