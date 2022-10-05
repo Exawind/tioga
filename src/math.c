@@ -293,7 +293,7 @@ void computeNodalWeights(double xv[8][3],double *xp,double frac[8],int nvert)
     }
 }
 
-extern "C" {void cellVolume(double&, double[8][3], int[6], int[6][4], int, int);}
+void cellVolume(double*, double[8][3], int[6], int[6][4], int, int);
 
 double computeCellVolume(double xv[8][3],int nvert)
 {
@@ -329,7 +329,7 @@ double computeCellVolume(double xv[8][3],int nvert)
     break;
   }
 
-  cellVolume(vol, xv, numverts[itype], faceInfo[itype], nfaces, nvert);
+  cellVolume(&vol, xv, numverts[itype], faceInfo[itype], nfaces, nvert);
   return vol;
 }
 

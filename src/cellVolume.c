@@ -3,7 +3,7 @@ double scalarProduct(double a1, double a2, double a3, double b1, double b2, doub
 }
 
 // Converted verbatim from cellVolume.f90
-void cellVolume(double& vol, double xc[8][3], int numverts[6], int fconn[6][4], int nfaces, int nvert){
+void cellVolume(double* vol, double xc[8][3], int numverts[6], int fconn[6][4], int nfaces, int nvert){
   vol = 0.0;
   for (int iface = 1; iface <= nfaces; iface++) {
     if (numverts[iface-1] == 3) {
