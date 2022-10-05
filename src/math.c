@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "codetypes.h"
-#include "cellVolume.h"
 
 void solvec(double **a,double *b,int *iflag,int n)
 {
@@ -294,9 +293,11 @@ void computeNodalWeights(double xv[8][3],double *xp,double frac[8],int nvert)
     }
 }
 
+void cellVolume(double&, double[8][3], int[6], int[6][4], int, int);
+
 double computeCellVolume(double xv[8][3],int nvert)
 {
-  double vol;
+  double vol = 0.0;
   int itype = 0;
   int nfaces = 0;
   int numverts[4][6] = {3, 3, 3, 3, 0, 0,

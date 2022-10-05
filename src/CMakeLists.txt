@@ -8,6 +8,7 @@ target_sources(tioga PRIVATE
   linklist.c
   math.c
   utils.c
+  cellVolume.c
 
   # CXX sources
   ADT.C
@@ -17,7 +18,6 @@ target_sources(tioga PRIVATE
   bookKeeping.C
   buildADTrecursion.C
   cartOps.C
-  cellVolume.C
   checkContainment.C
   dataUpdate.C
   exchangeAMRDonors.C
