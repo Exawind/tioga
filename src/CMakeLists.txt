@@ -3,7 +3,6 @@ add_library(tioga)
 target_sources(tioga PRIVATE
   # Fortran sources
   kaiser.f
-  cellVolume.f90
 
   # C sources
   linklist.c
@@ -18,6 +17,7 @@ target_sources(tioga PRIVATE
   bookKeeping.C
   buildADTrecursion.C
   cartOps.C
+  cellVolume.C
   checkContainment.C
   dataUpdate.C
   exchangeAMRDonors.C
