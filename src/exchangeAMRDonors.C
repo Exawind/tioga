@@ -20,7 +20,9 @@
 #include "codetypes.h"
 #include "tioga.h"
 #include <assert.h>
+
 using namespace TIOGA;
+
 void tioga::exchangeAMRDonors(void)
 {
   int i,j,k,l,m,n,i3;

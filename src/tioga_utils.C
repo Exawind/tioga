@@ -17,6 +17,7 @@
 /* License along with this library; if not, write to the Free Software */
 /* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
 #include "codetypes.h"
+#include "tioga_utils.h"
 #include "kaiser.h"
 
 /***
@@ -25,8 +26,8 @@
 void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
 {
   int i,j,k,m,i3;
-  double *aa;
-  double *eigenv;
+  double aa[9];
+  double eigenv[3];
   double trace,sume;
   double xd[3];
   double xmin[3],xmax[3];
@@ -81,8 +82,6 @@ void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
   // find co-variance matrix
   // aa = [I11 I12 I13;I21 I22 I23;I31 I32 I33]
   //
-  aa=(double *) malloc(sizeof(double)*9);
-  eigenv=(double *)malloc(sizeof(double)*3);
   //
   for(i=0;i<9;i++) aa[i]=0;
   //
@@ -158,9 +157,6 @@ void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
     for(k=0;k<3;k++)
       xc[j]+=(xd[k]*vec[k][j]);
     }
-  //
-  TIOGA_FREE(aa);
-  TIOGA_FREE(eigenv);
 }
 /**
  check if a point is inside the

@@ -21,7 +21,9 @@
 #include <algorithm>
 #include "codetypes.h"
 #include "tioga.h"
+
 using namespace TIOGA;
+
 void tioga::exchangeDonors(void)
 {
   int nsend,nrecv;

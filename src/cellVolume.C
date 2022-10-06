@@ -1,3 +1,5 @@
+#include "cellVolume.h"
+
 // Converted verbatim from cellVolume.f90
 double scalarProduct(double a1, double a2, double a3, double b1, double b2, double b3, double c1, double c2, double c3) {
   return (a1 * b2 * c3 - a1 * b3 * c2 + a2 * b3 * c1 - a2 * b1 * c3 + a3 * b1 * c2 - a3 * b2 * c1);

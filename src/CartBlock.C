@@ -24,15 +24,7 @@
 #include "CartGrid.h"
 #include "cartUtils.h"
 #include "linCartInterp.h"
-
-extern "C" {
-  void deallocateLinkList(DONORLIST *temp);
-  void deallocateLinkList2(INTEGERLIST *temp);
-  void deallocateLinkList3(INTEGERLIST2 *temp);
-  void deallocateLinkList4(INTERPLIST2 *temp);
-  void insertInList(DONORLIST **donorList,DONORLIST *temp1);
-  int checkHoleMap(double *x,int *nx,int *sam,double *extents);
-}
+#include "linklist.h"
 
 void CartBlock::registerData(int lid, TIOGA::AMRMeshInfo* minfo)
 {

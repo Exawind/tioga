@@ -21,17 +21,14 @@
 // routine for extra query points
 // have to unify both routines here 
 // FIX later ...
-//
+
 #include "codetypes.h"
 #include "MeshBlock.h"
 #include "parallelComm.h"
 #include "CartGrid.h"
 #include "cartUtils.h"
-extern "C"{
-  int obbIntersectCheck(double vA[3][3],double xA[3],double dxA[3],
-                        double vB[3][3],double xB[3],double dxB[3]);
-  void deallocateLinkList3(INTEGERLIST2 *);
-}
+#include "linklist.h"
+#include "tioga_utils.h"
 
 void MeshBlock::getCartReceptors(CartGrid *cg,parallelComm *pc)
 {

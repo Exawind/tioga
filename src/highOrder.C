@@ -19,16 +19,12 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "codetypes.h"
 #include "MeshBlock.h"
+#include "tioga_utils.h"
+#include "tioga_math.h"
 
 #define ROW 0
 #define COLUMN 1
 #define NFRAC 1331
-
-extern "C" 
-{
-  void computeNodalWeights(double xv[8][3],double *xp,double frac[8],int nvert);
-  int checkHoleMap(double *x,int *nx,int *sam,double *extents);
-}
 
 void MeshBlock::getCellIblanks2(void)
 {

@@ -19,14 +19,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "codetypes.h"
 #include "MeshBlock.h"
-extern "C" 
-{
-  void insertInList(DONORLIST **donorList,DONORLIST *temp1);
-  void deallocateLinkList(DONORLIST *temp);
-  void deallocateLinkList2(INTEGERLIST *temp);  
-  int checkHoleMap(double *x,int *nx,int *sam,double *extents);
-  void computeNodalWeights(double xv[8][3],double *xp,double frac[8],int nvert);
-}
+#include "linklist.h"
+#include "tioga_math.h"
 
 void MeshBlock::getDonorPacket(PACKET *sndPack, int nsend)
 {

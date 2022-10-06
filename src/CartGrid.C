@@ -19,8 +19,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "tioga_gpu.h"
 #include "TiogaMeshInfo.h"
-# include "codetypes.h"
-# include "CartGrid.h"
+#include "codetypes.h"
+#include "CartGrid.h"
 
 #include <cassert>
 #include <numeric>
