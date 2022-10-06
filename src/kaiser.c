@@ -1,5 +1,5 @@
 #include "kaiser.h"
-#include <cmath>
+#include <math.h>
 
 void kaiser_cpp(double a[3][3], int nrows, int n, double eigenv[3],
                 double trace, double sume) {
