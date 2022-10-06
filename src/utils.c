@@ -17,8 +17,8 @@
 /* License along with this library; if not, write to the Free Software */
 /* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
 #include "codetypes.h"
+#include "kaiser.h"
 
-extern void kaiser_wrap_(double *,int *,int *,double *,double *,double *,int *);
 /***
  ** find oriented bounding box for a given set of points
 */
@@ -28,7 +28,6 @@ void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
   double *aa;
   double *eigenv;
   double trace,sume;
-  int ier;
   double xd[3];
   double xmin[3],xmax[3];
   int nrows,ncols;
@@ -106,7 +105,7 @@ void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
   //
   nrows=3;
   ncols=3;  
-  kaiser_wrap_(aa,&nrows,&ncols,eigenv,&trace,&sume,&ier);
+  kaiser(aa,nrows,ncols,eigenv,trace,sume);
   //
   // copy the eigen vector basis on to vec
   //
