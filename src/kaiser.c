@@ -47,7 +47,7 @@ twenty:
         q = q + (xj + xk) * (xj - xk);
       }
       p = halfp + halfp;
-      absp = std::fabs(p);
+      absp = fabs(p);
 
       //   If P is very small, the vectors are almost orthogonal.
       //   Skip the rotation if Q >= 0 (correct ordering).
@@ -62,17 +62,17 @@ twenty:
 
       //   Rotation needed.
 
-      absq = std::fabs(q);
+      absq = fabs(q);
       if (absp <= absq) {
         TAN = absp / absq;
-        COS = one / std::sqrt(one + TAN * TAN);
+        COS = one / sqrt(one + TAN * TAN);
         SIN = TAN * COS;
       } else {
         ctn = absq / absp;
-        SIN = one / std::sqrt(one + ctn * ctn);
+        SIN = one / sqrt(one + ctn * ctn);
         COS = ctn * SIN;
       }
-      COS = std::sqrt((one + COS) * half);
+      COS = sqrt((one + COS) * half);
       SIN = SIN / (COS + COS);
       if (q < zero) {
         temp = COS;
@@ -106,7 +106,7 @@ onehundredsixty:
     for (int m = 1; m <= n; m++) {
       temp += (a[j - 1][m - 1] * a[j - 1][m - 1]);
     }
-    eigenv[j - 1] = std::sqrt(temp);
+    eigenv[j - 1] = sqrt(temp);
     sume = sume + eigenv[j - 1];
   }
 
