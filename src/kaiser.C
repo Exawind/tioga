@@ -5,8 +5,8 @@
 #define NCOLS 3
 
 // This functions expects a 3x3 matrix
-void kaiser_cpp(double a[9], int /*nrows*/, int /*n*/, double eigenv[3],
-                double trace, double sume) {
+void kaiser(double a[9], int /*nrows*/, int /*n*/, double eigenv[3],
+            double trace, double sume) {
   const double small = 1.0e-12;
   const double zero = 0.0;
   const double half = 0.5;
