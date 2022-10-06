@@ -1,9 +1,11 @@
+enable_language(Fortran)
 
 set(TIOGA_EXE_SOURCES
   modules.f90
   gridutils.f90
   poisson_utils.f90
 )
+
 if (TIOGA_ENABLE_ARBORX)
   list(APPEND TIOGA_EXE_SOURCES
       kokkos.f90
@@ -13,70 +15,44 @@ endif()
 
 add_library(tiogadriver ${TIOGA_EXE_SOURCES})
 
-set(libopts ${MPI_fortran_COMPILE_FLAGS})
-
-if( CMAKE_Fortran_COMPILER_ID STREQUAL "Intel" )
-    list(APPEND libopts "-nofor-main")
-endif()
-
-target_compile_options(tiogadriver PUBLIC ${libopts})
-target_include_directories(tiogadriver PUBLIC ${MPI_Fortran_INCLUDE_PATH})
-
-target_link_libraries(tiogadriver INTERFACE
-  tioga ${MPI_Fortran_LIBRARIES} ${CMAKE_DL_LIBS})
 if (TIOGA_ENABLE_ARBORX)
   target_link_libraries(tiogadriver PRIVATE ArborX::ArborX)
 endif()
+
+target_link_libraries(tiogadriver PRIVATE tioga)
+target_link_libraries(tiogadriver PRIVATE MPI::MPI_Fortran)
 
 add_executable(tioga.exe testTioga.F90)
 # Using #ifdef requires preprocessing
 target_compile_options(tioga.exe PRIVATE "-cpp")
 
 target_link_libraries(tioga.exe tiogadriver)
-# set_target_properties(tioga.exe PROPERTIES LINKER_LANGUAGE Fortran)
 
 add_executable(tioga_read.exe testTioga_dataRead.f90)
 target_link_libraries(tioga_read.exe tiogadriver)
-# set_target_properties(tioga_read.exe PROPERTIES LINKER_LANGUAGE Fortran)
 
 add_executable(poisson_mms.exe poisson_mms.f90)
 target_link_libraries(poisson_mms.exe tiogadriver)
-# set_target_properties(poisson_mms.exe PROPERTIES LINKER_LANGUAGE Fortran)
 
-add_executable(gpu_test.exe)
-target_sources(gpu_test.exe PRIVATE
-  gpu_test.C)
-target_link_libraries(gpu_test.exe tioga)
-if (TIOGA_ENABLE_CUDA)
-  get_target_property(GPUTEST_CPP_SRC gpu_test.exe SOURCES)
-  list(FILTER GPUTEST_CPP_SRC INCLUDE REGEX "\\.C")
-  set_source_files_properties(${GPUTEST_CPP_SRC} PROPERTIES LANGUAGE CUDA)
-endif()
+#add_executable(gpu_test.exe)
+#target_sources(gpu_test.exe PRIVATE
+#  gpu_test.C)
+#target_link_libraries(gpu_test.exe tioga)
+#if (TIOGA_ENABLE_CUDA)
+#  get_target_property(GPUTEST_CPP_SRC gpu_test.exe SOURCES)
+#  list(FILTER GPUTEST_CPP_SRC INCLUDE REGEX "\\.C")
+#  set_source_files_properties(${GPUTEST_CPP_SRC} PROPERTIES LANGUAGE CUDA)
+#endif()
+#
+#if (TIOGA_ENABLE_HIP)
+#  separate_arguments(TIOGA_HIP_ARCH_FLAGS)
+#  target_compile_options(gpu_test.exe PRIVATE
+#    $<$<COMPILE_LANGUAGE:CXX>:${TIOGA_HIP_ARCH_FLAGS}>)
+#  target_compile_options(gpu_test.exe PRIVATE
+#    $<$<COMPILE_LANGUAGE:CXX>:-x hip>)
+#endif()
 
-if (TIOGA_ENABLE_HIP)
-  separate_arguments(TIOGA_HIP_ARCH_FLAGS)
-  target_compile_options(gpu_test.exe PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>:${TIOGA_HIP_ARCH_FLAGS}>)
-  target_compile_options(gpu_test.exe PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>:-x hip>)
-endif()
-
-install(TARGETS tiogadriver
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib)
-
-install(TARGETS tioga.exe
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib)
-
-install(TARGETS tioga_read.exe
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib)
-
-install(TARGETS poisson_mms.exe
+install(TARGETS tiogadriver tioga.exe tioga_read.exe poisson_mms.exe
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib)

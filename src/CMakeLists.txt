@@ -52,43 +52,31 @@ if (TIOGA_ENABLE_ARBORX)
   target_link_libraries(tioga PRIVATE ArborX::ArborX)
 endif()
 
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(tioga PROPERTIES
-    COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
-endif()
+target_link_libraries(tioga PUBLIC MPI::MPI_CXX)
 
-if(MPI_LINK_FLAGS)
-  set_target_properties(tioga PROPERTIES
-    LINK_FLAGS "${MPI_LINK_FLAGS}")
-endif()
-
-if (TIOGA_ENABLE_CUDA)
-  separate_arguments(TIOGA_CUDA_FLAGS)
-  target_compile_definitions(tioga PUBLIC
-    TIOGA_HAS_GPU TIOGA_HAS_CUDA)
-  target_compile_options(tioga PRIVATE
-    $<$<COMPILE_LANGUAGE:CUDA>:${TIOGA_CUDA_FLAGS}>)
-  set(CMAKE_CUDA_FLAGS ${TIOGA_CUDA_ARCH_FLAGS})
-  set_target_properties(tioga PROPERTIES
-    CUDA_SEPARABLE_COMPILATION ON)
-  get_target_property(TIOGALIB_CPP_SRC tioga SOURCES)
-  list(FILTER TIOGALIB_CPP_SRC INCLUDE REGEX "\\.C")
-  set_source_files_properties(${TIOGALIB_CPP_SRC} PROPERTIES LANGUAGE CUDA)
-endif()
-
-if (TIOGA_ENABLE_HIP)
-  separate_arguments(TIOGA_HIP_ARCH_FLAGS)
-  target_compile_definitions(tioga PUBLIC
-    TIOGA_HAS_GPU TIOGA_HAS_HIP)
-  target_compile_options(tioga PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>:${TIOGA_HIP_ARCH_FLAGS}>)
-  target_compile_options(tioga PRIVATE
-    $<$<COMPILE_LANGUAGE:CXX>:-x hip>)
-endif()
-
-# Enable position independent code
-set_target_properties(tioga PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
+#if (TIOGA_ENABLE_CUDA)
+#  separate_arguments(TIOGA_CUDA_FLAGS)
+#  target_compile_definitions(tioga PUBLIC
+#    TIOGA_HAS_GPU TIOGA_HAS_CUDA)
+#  target_compile_options(tioga PRIVATE
+#    $<$<COMPILE_LANGUAGE:CUDA>:${TIOGA_CUDA_FLAGS}>)
+#  set(CMAKE_CUDA_FLAGS ${TIOGA_CUDA_ARCH_FLAGS})
+#  set_target_properties(tioga PROPERTIES
+#    CUDA_SEPARABLE_COMPILATION ON)
+#  get_target_property(TIOGALIB_CPP_SRC tioga SOURCES)
+#  list(FILTER TIOGALIB_CPP_SRC INCLUDE REGEX "\\.C")
+#  set_source_files_properties(${TIOGALIB_CPP_SRC} PROPERTIES LANGUAGE CUDA)
+#endif()
+#
+#if (TIOGA_ENABLE_HIP)
+#  separate_arguments(TIOGA_HIP_ARCH_FLAGS)
+#  target_compile_definitions(tioga PUBLIC
+#    TIOGA_HAS_GPU TIOGA_HAS_HIP)
+#  target_compile_options(tioga PRIVATE
+#    $<$<COMPILE_LANGUAGE:CXX>:${TIOGA_HIP_ARCH_FLAGS}>)
+#  target_compile_options(tioga PRIVATE
+#    $<$<COMPILE_LANGUAGE:CXX>:-x hip>)
+#endif()
 
 file(GLOB TIOGA_HEADERS *.h)
 install(TARGETS tioga

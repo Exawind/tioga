@@ -1,3 +1,4 @@
+enable_language(Fortran)
 
 set(GRIDGEN_SOURCES
   modules.f
@@ -8,11 +9,8 @@ set(GRIDGEN_SOURCES
 
 add_executable(buildGrid ${GRIDGEN_SOURCES})
 
-target_compile_options(buildGrid PUBLIC ${MPI_Fortran_COMPILE_FLAGS})
-target_include_directories(buildGrid PUBLIC ${MPI_Fortran_INCLUDE_PATH})
-target_link_libraries(buildGrid
-  tioga ${MPI_Fortran_LIBRARIES} ${CMAKE_DL_LIBS})
-# set_target_properties(buildGrid PROPERTIES LINKER_LANGUAGE Fortran)
+target_link_libraries(buildGrid PRIVATE tioga)
+target_link_libraries(buildGrid PRIVATE MPI::MPI_Fortran)
 
 install(TARGETS buildGrid
   RUNTIME DESTINATION bin
