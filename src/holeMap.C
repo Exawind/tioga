@@ -23,12 +23,9 @@
 #include <array>
 #include "codetypes.h"
 #include "tioga.h"
-using namespace TIOGA;
-extern "C" 
-{ 
-  void fillHoleMap(int *holeMap, int ix[3],int isym);
+#include "tioga_utils.h"
 
-};
+using namespace TIOGA;
 
 /**
  * Create hole maps for all grids

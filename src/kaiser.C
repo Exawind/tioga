@@ -1,5 +1,5 @@
 #include "kaiser.h"
-#include <math.h>
+#include <cmath>
 
 void kaiser(double a[3][3], int nrows, int n, double eigenv[3], double trace,
             double sume) {
@@ -47,7 +47,7 @@ twenty:
         q = q + (xj + xk) * (xj - xk);
       }
       p = halfp + halfp;
-      absp = fabs(p);
+      absp = std::fabs(p);
 
       //   If P is very small, the vectors are almost orthogonal.
       //   Skip the rotation if Q >= 0 (correct ordering).
@@ -62,17 +62,17 @@ twenty:
 
       //   Rotation needed.
 
-      absq = fabs(q);
+      absq = std::fabs(q);
       if (absp <= absq) {
         TAN = absp / absq;
-        COS = one / sqrt(one + TAN * TAN);
+        COS = one / std::sqrt(one + TAN * TAN);
         SIN = TAN * COS;
       } else {
         ctn = absq / absp;
-        SIN = one / sqrt(one + ctn * ctn);
+        SIN = one / std::sqrt(one + ctn * ctn);
         COS = ctn * SIN;
       }
-      COS = sqrt((one + COS) * half);
+      COS = std::sqrt((one + COS) * half);
       SIN = SIN / (COS + COS);
       if (q < zero) {
         temp = COS;
@@ -106,7 +106,7 @@ onehundredsixty:
     for (int m = 1; m <= n; m++) {
       temp += (a[j - 1][m - 1] * a[j - 1][m - 1]);
     }
-    eigenv[j - 1] = sqrt(temp);
+    eigenv[j - 1] = std::sqrt(temp);
     sume = sume + eigenv[j - 1];
   }
 

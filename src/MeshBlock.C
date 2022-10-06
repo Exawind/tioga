@@ -19,22 +19,12 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstring>
 #include <stdexcept>
-
 #include "codetypes.h"
 #include "MeshBlock.h"
 #include "tioga_gpu.h"
-
-extern "C" {
-  void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes);
-  double computeCellVolume(double xv[8][3],int nvert);
-  void deallocateLinkList(DONORLIST *temp);
-  void deallocateLinkList2(INTEGERLIST *temp);  
-  double tdot_product(double a[3],double b[3],double c[3]);
-  void getobbcoords(double xc[3],double dxc[3],double vec[3][3],double xv[8][3]);
-  void transform2OBB(double xv[3],double xc[3],double vec[3][3],double xd[3]);
-  void writebbox(OBB *obb,int bid);
-  void writebboxdiv(OBB *obb,int bid);
-}
+#include "linklist.h"
+#include "tioga_math.h"
+#include "tioga_utils.h"
 
 void MeshBlock::setData(int btag,int nnodesi,double *xyzi, int *ibli,int nwbci, int nobci, 
 			int *wbcnodei,int *obcnodei,

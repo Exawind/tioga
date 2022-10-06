@@ -26,11 +26,10 @@
 #include <cassert>
 #include "codetypes.h"
 #include "tioga.h"
+#include "tioga_utils.h"
+
 using namespace TIOGA;
-extern "C"{
-  int obbIntersectCheck(double vA[3][3],double xA[3],double dxA[3],
-			double vB[3][3],double xB[3],double dxB[3]);			   
-}
+
 void tioga::exchangeBoxes(void)
 {
   int *sndMap;

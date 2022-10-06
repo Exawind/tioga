@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "codetypes.h"
+#include "cellVolume.h"
 
 void solvec(double **a,double *b,int *iflag,int n)
 {

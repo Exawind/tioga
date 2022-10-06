@@ -19,11 +19,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "codetypes.h"
 #include "MeshBlock.h"
+#include "tioga_math.h"
 
-extern "C"{
-  void computeNodalWeights(double xv[8][3],double *xp,double frac[8],int nvert);
-}
-			   
 void MeshBlock::checkContainment(int *cellIndex, int adtElement, double *xsearch)
 {
   int i,j,k,m,n,i3;

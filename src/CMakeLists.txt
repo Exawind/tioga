@@ -1,14 +1,6 @@
 add_library(tioga)
 
 target_sources(tioga PRIVATE
-  # C sources
-  cellVolume.c
-  kaiser.c
-  linklist.c
-  math.c
-  utils.c
-
-  # CXX sources
   ADT.C
   CartBlock.C
   CartGrid.C
@@ -16,6 +8,7 @@ target_sources(tioga PRIVATE
   bookKeeping.C
   buildADTrecursion.C
   cartOps.C
+  cellVolume.C
   checkContainment.C
   dataUpdate.C
   exchangeAMRDonors.C
@@ -25,12 +18,16 @@ target_sources(tioga PRIVATE
   getCartReceptors.C
   highOrder.C
   holeMap.C
+  kaiser.C
   linCartInterp.C
+  linklist.C
   median.C
   parallelComm.C
   search.C
   searchADTrecursion.C
   tioga.C
+  tioga_math.C
+  tioga_utils.C
   tiogaInterface.C
   )
 

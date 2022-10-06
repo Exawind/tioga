@@ -19,6 +19,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "codetypes.h"
 #include "MeshBlock.h"
+#include "tioga_utils.h"
 #include <unordered_map>
 #include <iostream>
 
@@ -70,14 +71,6 @@ struct MyCallback {
 };
 
 #endif
-
-extern "C" {
-  void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes);
-  void writebbox(OBB *obb,int bid);
-  void writePoints(double *x,int nsearch,int bid);
-  void uniquenodes(double *x,int *meshtag,double *rtag,int *itag,int *nn);
-  void uniquenodes_octree(double *x,int *meshtag,double *rtag,int *itag,int *nn);
-}
 
 namespace {
 

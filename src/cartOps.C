@@ -19,14 +19,10 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "codetypes.h"
 #include "MeshBlock.h"
+#include "tioga_math.h"
 #include <assert.h>
 #define ROW 0
 #define COLUMN 1
-
-extern "C" 
-{
-  void computeNodalWeights(double xv[8][3],double *xp,double frac[8],int nvert);
-}
 
 void MeshBlock::setCartIblanks(void)
 {
