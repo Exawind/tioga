@@ -17,7 +17,7 @@ void cellVolume(double* vol, double xc[8][3], int numverts[6], int fconn[6][4], 
                                  xc[fconn[iface-1][2-1]-1][1-1], xc[fconn[iface-1][2-1]-1][2-1], xc[fconn[iface-1][2-1]-1][3-1],
                                  xc[fconn[iface-1][3-1]-1][1-1], xc[fconn[iface-1][3-1]-1][2-1], xc[fconn[iface-1][3-1]-1][3-1]);
     *vol=*vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
-                                 xc[fconn[iface-1][3-1]-1][1-1], xc[fconn[iface-1][3-1]-1][3-1], xc[fconn[iface-1][3-1]-1][3-1],
+                                 xc[fconn[iface-1][3-1]-1][1-1], xc[fconn[iface-1][3-1]-1][2-1], xc[fconn[iface-1][3-1]-1][3-1],
                                  xc[fconn[iface-1][4-1]-1][1-1], xc[fconn[iface-1][4-1]-1][2-1], xc[fconn[iface-1][4-1]-1][3-1]);
     *vol=*vol-0.25*scalarProduct(xc[fconn[iface-1][1-1]-1][1-1], xc[fconn[iface-1][1-1]-1][2-1], xc[fconn[iface-1][1-1]-1][3-1],
                                  xc[fconn[iface-1][2-1]-1][1-1], xc[fconn[iface-1][2-1]-1][2-1], xc[fconn[iface-1][2-1]-1][3-1],
