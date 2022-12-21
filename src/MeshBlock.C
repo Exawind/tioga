@@ -26,7 +26,7 @@
 #include "tioga_math.h"
 #include "tioga_utils.h"
 
-void MeshBlock::setData(int btag,int nnodesi,double *xyzi, int *ibli,int nwbci, int nobci, 
+void MeshBlock::setData(int btag,int nnodesi,double *xyzi, int *ibli,int nwbci, int nobci,
 			int *wbcnodei,int *obcnodei,
                         int ntypesi,int *nvi,int *nci,int **vconni,
                         uint64_t* cell_gid, uint64_t* node_gid)
@@ -141,18 +141,18 @@ void MeshBlock::tagBoundary(void)
   int nvert,i3;
   FILE *fp;
   char intstring[7];
-  char fname[80];  
-  int *iextmp,*iextmp1; 
+  char fname[80];
+  int *iextmp,*iextmp1;
   int iex;
   //
   // do this only once
-  // i.e. when the meshblock is first 
+  // i.e. when the meshblock is first
   // initialized, cellRes would be NULL in this case
   //
 
   if(cellRes) TIOGA_FREE(cellRes);
   if(nodeRes) TIOGA_FREE(nodeRes);
-    
+
   //
   cellRes=(double *) malloc(sizeof(double)*ncells);
   nodeRes=(double *) malloc(sizeof(double)*nnodes);
@@ -162,7 +162,7 @@ void MeshBlock::tagBoundary(void)
   iflag=(int *)malloc(sizeof(int)*nnodes);
   iextmp=(int *) malloc(sizeof(double)*nnodes);
   iextmp1=(int *) malloc(sizeof(double)*nnodes);
-  // 
+  //
   //printf("%p %p\n",userSpecifiedNodeRes,userSpecifiedCellRes);
   //if (myid==2) {
   //  printf("myid,x=%d %d %f %f %f \n",myid,nodeGID[12058],x[12058*3],x[12058*3+1],x[12058*3+2]);
@@ -200,7 +200,7 @@ void MeshBlock::tagBoundary(void)
 		{
 		  iflag[inode[m]]++;
 		  nodeRes[inode[m]]+=(vol*resolutionScale);
-		}	      
+		}
 	    }
 	}
     }
@@ -209,7 +209,7 @@ void MeshBlock::tagBoundary(void)
       k=0;
       for(n=0;n<ntypes;n++)
 	{
-	  for(i=0;i<nc[n];i++)		
+	  for(i=0;i<nc[n];i++)
 	    {
 	      cellRes[k]=userSpecifiedCellRes[k];
 	      k++;
@@ -222,25 +222,25 @@ void MeshBlock::tagBoundary(void)
       //MPI_Reduce(&nmandatory,&nman_global,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
       //if (myid==0) printf("Total mandatory receptors :%d\n",nman_global);
     }
-  
+
   for(int j=0;j<3;j++)
     {
      mapdims[j]=10;
      mapdx[j]=2*obb->dxc[j]/mapdims[j];
     }
   //
-  // compute nodal resolution as the average of 
+  // compute nodal resolution as the average of
   // all the cells associated with it. This takes care
   // of partition boundaries as well.
   //
   // Also create the inverse map of nodes
-  // 
+  //
   if (icft) TIOGA_FREE(icft);
   icft=(int *)malloc(sizeof(int)*(mapdims[2]*mapdims[1]*mapdims[0]+1));
   if (invmap) TIOGA_FREE(invmap);
   invmap=(int *)malloc(sizeof(int)*nnodes);
   for(int i=0;i<mapdims[2]*mapdims[1]*mapdims[0]+1;i++) icft[i]=-1;
-  icft[0]=0;	  
+  icft[0]=0;
   int *iptr;
   iptr=(int *)malloc(sizeof(int)*nnodes);
   //
@@ -251,7 +251,7 @@ void MeshBlock::tagBoundary(void)
       if (iflag[i]!=0)  nodeRes[i]/=iflag[i];
       iflag[i]=0;
       iextmp[i]=iextmp1[i]=0;
-      
+
       for(int j=0;j<3;j++)
 	{
 	  xd[j]=obb->dxc[j];
@@ -263,13 +263,13 @@ void MeshBlock::tagBoundary(void)
       iptr[i]=icft[indx+1];
       icft[indx+1]=i;
     }
- 
+
  int kc=0;
  for(int i=0;i<mapdims[2]*mapdims[1]*mapdims[0];i++)
   {
    int ip=icft[i+1];
    int m=0;
-   while(ip != -1) 
+   while(ip != -1)
    {
      invmap[kc++]=ip;
      ip=iptr[ip];
@@ -285,7 +285,7 @@ void MeshBlock::tagBoundary(void)
   //
   //TRACEI(nobc);
   for(i=0;i<nobc;i++)
-    { 
+    {
       ii=(obcnode[i]-BASE);
       iflag[(obcnode[i]-BASE)]=1;
     }
@@ -301,7 +301,7 @@ void MeshBlock::tagBoundary(void)
       nvert=nv[n];
       for(i=0;i<nc[n];i++)
 	{
-	  double xd[3],xc[3],xmin[3],xmax[3];	    
+	  double xd[3],xc[3],xmin[3],xmax[3];
 	  int idx[3];
 	  itag=0;
 	  for(int j=0;j<3;j++) { xmin[j]=BIGVALUE;xmax[j]=-BIGVALUE;}
@@ -312,11 +312,11 @@ void MeshBlock::tagBoundary(void)
 	      for(int j=0;j<3;j++)
 		{
 		  xd[j]=obb->dxc[j];
-		  for(int k=0;k<3;k++) 
+		  for(int k=0;k<3;k++)
 		    xd[j]+=(x[3*inode[m]+k]-obb->xc[k])*obb->vec[j][k];
 		  xmin[j]=TIOGA_MIN(xd[j],xmin[j]);
 		  xmax[j]=TIOGA_MAX(xd[j],xmax[j]);
-		} 	    
+		}
 	    }
           for(int j=0;j<3;j++) { xmin[j]-=TOL; xmax[j]+=TOL;}
 	  for(int j=xmin[0]/mapdx[0];j<=xmax[0]/mapdx[0];j++)
@@ -355,7 +355,7 @@ void MeshBlock::tagBoundary(void)
     fclose(fp);
   */
   //
-  // now tag all the cells which have 
+  // now tag all the cells which have
   // mandatory receptors as nodes as not acceptable
   // donors
   //
@@ -370,13 +370,13 @@ void MeshBlock::tagBoundary(void)
 	      for(m=0;m<nvert;m++)
 		{
 		  inode[m]=vconn[n][nvert*i+m]-BASE;
-		  if (iextmp[inode[m]]==1) //(iflag[inode[m]]) 
+		  if (iextmp[inode[m]]==1) //(iflag[inode[m]])
 		    {
 		      cellRes[k]=BIGVALUE;
 		      break;
-		    }		    
+		    }
 		}
-	      if (cellRes[k]==BIGVALUE) 
+	      if (cellRes[k]==BIGVALUE)
 		{
 		  for(m=0;m<nvert;m++) {
 		    inode[m]=vconn[n][nvert*i+m]-BASE;
@@ -386,7 +386,7 @@ void MeshBlock::tagBoundary(void)
 	      k++;
 	    }
 	}
-      for(i=0;i<nnodes;i++) iextmp[i]=iextmp1[i];	
+      for(i=0;i<nnodes;i++) iextmp[i]=iextmp1[i];
     }
   TIOGA_FREE(iflag);
   TIOGA_FREE(iextmp);
@@ -434,7 +434,7 @@ void MeshBlock::writeGridFile(int bid)
 		      vconn[n][nvert*i+3]+ba,
 		      vconn[n][nvert*i+3]+ba);
 	    }
-	  else if (nvert==5) 
+	  else if (nvert==5)
 	    {
 	      fprintf(fp,"%d %d %d %d %d %d %d %d\n",
 		      vconn[n][nvert*i]+ba,
@@ -446,7 +446,7 @@ void MeshBlock::writeGridFile(int bid)
 		      vconn[n][nvert*i+4]+ba,
 		      vconn[n][nvert*i+4]+ba);
 	    }
-	  else if (nvert==6) 
+	  else if (nvert==6)
 	    {
 	      fprintf(fp,"%d %d %d %d %d %d %d %d\n",
 		      vconn[n][nvert*i]+ba,
@@ -520,7 +520,7 @@ void MeshBlock::writeCellFile(int bid)
 		      vconn[n][nvert*i+3]+ba,
 		      vconn[n][nvert*i+3]+ba);
 	    }
-	  else if (nvert==5) 
+	  else if (nvert==5)
 	    {
 	      fprintf(fp,"%d %d %d %d %d %d %d %d\n",
 		      vconn[n][nvert*i]+ba,
@@ -532,7 +532,7 @@ void MeshBlock::writeCellFile(int bid)
 		      vconn[n][nvert*i+4]+ba,
 		      vconn[n][nvert*i+4]+ba);
 	    }
-	  else if (nvert==6) 
+	  else if (nvert==6)
 	    {
 	      fprintf(fp,"%d %d %d %d %d %d %d %d\n",
 		      vconn[n][nvert*i]+ba,
@@ -578,7 +578,7 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
   // if fringes were reduced use
   // iblank_reduced
   //
-  if (iblank_reduced) 
+  if (iblank_reduced)
     {
       ibl=iblank_reduced;
     }
@@ -591,11 +591,11 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
   sprintf(fname,"flow%s.dat",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
-  fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"BTAG\" ");
+  fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"BTAG\"");
   for(i=0;i<nvar;i++)
     {
       sprintf(qstr,"Q%d",i);
-      fprintf(fp,"\"%s\",",qstr);
+      fprintf(fp,",\"%s\"",qstr);
     }
   fprintf(fp,"\n");
   fprintf(fp,"ZONE T=\"VOL_MIXED\",N=%d E=%d ET=BRICK, F=FEPOINT\n",nnodes,
@@ -607,7 +607,7 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
 	{
 	  fprintf(fp,"%lf %lf %lf %d %d ",x[3*i],x[3*i+1],x[3*i+2],ibl[i],meshtag);
 	  for(j=0;j<nvar;j++)
-	    fprintf(fp,"%lf ",q[i*nvar+j]);      
+	    fprintf(fp,"%lf ",q[i*nvar+j]);
 	  //for(j=0;j<nvar;j++)
 	  //  fprintf(fp,"%lf ", x[3*i]+x[3*i+1]+x[3*i+2]);
           fprintf(fp,"\n");
@@ -641,7 +641,7 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
 		      vconn[n][nvert*i+3]+ba,
 		      vconn[n][nvert*i+3]+ba);
 	    }
-	  else if (nvert==5) 
+	  else if (nvert==5)
 	    {
 	      fprintf(fp,"%d %d %d %d %d %d %d %d\n",
 		      vconn[n][nvert*i]+ba,
@@ -653,7 +653,7 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
 		      vconn[n][nvert*i+4]+ba,
 		      vconn[n][nvert*i+4]+ba);
 	    }
-	  else if (nvert==6) 
+	  else if (nvert==6)
 	    {
 	      fprintf(fp,"%d %d %d %d %d %d %d %d\n",
 		      vconn[n][nvert*i]+ba,
@@ -688,13 +688,13 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
   fclose(fp);
   return;
 }
-  
+
 void MeshBlock::getWallBounds(int *mtag,int *existWall, double wbox[6])
 {
   int i,j,i3;
   int inode;
 
-  *mtag=meshtag+(1-BASE); 
+  *mtag=meshtag+(1-BASE);
   wbox[0]=wbox[1]=wbox[2]=BIGVALUE;
   wbox[3]=wbox[4]=wbox[5]=-BIGVALUE;
 
@@ -715,9 +715,9 @@ void MeshBlock::getWallBounds(int *mtag,int *existWall, double wbox[6])
 	  wbox[j+3]=TIOGA_MAX(wbox[j+3],x[i3+j]);
 	}
     }
-  
+
 }
-  
+
 void MeshBlock::markWallBoundary(int *sam,int nx[3],double extents[6])
 {
   int i,j,k,m,n;
@@ -784,7 +784,7 @@ void MeshBlock::markWallBoundary(int *sam,int nx[3],double extents[6])
        nvert=nv[n];
        for(i=0;i<nc[n];i++)
  	{
-	  if (iflag[m]==1) 
+	  if (iflag[m]==1)
 	    {
 	      //
 	      // find the index bounds of each wall boundary cell
@@ -826,7 +826,7 @@ void MeshBlock::markWallBoundary(int *sam,int nx[3],double extents[6])
    TIOGA_FREE(inode);
 }
 
-void MeshBlock::getReducedOBB(OBB *obc,double *realData) 
+void MeshBlock::getReducedOBB(OBB *obc,double *realData)
 {
   int i,j,k,m,n,i3;
   int nvert;
@@ -893,7 +893,7 @@ void MeshBlock::getReducedOBB(OBB *obc,double *realData)
 }
 
 
-void MeshBlock::getReducedOBB2(OBB *obc,double *realData) 
+void MeshBlock::getReducedOBB2(OBB *obc,double *realData)
 {
   int i,j,k,l,m,n,i3,jmin,kmin,lmin,jmax,kmax,lmax,indx;
   double bbox[6],xd[3];
@@ -912,7 +912,7 @@ void MeshBlock::getReducedOBB2(OBB *obc,double *realData)
           xmax[j]=TIOGA_MAX(xmax[j],xd[j]+obb->dxc[j]);
         }
     }
-  for(j=0;j<3;j++) 
+  for(j=0;j<3;j++)
     {
       delta=0.01*(xmax[j]-xmin[j]);
       xmin[j]-=delta;
@@ -987,7 +987,7 @@ void MeshBlock::getQueryPoints(OBB *obc,
 
         }
     }
-  if (myid==0 && meshtag==1) {TRACEI(*nints);} 
+  if (myid==0 && meshtag==1) {TRACEI(*nints);}
   (*intData)=(int *)malloc(sizeof(int)*(*nints));
   (*realData)=(double *)malloc(sizeof(double)*(*nreals));
   //
@@ -1004,7 +1004,7 @@ void MeshBlock::getQueryPoints(OBB *obc,
   //
   TIOGA_FREE(inode);
 }
-	      
+
 void MeshBlock::getQueryPoints2(OBB *obc,
 			       int *nints,int **intData,
 			       int *nreals, double **realData)
@@ -1034,8 +1034,8 @@ void MeshBlock::getQueryPoints2(OBB *obc,
           xmax[j]=TIOGA_MAX(xmax[j],xd[j]+obb->dxc[j]);
         }
     }
-  
-  for(j=0;j<3;j++) 
+
+  for(j=0;j<3;j++)
     {
       delta=0.01*(xmax[j]-xmin[j]);
       xmin[j]-=delta;
@@ -1063,7 +1063,7 @@ void MeshBlock::getQueryPoints2(OBB *obc,
   //printf("xmax :%f %f %f\n",xmax[0],xmax[1],xmax[2]);
   //
   // now find the actual number of points
-  // that are within OBC using only the 
+  // that are within OBC using only the
   // sub-blocks with potential bbox overlap
   //
   //FILE *fp,*fp2,*fp3,*fp4;
@@ -1076,7 +1076,7 @@ void MeshBlock::getQueryPoints2(OBB *obc,
       for(j=imin[0];j<=imax[0];j++)
 	{
 	  //
-	  // centroid of each sub-block 
+	  // centroid of each sub-block
 	  // in OBC axes
 	  //
 	  xd[0]=-obb->dxc[0]+j*mapdx[0]+mapdx[0]*0.5;
@@ -1169,8 +1169,8 @@ void MeshBlock::getQueryPoints2(OBB *obc,
   *nints *= nintsPerNode;
   //
   TIOGA_FREE(inode);
-}  
-  
+}
+
 void MeshBlock::writeOBB(int bid)
 {
   FILE *fp;
@@ -1200,7 +1200,7 @@ void MeshBlock::writeOBB(int bid)
 	      for(m=0;m<3;m++)
 		xx[m]=obb->xc[m]+ij*obb->vec[0][m]*obb->dxc[0]
 		  +ik*obb->vec[1][m]*obb->dxc[1]
-		  +il*obb->vec[2][m]*obb->dxc[2];	      
+		  +il*obb->vec[2][m]*obb->dxc[2];
 	      fprintf(fp,"%f %f %f\n",xx[0],xx[1],xx[2]);
 	    }
 	}
@@ -1289,7 +1289,7 @@ MeshBlock::~MeshBlock()
   if (m_info_device) TIOGA_FREE_DEVICE(m_info_device);
 
   // need to add code here for other objects as and
-  // when they become part of MeshBlock object  
+  // when they become part of MeshBlock object
 };
 //
 // set user specified node and cell resolutions
@@ -1326,7 +1326,7 @@ void MeshBlock::check_for_uniform_hex(void)
 		  xv[m][k]=x[i3+k];
 	      }
 	    //
-	    // check angles to see if sides are 
+	    // check angles to see if sides are
 	    // rectangles
 	    //
 	    // z=0 side
@@ -1344,7 +1344,7 @@ void MeshBlock::check_for_uniform_hex(void)
 	    if (fabs(tdot_product(xv[4],xv[1],xv[0])) > TOL) return;
 	    if (fabs(tdot_product(xv[4],xv[1],xv[5])) > TOL) return;
 	    //
-	    // need to check just one more angle on 
+	    // need to check just one more angle on
 	    // on the corner against 0 (6)
 	    //
 	    if (fabs(tdot_product(xv[5],xv[7],xv[6])) > TOL) return;
@@ -1373,7 +1373,7 @@ void MeshBlock::check_for_uniform_hex(void)
     obh=(OBB *) malloc(sizeof(OBB));
     for(int j=0;j<3;j++)
      for(int k=0;k<3;k++)
-       obh->vec[j][k]=0;      
+       obh->vec[j][k]=0;
     for(int k=0;k<3;k++)
       obh->vec[0][k]=(xv[1][k]-xv[0][k])/dx[0];
     for(int k=0;k<3;k++)
@@ -1386,7 +1386,7 @@ void MeshBlock::check_for_uniform_hex(void)
     double xmax[3];
     double xmin[3];
     xmax[0]=xmax[1]=xmax[2]=-BIGVALUE;
-    xmin[0]=xmin[1]=xmin[2]=BIGVALUE;	
+    xmin[0]=xmin[1]=xmin[2]=BIGVALUE;
     //
     for(int i=0;i<nnodes;i++)
     {
@@ -1412,11 +1412,11 @@ void MeshBlock::check_for_uniform_hex(void)
       {
 	xmax[j]+=TOL;
 	xmin[j]-=TOL;
-	obh->dxc[j]=(xmax[j]-xmin[j])*0.5;	
+	obh->dxc[j]=(xmax[j]-xmin[j])*0.5;
 	xd[j]=(xmax[j]+xmin[j])*0.5;
       }
     //
-    // find the center of the box in 
+    // find the center of the box in
     // actual cartesian coordinates
     //
     for(int j=0;j<3;j++)
@@ -1424,11 +1424,11 @@ void MeshBlock::check_for_uniform_hex(void)
 	obh->xc[j]=0.0;
 	for(int k=0;k<3;k++)
 	  obh->xc[j]+=(xd[k]*obh->vec[k][j]);
-      }    
+      }
    }
   return;
 }
-		
+
 void MeshBlock::create_hex_cell_map(void)
 {
   for(int j=0;j<3;j++)
@@ -1472,7 +1472,7 @@ void MeshBlock::checkOrphans(void)
   char fname[80];
   //sprintf(fname,"nodeRes%d.dat",myid);
   //FILE *fp=fopen(fname,"w");
-  for (int i=0;i<nnodes;i++) 
+  for (int i=0;i<nnodes;i++)
     {
       if (nodeRes[i]>=BIGVALUE) {
 	if (iblank[i]==1) {
@@ -1490,7 +1490,7 @@ void MeshBlock::checkOrphans(void)
     sprintf(intstring,"%d",100000+myid);
     sprintf(fname,"orphan%s.dat",&(intstring[1]));
     FILE *fp=fopen(fname,"w");
-    for (int i=0;i<nnodes;i++) 
+    for (int i=0;i<nnodes;i++)
     {
       if (nodeRes[i]>=BIGVALUE) {
 	if (iblank[i]==1) {
