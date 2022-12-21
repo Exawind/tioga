@@ -1,4 +1,5 @@
 enable_language(Fortran)
+find_package(MPI REQUIRED)
 
 set(GRIDGEN_SOURCES
   modules.f
