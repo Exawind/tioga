@@ -35,7 +35,7 @@ void tioga::exchangeDonors(void)
   // and receiving
   //
   pc->getMap(&nsend,&nrecv,&sndMap,&rcvMap);
-  if (nsend == 0) return;  
+  if (nsend == 0) return;
   //
   // create packets to send and receive
   // and initialize them to zero
@@ -54,14 +54,14 @@ void tioga::exchangeDonors(void)
     mb->getMBDonorPktSizes(nintsSend, nrealsSend);
   }
   //
-  // Allocate sndPack 
+  // Allocate sndPack
   //
   for(int k=0;k<nsend;k++)
     {
       sndPack[k].nints=nintsSend[k];
       sndPack[k].nreals=nrealsSend[k];
       sndPack[k].intData = (int*)malloc(sizeof(int) * sndPack[k].nints);
-      sndPack[k].realData = (double*)malloc(sizeof(double) * sndPack[k].nreals);    
+      sndPack[k].realData = (double*)malloc(sizeof(double) * sndPack[k].nreals);
     }
   //
   // Populate send packets with data from each mesh block in this partition
@@ -103,11 +103,20 @@ void tioga::exchangeDonors(void)
   std::vector<int> nrecords(nblocks,0);
   int** donorRecords = (int**)malloc(sizeof(int*)*nblocks);
   double** receptorResolution = (double**)malloc(sizeof(double*)*nblocks);
-  for (int ib=0; ib<nblocks; ib++) {
-    auto& mb = mblocks[ib];
-    mb->processDonors(holeMap, nmesh, &(donorRecords[ib]),
-                      &(receptorResolution[ib]),&(nrecords[ib]));
+  if (USE_ADAPTIVE_HOLEMAP) {
+    for (int ib=0; ib<nblocks; ib++) {
+      auto& mb = mblocks[ib];
+      mb->processDonors(adaptiveHoleMap, nmesh, &(donorRecords[ib]),
+                        &(receptorResolution[ib]),&(nrecords[ib]));
+    }
+  } else {
+    for (int ib=0; ib<nblocks; ib++) {
+      auto& mb = mblocks[ib];
+      mb->processDonors(holeMap, nmesh, &(donorRecords[ib]),
+                        &(receptorResolution[ib]),&(nrecords[ib]));
+    }
   }
+
   //
   // Reset all send/recv data structures
   //
@@ -137,7 +146,7 @@ void tioga::exchangeDonors(void)
 
   for (int n=0; n<nblocks; n++) {
     for (int i=0; i<nrecords[n]; i++) {
-      int k = donorRecords[n][3*i];      
+      int k = donorRecords[n][3*i];
       sndPack[k].intData[ixOffset[k]++]=donorRecords[n][3*i+1];
       sndPack[k].intData[ixOffset[k]++]=donorRecords[n][3*i+2];
       sndPack[k].realData[rxOffset[k]++]=receptorResolution[n][i];
@@ -179,7 +188,7 @@ void tioga::exchangeDonors(void)
 	  mblocks[ib]->findInterpData(&(ninterp[ib]),recid,receptorRes);
 	}
     }
-  
+
   for (int ib=0; ib<nblocks; ib++) {
     mblocks[ib]->set_ninterp(ninterp[ib]);
   }
@@ -220,7 +229,7 @@ void tioga::exchangeDonors(void)
   // communciate cancellation data comm 3
   //
   pc->sendRecvPackets(sndPack,rcvPack);
-  
+
   for (int k=0; k<nrecv; k++) {
     int m = 0;
     for (int j=0;j<rcvPack[k].nints/2;j++) {
@@ -245,10 +254,10 @@ void tioga::exchangeDonors(void)
       TIOGA_FREE(donorRecords[i]);
       donorRecords[i] = NULL;
     }
-    nrecords[i] = 0;    
+    nrecords[i] = 0;
     mblocks[i]->getInterpData(&(nrecords[i]),
                               &(donorRecords[i]));
-  }  
+  }
   std::fill(nintsSend.begin(), nintsSend.end(), 0);
   std::fill(ixOffset.begin(), ixOffset.end(), 0);
   for (int n=0; n < nblocks; n++) {
@@ -269,12 +278,12 @@ void tioga::exchangeDonors(void)
   //
   // comm 4
   // final receptor data to set iblanks
-  //     
+  //
   pc->sendRecvPackets(sndPack,rcvPack);
   //
   for(int ib=0;ib<nblocks;ib++)
     mblocks[ib]->clearIblanks();
-  
+
   for (int k=0; k<nrecv; k++) {
     int m = 0;
     for(int j=0;j< rcvPack[k].nints/2;j++)
@@ -287,7 +296,7 @@ void tioga::exchangeDonors(void)
   pc->clearPackets(sndPack,rcvPack);
   TIOGA_FREE(sndPack);
   TIOGA_FREE(rcvPack);
-  
+
   if (donorRecords) {
     for (int i=0; i<nblocks; i++) {
       if (donorRecords[i]) TIOGA_FREE(donorRecords[i]);
@@ -299,9 +308,9 @@ void tioga::exchangeDonors(void)
       if (receptorResolution[i]) TIOGA_FREE(receptorResolution[i]);
     }
     TIOGA_FREE(receptorResolution);
-  }   
+  }
 }
-  
+
 void tioga::outputStatistics(void)
 {
 //#ifdef TIOGA_OUTPUT_STATS

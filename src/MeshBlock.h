@@ -66,11 +66,18 @@ class MeshBlock
   double *x;        /** < grid nodes x[3*nnodes] */
   int *iblank_cell; /** < iblank value at each grid cell */
   //
-  int **vconn;        /** < connectivity of each kind of cell */
+  int **vconn;      /** < connectivity of each kind of cell */
   int *wbcnode;     /** < wall boundary node indices */
   int *obcnode;     /** < overset boundary node indices */
-  uint64_t *cellGID;     /**< Global ID of the cell */
-  uint64_t *nodeGID;     /**< Global ID for the nodes */
+  uint64_t *cellGID;/**< Global ID of the cell */
+  uint64_t *nodeGID;/**< Global ID for the nodes */
+  //
+  int nwbcface;     /** < number of wall boundary faces */
+  int nobcface;     /** < number of outer boundary faces */
+  std::vector<int> wbcfacenode; /** < [4*nwbcface] wall face boundary nodes (-1 node: triangle face) */
+  std::vector<int> obcfacenode; /** < [4*nobcface] outer face boundary nodes (-1 node: triangle face) */
+  std::vector<box_t> wbcfacebox;/** < [nwbcface] wall face bounding boxes */
+  std::vector<box_t> obcfacebox;/** < [nobcface] outer face bounding boxes */
   //
   double *nodeRes;  /** < node resolution  */
   double *userSpecifiedNodeRes;
@@ -82,13 +89,13 @@ class MeshBlock
   //
   ADT *adt;   /** < Digital tree for searching this block */
   //
-  DONORLIST **donorList;      /**< list of donors for the nodes of this mesh */
+  DONORLIST **donorList;    /**< list of donors for the nodes of this mesh */
   //
   int ninterp;              /**< number of interpolations to be performed */
   int interpListSize;
   int interptype;
   INTERPLIST *interpList;   /**< list of donor nodes in my grid, with fractions and information of
-                                 who they donate to */ 
+                                 who they donate to */
   int *interp2donor;
 
   INTEGERLIST *cancelList;  /** receptors that need to be cancelled because of */
@@ -102,9 +109,9 @@ class MeshBlock
   int nreceptorCells;      /** number of receptor cells */
   int *ctag;               /** index of receptor cells */
   int *pointsPerCell;      /** number of receptor points per cell */
-  int maxPointsPerCell;     /** max of pointsPerCell vector */
-  double *rxyz;            /**  point coordinates */
-  int ipoint; 
+  int maxPointsPerCell;    /** max of pointsPerCell vector */
+  double *rxyz;            /** point coordinates */
+  int ipoint;
   int *picked;             /** < flag specifying if a node has been selected for high-order interpolation */
 
   int nreceptorCellsCart;
@@ -135,7 +142,7 @@ class MeshBlock
   double resolutionScale;
   //
   // oriented bounding box of this partition
-  // 
+  //
   OBB *obb;
   OBB *obh;
   //
@@ -149,7 +156,13 @@ class MeshBlock
   int *donorId;       /** < donor indices for those found */
   std::vector<uint64_t> gid_search; /**< Global node ID for the query points */
   int donorCount;
-  int myid;
+
+  int myid;              /** < global mpi rank */
+  int blockcomm_id;      /** < mpi rank within this block */
+  int blockcomm_numprocs;/** < number of mpi ranks within this blocks */
+  MPI_Comm blockcomm;    /** < subgroup communicator for this mesh block */
+  char meshMaster;       /** < master rank for each body flag: [0] subordinate rank, [1] master rank */
+
   double *cellRes;  /** < resolution for each cell */
   int ntotalPoints;        /**  total number of extra points to interpolate */
   int ihigh;
@@ -158,7 +171,7 @@ class MeshBlock
   INTERPLIST *interpList2; /** < list for high-interpolation points */
   int ninterpCart;
   int interpListCartSize;
-  INTERPLIST *interpListCart; 
+  INTERPLIST *interpListCart;
   int* receptorIdCart;
 
   int* vconn_ptrs[TIOGA::MeshBlockInfo::max_vertex_types];
@@ -170,8 +183,6 @@ class MeshBlock
   void (*p4estsearchpt) (double *,int *,int *,int *);
   void (*check_intersect_p4est) (int *, int *);
 
-
-
   /** basic constructor */
   MeshBlock() { nv=NULL; nc=NULL; x=NULL;iblank=NULL;iblank_cell=NULL;vconn=NULL;wbcnode=NULL;
     obcnode=NULL; cellRes=NULL; nodeRes=NULL; elementBbox=NULL; elementList=NULL; adt=NULL; donorList=NULL;
@@ -179,6 +190,7 @@ class MeshBlock
     res_search=NULL;xsearch=NULL; donorId=NULL;xtag=NULL;
     adt=NULL; cancelList=NULL; userSpecifiedNodeRes=NULL; userSpecifiedCellRes=NULL; nfringe=1;
     mexclude=3; nvar=0; interptype=0;
+    blockcomm=MPI_COMM_NULL;
     // new vars
     ninterp=ninterp2=interpListSize=interp2ListSize=0;
     ctag=NULL;pointsPerCell=NULL;maxPointsPerCell=0;rxyz=NULL;ntotalPoints=0;rst=NULL;ihigh=0;ipoint=0;
@@ -199,11 +211,13 @@ class MeshBlock
 
   /** basic destructor */
   ~MeshBlock();
-      
+
   void preprocess(void);
 
   void tagBoundary(void);
-  
+
+  void tagBoundaryFaces(void);
+
   void writeGridFile(int bid);
 
   void writeFlowFile(int bid,double *q,int nvar,int type);
@@ -215,9 +229,8 @@ class MeshBlock
                int ntypesi, int *nvi, int *nci, int **vconni,
                uint64_t* cell_gid=NULL, uint64_t* node_gid=NULL);
 
+  void setResolutions(double *nres,double *cres);
 
-  void setResolutions(double *nres,double *cres);    
-	       
   void search();
   void search_uniform_hex();
   void writeOBB(int bid);
@@ -232,32 +245,56 @@ class MeshBlock
 			       int nvar, int interptype);
 
   void getInterpolatedSolutionAMR(int *nints,int *nreals,int **intData,double **realData,double *q,int *);
-  
+
   void checkContainment(int *cellIndex,int adtElement,double *xsearch);
 
   void getWallBounds(int *mtag,int *existWall, double wbox[6]);
-  
+
   void markWallBoundary(int *sam,int nx[3],double extents[6]);
 
-  void getQueryPoints2(OBB *obb,int *nints,int **intData,int *nreals,
-		      double **realData);
+  void markBoundaryAdaptiveMap(char nodetype2tag,
+                               double extents_lo[3],
+                               double extents_hi[3],
+                               level_octant_t *level,
+                               uint8_t *taggedList,
+                               uint8_t *tagList);
+
+  void markBoundaryAdaptiveMapSurfaceIntersect(char nodetype2tag,
+                                               double extents_lo[3],
+                                               double extents_hi[3],
+                                               level_octant_t *level,
+                                               uint8_t *taggedList,
+                                               uint8_t *tagList);
+
+  void markBoundaryMapSurface(char nodetype2tag,
+                              double extents_lo[3],
+                              double extents_hi[3],
+                              level_octant_t *level,
+                              uint8_t *taggedList,
+                              uint8_t *tagList);
+
   void getQueryPoints(OBB *obb,int *nints,int **intData,int *nreals,
 		      double **realData);
-  
+
+  void getQueryPoints2(OBB *obb,int *nints,int **intData,int *nreals,
+		       double **realData);
 
   /** routines that do book keeping */
 
   void getDonorPacket(PACKET *sndPack, int nsend);
 
   void initializeDonorList();
-  
+
   void insertAndSort(int pointid,int senderid,int meshtag, int remoteid, double donorRes,double receptorRes);
-  
-  void processDonors(HOLEMAP *holemap, int nmesh,int **donorRecords,double **receptorResolution,
-		     int *nrecords);
+
+  void processDonors(HOLEMAP *holemap,int nmesh,int **donorRecords,
+                     double **receptorResolution,int *nrecords);
+
+  void processDonors(ADAPTIVE_HOLEMAP *holemap,int nmesh,int **donorRecords,
+                     double **receptorResolution,int *nrecords);
 
   void initializeInterpList(int ninterp_input);
-  
+
   void findInterpData(int* recid,int irecord, double receptorRes);
 
   void findInterpListCart();
@@ -271,7 +308,7 @@ class MeshBlock
   void getInterpData(int *nrecords, int **intData);
 
   void clearIblanks(void);
-  
+
   void getStats(int mstat[2]);
 
   void setIblanks(int inode);
@@ -295,10 +332,10 @@ class MeshBlock
   {
     iblank_cell=iblank_cell_input;
   }
-  void setcallback(void (*f1)(int*, int*),
-		    void (*f2)(int *,int *,double *),
-		    void (*f3)(int *,double *,int *,double *),
-		    void (*f4)(int *,double *,int *,int *,double *,double *,int *),
+  void setcallback(void (*f1)(int *,int *),
+		   void (*f2)(int *,int *,double *),
+		   void (*f3)(int *,double *,int *,double *),
+		   void (*f4)(int *,double *,int *,int *,double *,double *,int *),
 		   void (*f5)(int *,int *,double *,int *,int*,double *))
   {
     get_nodes_per_cell=f1;
@@ -316,26 +353,28 @@ class MeshBlock
   }
 
   void writeCellFile(int);
+  void writeBCnodes(char nodetype2tag,int bodyid);
   void getInternalNodes(void);
   void getExtraQueryPoints(OBB *obb,int *nints,int **intData,int *nreals,
-		      double **realData);
+                           double **realData);
   void processPointDonors(void);
   void getInterpolatedSolutionAtPoints(int *nints,int *nreals,int **intData,
 				       double **realData,
 				       double *q,
 				       int nvar, int interptype);
   void updatePointData(double *q,double *qtmp,int nvar,int interptype);
-  void outputOrphan(FILE *fp,int i) 
+  void outputOrphan(FILE *fp,int i)
   {
     fprintf(fp,"%f %f %f\n",rxyz[3*i],rxyz[3*i+1],rxyz[3*i+2]);
   }
   void clearOrphans(HOLEMAP *holemap,int nmesh,int *itmp);
+  void clearOrphans(ADAPTIVE_HOLEMAP *holemap, int nmesh,int *itmp);
   void getUnresolvedMandatoryReceptors();
   void getCartReceptors(CartGrid *cg, parallelComm *pc);
   void fillReceptorDataPtr(CartGrid *cg,int cell_count,int c,int j,int k,int l,int* pmap,
-    double vol,double* xtm,bool isNodal,INTEGERLIST2*& dataPtr);
+                           double vol,double* xtm,bool isNodal,INTEGERLIST2*& dataPtr);
   void setCartIblanks(void);
-  
+
   // Getters
   inline int getMeshTag() const { return meshtag + (1 - BASE); }
 
@@ -387,6 +426,34 @@ class MeshBlock
     interptype = type;
   }
   void checkOrphans(void);
+
+  static
+  char overlapping1D(bound_t box1,bound_t box2){
+    return ((box1.hi >= box2.lo) && (box2.hi >= box1.lo));
+  }
+};
+
+/* Mesh Block Complement Rank Data */
+class meshblockCompInfo {
+  public:
+    int nreq;
+    int id;
+    int nrank;
+    int masterID;   /* master rank for distributing mesh block data */
+    MPI_Comm comm;  /* communicator containing all complement ranks + master */
+    MPI_Request req;
+
+    /* constructor */
+    meshblockCompInfo(){
+        comm = MPI_COMM_NULL;
+        req = MPI_REQUEST_NULL;
+    };
+
+    /* deconstructor */
+   ~meshblockCompInfo(){
+        if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+        if(req != MPI_REQUEST_NULL) MPI_Request_free(&req);
+    };
 };
 
 #endif /* MESHBLOCK_H */

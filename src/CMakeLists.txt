@@ -27,6 +27,7 @@ target_sources(tioga PRIVATE
   searchADTrecursion.C
   tioga.C
   tioga_math.C
+  tioga_triBox.C
   tioga_utils.C
   tiogaInterface.C
   )

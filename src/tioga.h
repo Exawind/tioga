@@ -62,19 +62,26 @@ class tioga
   CartBlock *cb;
   int nmesh;
   HOLEMAP *holeMap;
+  ADAPTIVE_HOLEMAP *adaptiveHoleMap;
   MPI_Comm scomm;
+  MPI_Group scomm_group;
   parallelComm *pc;
   parallelComm *pc_cart;
   int isym;
   int ierr;
+
   int myid,numprocs;
   int *sendCount;
   int *recvCount;
-  //OBB *obblist;
   std::vector<OBB> obblist;
   int iorphanPrint;
 
-  //! Mesh blocks in this processor 
+  //! Mesh Block Complement data
+  meshblockCompInfo *meshblockComp;
+  mastertag_t *meshMasterIDs;
+  int *excl_list;
+
+  //! Mesh blocks in this processor
   std::vector<std::unique_ptr<MeshBlock> > mblocks;
   //! Solver assigned mesh tags for the mesh blocks
   std::vector<int> mtags;
@@ -104,9 +111,11 @@ class tioga
       mtags(0)
     */
     {
-        mb = NULL; cg=NULL; cb=NULL;
-        holeMap=NULL; pc=NULL; sendCount=NULL; recvCount=NULL;
+        mb=NULL; cg=NULL; cb=NULL;
+        holeMap=NULL; adaptiveHoleMap=NULL;
+        pc=NULL; sendCount=NULL; recvCount=NULL;
         pc_cart = NULL;
+        meshblockComp=NULL; meshMasterIDs=NULL; excl_list=NULL;
         // obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         isym=3;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         mexclude=3,nfringe=1;
@@ -114,10 +123,10 @@ class tioga
         mblocks.clear();
         mtags.clear();
     }
- 
+
   /** basic destructor */
-  ~tioga(); 
-  
+  ~tioga();
+
   /** set communicator */
   void setCommunicator(MPI_Comm communicator,int id_proc,int nprocs);
 
@@ -150,7 +159,7 @@ class tioga
   void exchangeSearchData(int at_points=0);
 
   void exchangeDonors(void);
-    
+
   /** perform overset grid connectivity */
 
   void performConnectivity(void);
@@ -158,25 +167,24 @@ class tioga
   void performConnectivityAMR(void);
 
   /** update data */
-
   void dataUpdate(int nvar,int interptype,int at_points=0) ;
 
   void dataUpdate_AMR() ;
-  
+
   void dataUpdate_highorder(int nvar,double *q,int interptype) ;
 
   /** get hole map for each mesh */
- 
   void getHoleMap(void);
+  void getAdaptiveHoleMap(void);
 
   /** output HoleMaps */
-  
   void outputHoleMap(void);
+  void outputAdaptiveHoleMap(void);
 
   void writeData(int nvar,int interptype);
 
   void getDonorCount(int btag, int *dcount, int *fcount);
-  
+
   void getDonorInfo(int btag, int *receptors,int *indices,double *frac,int *dcount);
 
   void getReceptorInfo(std::vector<int>&);
@@ -194,7 +202,7 @@ class tioga
     auto& mb = mblocks[iblk];
     mb->setResolutions(nres, cres);
   }
-  
+
   void setMexclude(int *mexclude_input)
   {
     mexclude=*mexclude_input;
@@ -227,17 +235,17 @@ class tioga
     mb->set_cell_iblank(ib_cell);
   }
 
-  void setcallback(void (*f1)(int*, int*),
-		    void (*f2)(int *,int *,double *),
-		    void (*f3)(int *,double *,int *,double *),
-		    void (*f4)(int *,double *,int *,int *,double *,double *,int *),
+  void setcallback(void (*f1)(int *,int *),
+		   void (*f2)(int *,int *,double *),
+		   void (*f3)(int *,double *,int *,double *),
+		   void (*f4)(int *,double *,int *,int *,double *,double *,int *),
 		   void (*f5)(int *,int *,double *,int *,int*,double *))
   {
    for(int ib=0;ib<nblocks;ib++)
    {
     auto& mb = mblocks[ib];
     mb->setcallback(f1,f2,f3,f4,f5);
-   }   
+   }
    ihigh=1;
   }
 
@@ -245,10 +253,10 @@ class tioga
 			void (*f2) (int *,int *))
   {
    for(int ib=0;ib<nblocks;ib++)
-    { 
+    {
      auto& mb = mblocks[ib];   // TODO:this may have to based on unique tag of p4est blocks
      mb->setp4estcallback(f1,f2);
-    } 
+    }
   }
 
   void set_p4est(void)
@@ -260,7 +268,7 @@ class tioga
       mb->resolutionScale=1000.0;
     }
   }
-  
+
   void set_amr_callback(void (*f1)(int *,double *,int *,double *))
   {
     cg->setcallback(f1);
@@ -273,11 +281,9 @@ class tioga
   void exchangeAMRDonors(void);
   void checkComm(void);
   void outputStatistics(void);
-  void myTimer(char const *, int);
+  void myTimer(char const *,int);
   void reduce_fringes(void);
 };
-      
-  
-}
+} // namespace
 
 #endif /* TIOGA_H */
