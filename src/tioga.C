@@ -35,9 +35,6 @@ void tioga::setCommunicator(MPI_Comm communicator, int id_proc, int nprocs)
   sendCount=(int *) malloc(sizeof(int)*numprocs);
   recvCount=(int *) malloc(sizeof(int)*numprocs);
 
-  meshMasterIDs = (mastertag_t *) malloc(numprocs*sizeof(mastertag_t));
-  excl_list = (int *) malloc(numprocs*sizeof(int));
-
   // get MPI group for TIOGA WORLD communicator: used to obtain subgroups
   MPI_Comm_group(scomm,&scomm_group);
   //
@@ -63,6 +60,138 @@ void tioga::setCommunicator(MPI_Comm communicator, int id_proc, int nprocs)
   pc_cart->numprocs=numprocs;
   //
 }
+
+void tioga::assembleComms(void)
+{
+  MPI_Group meshblockIncludeGroup;
+  MPI_Group meshblockExcludeGroup;
+
+  int maxtag,maxtagLocal;
+  int body_minrank;
+  int incount,excount;
+  char compListFlag;
+
+  std::vector<char> existMeshTag(numprocs);
+  std::vector<int> incl_list(numprocs);
+  std::vector<int> comp_list(numprocs);
+
+  /* ===================================== */
+  /* set mesh body ranks and communicators */
+  /* ===================================== */
+  /* NOTE: There are two tasks.
+   *  1. Build communicator between all ranks involved in the same body.
+   *  2. Build communicator between all complement ranks of a body
+   *     + the master rank of that body.
+   *   2a. For each body, we set the rank with lowest id as the rank master
+   *   2b. Build body complement subgroup/communicator and new rank IDs.
+   */
+
+  /* ================================ */
+  /* Step A: count max number of tags */
+  /* ================================ */
+  maxtagLocal = -BIGINT;
+  for(int mbi=0; mbi<nblocks; mbi++){
+    auto& mb = mblocks[mbi];
+    int mbtag = mb->getMeshTag();
+
+    maxtagLocal = (maxtagLocal < mbtag) ? mbtag:maxtagLocal;
+
+    // cleanup memory
+    if(mb->blockcomm != MPI_COMM_NULL) MPI_Comm_free(&mb->blockcomm);
+  }
+  MPI_Allreduce(&maxtagLocal,&maxtag,1,MPI_INT,MPI_MAX,scomm);
+
+  // allocate mesh block complement communicators and rank master arrays
+  if(meshblockComp) delete [] meshblockComp;
+  meshblockComp = new meshblockCompInfo[maxtag];
+
+  /* ========================================= */
+  /* Step B: create each subgroup per mesh tag */
+  /* ========================================= */
+  for(int mtag=1; mtag<=maxtag; mtag++){
+    meshblockCompInfo &MBC = meshblockComp[mtag-1];
+
+    // check if body exists on rank
+    char foundFlag = 0;
+    for(int mbi=0; mbi<nblocks; mbi++){
+      if(mytag[mbi] == mtag){foundFlag = 1; break;}
+    }
+
+    // inform all ranks of which ranks are involved in this mesh tag
+    std::fill(existMeshTag.begin(),existMeshTag.end(),0);
+    MPI_Allgather(&foundFlag,1,MPI_CHAR,existMeshTag.data(),1,MPI_CHAR,scomm);
+
+    // get mesh master id: stop at first rank found
+    int meshMasterId = -1;
+    for(int i=0; i<numprocs; i++){
+        if(existMeshTag[i] == 1) {meshMasterId = i; break;};
+    }
+
+    // set complement list flag (include mesh rank master)
+    compListFlag = (existMeshTag[myid]) ? 0:1;
+    if(myid == meshMasterId) compListFlag = 1;
+
+    // reset inclusion and complement rank lists
+    incount = excount = 0;
+    std::fill(incl_list.begin(),incl_list.end(),0);
+    std::fill(comp_list.begin(),comp_list.end(),0);
+
+    // store mesh rank master in exclude list (as it broadcasts the hole map)
+    comp_list[excount++] = meshMasterId;
+
+    // create MPI subgroup ranks for this mesh tag: inclusion and comp lists
+    for(int i=0; i<numprocs; i++){
+       // add rank i to appropriate list
+      if(existMeshTag[i]){
+        incl_list[incount++] = i;
+      } else {
+        comp_list[excount++] = i;
+      }
+    }
+
+    // construct the subgroups using the inclusion and complement rank lists
+    MPI_Group_incl(scomm_group,incount,incl_list.data(),&meshblockIncludeGroup);
+    MPI_Group_incl(scomm_group,excount,comp_list.data(),&meshblockExcludeGroup);
+
+    // create complement MPI subgroup communicator and rank
+    MPI_Comm_create(scomm,meshblockExcludeGroup,&(MBC.comm));
+
+    if(compListFlag){
+        MPI_Comm_rank(MBC.comm,&(MBC.id));
+        MPI_Comm_size(MBC.comm,&(MBC.nrank));
+
+        MBC.masterID = (myid == meshMasterId) ? MBC.id : -1;
+        MPI_Allreduce(MPI_IN_PLACE,&(MBC.masterID),1,MPI_INT,MPI_MAX,MBC.comm);
+
+        //printf("My GID[%2d] (comp rank %2d of %2d), body_tag[%d] of %d blocks, master rank %d, %d\n",
+        //        myid,MBC.id,MBC.nrank,mtag,maxtag,MBC.masterID,myid == meshMasterId);
+    }
+
+    // create MPI subgroup communicator for this mesh tag
+    for(int mbi=0; mbi<nblocks; mbi++){
+      // create MPI subgroup communicator for this mesh tag
+      if(mytag[mbi] == mtag){
+        auto& mb = mblocks[mbi];
+
+        MPI_Comm_create_group(scomm,meshblockIncludeGroup,0,&(mb->blockcomm));
+        MPI_Comm_rank(mb->blockcomm,&mb->blockcomm_id);
+        MPI_Comm_size(mb->blockcomm,&mb->blockcomm_numprocs);
+
+        // Task 2a: set rank master for this body tag: lowest rank in this block
+        MPI_Allreduce(&myid,&body_minrank,1,MPI_INT,MPI_MIN,mb->blockcomm);
+        mb->meshMaster = (myid == body_minrank);
+
+        //printf("My ID[%2d] (local rank %2d of %2d), body_tag[%d] of %d blocks\n",
+        //        myid,mb->blockcomm_id,mb->blockcomm_numprocs,mytag[mbi],nblocks);
+      }
+    }
+
+    // cleanup memory
+    MPI_Group_free(&meshblockIncludeGroup);
+    MPI_Group_free(&meshblockExcludeGroup);
+  }
+}
+
 /**
  * register grid data for each mesh block
  */
@@ -70,14 +199,6 @@ void tioga::registerGridData(int btag,int nnodes,double *xyz,int *ibl, int nwbc,
                              int *wbcnode,int *obcnode,int ntypes, int *nv, int *nc, int **vconn,
                              uint64_t* cell_gid, uint64_t* node_gid)
 {
-  MPI_Group meshblockCompGroup;
-  mastertag_t btrm;
-
-  int body_minrank;
-  int maxtag;
-  int excount;
-  int excl_flag;
-  int i,j;
   int iblk;
 
   auto idxit = tag_iblk_map.find(btag);
@@ -103,7 +224,6 @@ void tioga::registerGridData(int btag,int nnodes,double *xyz,int *ibl, int nwbc,
 
 void tioga::register_unstructured_grid(TIOGA::MeshBlockInfo *minfo)
 {
-
   int iblk;
 
   const int btag = minfo->meshtag;
@@ -175,7 +295,7 @@ void tioga::performConnectivity(void)
       this->myTimer("tioga::getAdaptiveHoleMap",1);
   } else {
       this->myTimer("tioga::getHoleMap",0);
-      getAdaptiveHoleMap();
+      getHoleMap();
       this->myTimer("tioga::getHoleMap",1);
   }
   this->myTimer("tioga::exchangeBoxes",0);

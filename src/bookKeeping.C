@@ -21,6 +21,7 @@
 #include "MeshBlock.h"
 #include "linklist.h"
 #include "tioga_math.h"
+#include "tioga_utils.h"
 
 void MeshBlock::getDonorPacket(PACKET *sndPack, int nsend)
 {
@@ -345,6 +346,198 @@ void MeshBlock::processDonors(HOLEMAP *holemap, int nmesh, int **donorRecords,do
   //
   // release local memory
   //
+  TIOGA_FREE(iflag);
+}
+
+void MeshBlock::processDonors(ADAPTIVE_HOLEMAP *holemap,int nmesh,
+                              int **donorRecords,double **receptorResolution,
+			      int *nrecords){
+  int i,j,k,m,n,mm,ii;
+  int nvert;
+  DONORLIST *temp;
+  int *iflag;
+  int meshtagdonor;
+  int *mtag,*mtag1;
+  int iter;
+  int verbose;
+
+  iflag = (int *) malloc(sizeof(int)*nmesh);
+
+  /* =================== */
+  /* 1. mark hole points */
+  /* =================== */
+  for(i=0;i<nnodes;i++){
+    iblank[i]=1;
+
+    verbose=0;
+    if(verbose) TRACEI(i);
+
+    if(donorList[i]==NULL){
+      // No Donor Cells Found: point is either a field or hole.
+      //    Check the point is in any hole SB --> hole point
+      if(verbose) printf("No donor found for %d\n",i);
+
+      for(j=0;j<nmesh;j++){
+        if(j!=(meshtag-BASE) && holemap[j].existWall){
+          int SB_val = checkAdaptiveHoleMap(&x[3*i],&holemap[j]);
+	  if(SB_val != OUTSIDE_SB){
+            iblank[i]=0;
+            break;
+	  }
+        }
+      }
+    } else {
+      /* potential donor cells */
+      temp=donorList[i];
+      for(j=0;j<nmesh;j++) iflag[j]=0;
+
+      // find mesh tags that have a candidate donor cell
+      while(temp!=NULL){
+        meshtagdonor=temp->donorData[1]-BASE;
+        iflag[meshtagdonor]=1;
+
+        if (verbose) {
+         TRACEI(meshtagdonor);
+         TRACED(temp->donorRes);
+         TRACEI(temp->donorData[0]);
+         TRACEI(temp->donorData[1]);
+         TRACEI(temp->donorData[2]);
+        }
+        nodeRes[i]=TIOGA_MAX(nodeRes[i],temp->receptorRes);
+        temp=temp->next;
+      }
+
+      // loop all bodies that do NOT have a candidate and check if pt is INSIDE/WALL
+      for(j=0;j<nmesh;j++){
+        if(j!=(meshtag-BASE) && holemap[j].existWall){
+          if(!iflag[j]){
+            // body{j} does NOT have candidate so check if point is INSIDE SB
+            int SB_val = checkAdaptiveHoleMap(&x[3*i],&holemap[j]);
+            if(SB_val != OUTSIDE_SB){
+              iblank[i]=0;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for(i=0;i<nwbc;i++){
+    if(iblank[wbcnode[i]-BASE]==0){
+      fprintf(stderr,"--------------------------------------------------------------------\n");
+      fprintf(stderr,"Alarm from process %d : wall node is being tagged as a hole %d %p\n",
+                      myid,wbcnode[i]-BASE,donorList[wbcnode[i]-BASE]);
+      ii=wbcnode[i]-BASE;
+      fprintf(stderr,"xloc=%e %e %e\n",x[3*ii],x[3*ii+1],x[3*ii+2]);
+      fprintf(stderr,"Computations will continue, but may suffer from accuracy problems\n");
+      fprintf(stderr,"Please recheck positions of your grids\n");
+      fprintf(stderr,"--------------------------------------------------------------------\n");
+    }
+  }
+
+  /* ===================================================================== */
+  /* 2. mark mandatory fringes as neighbors (nfringe depth) of hole points */
+  /* ===================================================================== */
+  mtag  = (int *) malloc(sizeof(int)*nnodes);
+  mtag1 = (int *) malloc(sizeof(int)*nnodes);
+
+  for(i=0;i<nnodes;i++){
+    mtag[i] = mtag1[i] = 0;
+    if(iblank[i]==0) mtag[i] = mtag1[i] = 1;
+  }
+
+  for(iter=0;iter<nfringe;iter++){
+    for(n=0;n<ntypes;n++){
+      nvert=nv[n];
+      for(i=0;i<nc[n];i++){
+	for(m=0;m<nvert;m++){
+          if(mtag[(vconn[n][nvert*i+m]-BASE)]==1){
+            for(mm=0;mm<nvert;mm++){
+              if(m!=mm && mtag[vconn[n][nvert*i+mm]-BASE] !=1){
+                mtag1[vconn[n][nvert*i+mm]-BASE] = 1;
+              }
+            }
+          }
+        }
+      }
+    }
+    for(i=0;i<nnodes;i++) mtag[i] = mtag1[i];
+  }
+
+  for(i=0;i<nnodes;i++){
+    if(mtag1[i] && iblank[i]) nodeRes[i]=BIGVALUE;
+  }
+  TIOGA_FREE(mtag);
+  TIOGA_FREE(mtag1);
+
+  /* =============== */
+  /* 3. find fringes */
+  /* =============== */
+  *nrecords=0;
+  for(i=0;i<nnodes;i++){
+    verbose=0;
+    if(verbose){
+      TRACEI(i);
+      TRACEI(iblank[i]);
+    }
+
+    if(donorList[i]!=NULL && iblank[i]!=0){
+      temp=donorList[i];
+      if(verbose) TRACED(nodeRes[i]);
+
+      while(temp!=NULL){
+        if(verbose) TRACED(temp->donorRes);
+
+        if(temp->donorRes < nodeRes[i]){
+          iblank[i]=-temp->donorData[1];
+
+          if(verbose){
+            TRACEI(iblank[i]);
+            TRACEI(temp->donorData[0]);
+            TRACEI(temp->donorData[1]);
+            TRACEI(temp->donorData[2]);
+          }
+          (*nrecords)++;
+          break;
+        }
+        temp=temp->next;
+      }
+    }
+  }
+
+  /* ==================================================== */
+  /* 4. set the records to send back to the donor process */
+  /* ==================================================== */
+  (*donorRecords)=(int *)malloc(sizeof(int)*3*(*nrecords));
+  (*receptorResolution)=(double *)malloc(sizeof(double)*(*nrecords));
+
+  m=k=0;
+  for(i=0;i<nnodes;i++){
+    verbose=0;
+    if(iblank[i] < 0){
+      temp=donorList[i];
+      while(temp!=NULL){
+        if(temp->donorRes < nodeRes[i]) break;
+      }
+
+      (*receptorResolution)[k++] = (resolutionScale > 1.0) ? -nodeRes[i]:nodeRes[i];
+      (*donorRecords)[m++]=temp->donorData[0];
+      (*donorRecords)[m++]=temp->donorData[2];
+      (*donorRecords)[m++]=temp->donorData[1];
+
+      if(verbose){
+        TRACEI(iblank[i]);
+        TRACEI(m);
+        TRACEI((*donorRecords)[m-3]);
+        TRACEI((*donorRecords)[m-1]);
+        TRACEI((*donorRecords)[m-2]);
+        TRACED((*receptorResolution)[k-1]);
+      }
+    }
+  }
+
+  // release local memory
   TIOGA_FREE(iflag);
 }
 

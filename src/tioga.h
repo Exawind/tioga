@@ -78,8 +78,6 @@ class tioga
 
   //! Mesh Block Complement data
   meshblockCompInfo *meshblockComp;
-  mastertag_t *meshMasterIDs;
-  int *excl_list;
 
   //! Mesh blocks in this processor
   std::vector<std::unique_ptr<MeshBlock> > mblocks;
@@ -115,7 +113,7 @@ class tioga
         holeMap=NULL; adaptiveHoleMap=NULL;
         pc=NULL; sendCount=NULL; recvCount=NULL;
         pc_cart = NULL;
-        meshblockComp=NULL; meshMasterIDs=NULL; excl_list=NULL;
+        meshblockComp=NULL;
         // obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         isym=3;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         mexclude=3,nfringe=1;
@@ -129,6 +127,8 @@ class tioga
 
   /** set communicator */
   void setCommunicator(MPI_Comm communicator,int id_proc,int nprocs);
+
+  void assembleComms(void);
 
   /** registerGrid data */
 

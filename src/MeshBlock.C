@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include "codetypes.h"
 #include "MeshBlock.h"
+#include "tioga.h"
 #include "tioga_gpu.h"
 #include "linklist.h"
 #include "tioga_math.h"

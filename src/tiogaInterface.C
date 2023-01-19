@@ -152,6 +152,7 @@ extern "C" {
 
   void tioga_preprocess_grids_(void)
   {
+    tg->assembleComms();
     tg->profile();
   }
 

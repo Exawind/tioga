@@ -27,6 +27,7 @@
 void findOBB(double *x, double xc[3], double dxc[3], double vec[3][3],
              int nnodes);
 int checkHoleMap(double *x, int *nx, int *sam, double *extents);
+int checkAdaptiveHoleMap(double *xpt,ADAPTIVE_HOLEMAP *AHM);
 void fillHoleMap(int *holeMap, int ix[3], int isym);
 void octant_children(uint8_t children_level,uint32_t idx,
                      octant_full_t * q,

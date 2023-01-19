@@ -61,7 +61,7 @@ typedef int32_t qcoord_t;
 /*==================================================================*/
 /* ADAPTIVE HOLE MAP OCTANT INFO                                    */
 /*==================================================================*/
-#define USE_ADAPTIVE_HOLEMAP 0 // [0] original hole map, [1] adaptive hole map
+#define USE_ADAPTIVE_HOLEMAP 1 // [0] original hole map, [1] adaptive hole map
 #define INTERSECT_ALG        1 // [0] point-box inclusion only
                                // [1] face-box intersection (water-tight)
 
@@ -109,12 +109,6 @@ typedef int32_t qcoord_t;
 #define YHI 3
 #define ZLO 4
 #define ZHI 5
-
-/* key[master]-value[tag] pair: order matters here for  MPI MAXLOC */
-typedef struct {
-  int master; /**< mesh body master rank flag: value */
-  int tag;    /**< mesh body id: key */
-} mastertag_t;
 
 typedef struct {
   double lo;  /**< lower bound */

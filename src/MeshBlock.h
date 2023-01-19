@@ -377,6 +377,7 @@ class MeshBlock
 
   // Getters
   inline int getMeshTag() const { return meshtag + (1 - BASE); }
+  inline int getWallFlag() const { return (nwbc > 0); }
 
   /**
    * Get donor packet for multi-block/partition setups
