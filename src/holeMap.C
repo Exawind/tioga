@@ -214,17 +214,7 @@ void tioga::getAdaptiveHoleMap(void){
   /* =============================== */
   /* B: reallocate adaptive hole map */
   /* =============================== */
-  // TODO: replace octant with std::vector
-  if(adaptiveHoleMap){
-    for(mi=0; mi<nmesh; mi++){
-      if(adaptiveHoleMap[mi].existWall){
-        for(mj=0; mj<adaptiveHoleMap[mi].meta.nlevel; mj++){
-          free(adaptiveHoleMap[mi].levels[mj].octants);
-        }
-      }
-    }
-    delete[] adaptiveHoleMap;
-  }
+  if(adaptiveHoleMap) delete[] adaptiveHoleMap;
   adaptiveHoleMap = new ADAPTIVE_HOLEMAP[maxtag];
   for(mi=0; mi<maxtag; mi++){
     adaptiveHoleMap[mi].meta.nlevel = 0;
@@ -321,7 +311,7 @@ void tioga::getAdaptiveHoleMap(void){
       // allocate level 0
       lvl->level_id = 0;
       lvl->elem_count = 1;
-      lvl->octants = (octant_full_t *) malloc(1*sizeof(octant_full_t));
+      lvl->octants.resize(1);
 
       existWall.resize(1);
       existOuter.resize(1);
@@ -389,7 +379,7 @@ void tioga::getAdaptiveHoleMap(void){
       // allocate new level
       new_lvl->level_id = level_id;
       new_lvl->elem_count = nchildren;
-      new_lvl->octants = (octant_full_t *) malloc(nchildren*sizeof(octant_full_t));
+      new_lvl->octants.resize(nchildren);
 
       // zero arrays
       existWall.resize(nchildren);
@@ -516,7 +506,7 @@ void tioga::getAdaptiveHoleMap(void){
         // set level info
         elvl->level_id = level_id;
         elvl->elem_count = lvl->elem_count;
-        elvl->octants = (octant_t *) malloc(elvl->elem_count*sizeof(octant_t));
+        elvl->octants.resize(elvl->elem_count);
 
         // fill octant data
         for(j=0; j<elvl->elem_count; j++){
@@ -535,8 +525,7 @@ void tioga::getAdaptiveHoleMap(void){
         }
 
         // free level full octant data set
-        free(lvl->octants);
-        lvl->octants = NULL;
+        lvl->octants.clear();
       }
     }
   }
@@ -576,12 +565,10 @@ void tioga::getAdaptiveHoleMap(void){
                     MBC.comm);
 
           // allocate leaf octant data for level data (if not master rank)
-          if(MBC.masterID != MBC.id){
-            elvl->octants = (octant_t *) malloc(elvl->elem_count*sizeof(octant_t));
-          }
+          if(MBC.masterID != MBC.id) elvl->octants.resize(elvl->elem_count);
 
           // communicate leaf octant coordinates on level
-          MPI_Bcast(elvl->octants,
+          MPI_Bcast(elvl->octants.data(),
                     elvl->elem_count*sizeof(octant_t),
                     MPI_BYTE,
                     MBC.masterID,

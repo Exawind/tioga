@@ -25,6 +25,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<vector>
 #include "mpi.h"
 /*====================================================================*/
 /*  Floating point definition                                         */
@@ -146,14 +147,14 @@ typedef struct level_octant
 {
   uint32_t elem_count;      /**< number of octants in level */
   uint8_t level_id;         /**< level number */
-  octant_full_t *octants;   /**< [elem_count] locally stored octants */
+  std::vector<octant_full_t> octants; /**< [elem_count] locally stored octants */
 } level_octant_t;
 
 typedef struct level
 {
   uint8_t level_id;     /**< level number */
   uint32_t elem_count;  /**< number of octants in level */
-  octant_t *octants;    /**< [elem_count] octant list */
+  std::vector<octant_t> octants; /**< [elem_count] octant list */
 } level_t;
 
 typedef struct ADAPTIVE_HOLEMAP_OCTANT

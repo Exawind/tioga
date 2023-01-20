@@ -305,12 +305,11 @@ void tioga::performConnectivity(void)
   exchangeSearchData();
   this->myTimer("tioga::exchangeSearchData",1);
   this->myTimer("tioga::search",0);
-  for(int ib=0;ib < nblocks;ib++)
-  {
-   auto& mb = mblocks[ib];
-   mb->ihigh=0;
-   mb->resetInterpData();
-   mb->search();
+  for(int ib=0;ib < nblocks;ib++){
+    auto& mb = mblocks[ib];
+    mb->ihigh=0;
+    mb->resetInterpData();
+    mb->search();
   }
   this->myTimer("tioga::search",1);
   this->myTimer("tioga::exchangeDonors",0);
@@ -339,7 +338,7 @@ void tioga::performConnectivity(void)
   //}
   //mb->writeOutput(myid);
   //TRACEI(myid);
-  //this->myTimer("tioga::performConnectivity",1);
+  this->myTimer("tioga::performConnectivity",1);
 }
 
 void tioga::performConnectivityHighOrder(void)

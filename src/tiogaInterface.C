@@ -20,10 +20,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include "codetypes.h"
 #include "tioga.h"
 #include "globals.h"
-#include <string.h>
 //
 // All the interfaces that are 
 // accessible to third party f90 and C
