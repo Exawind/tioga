@@ -142,7 +142,7 @@ void MeshBlock::tagBoundary(void)
   int *iflag;
   int nvert,i3;
   FILE *fp;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
   int *iextmp,*iextmp1;
   int iex;
@@ -397,14 +397,17 @@ void MeshBlock::tagBoundary(void)
 
 void MeshBlock::tagBoundaryFaces(void){
   /* tag boundary faces (wall & outer) for locating hole points */
+  char flagwbc,flagobc,flagduplicate;
   int i,j,m,n,f,d;
   int ii,i3;
   int ctype;
   int nvert;
   int inode[8];
   double bboxCell[6];
-  std::vector<char> iflag;
-  char flag;
+
+  std::vector<char> iflagwbc(nnodes,0);
+  std::vector<char> iflagobc(nnodes,0);
+  std::vector<char> iflagduplicates(nnodes,0);
 
   // input=[cell type]: [0] tetrahedron, [1] pyramid, [2] prism, [3] hexahedron
   const int nfaces[4] = {4,5,5,6};
@@ -427,27 +430,34 @@ void MeshBlock::tagBoundaryFaces(void){
                                             // [6]: type=2, prism
                                             // [8]: type=3, hexahedron
 
-  // allocate local array
-  iflag.resize(nnodes);
+  /* ============ */
+  /* TAG BC FACES */
+  /* ============ */
+  for(i=0;i<nwbc;i++) iflagwbc[wbcnode[i]-BASE] = 1;
+  for(i=0;i<nobc;i++) iflagobc[obcnode[i]-BASE] = 1;
 
-  /* ================= */
-  /* TAG WALL BC FACES */
-  /* ================= */
-  // set wall node flags
-  std::fill(iflag.begin(),iflag.end(),0);
-  for(i=0;i<nwbc;i++) iflag[wbcnode[i]-BASE] = 1;
+  // set duplicate wall node tags
+  for(i=0,flagduplicate=0;i<nnodes;i++){
+    iflagduplicates[i] = iflagwbc[i] & iflagobc[i];
+    flagduplicate |= iflagduplicates[i];
+  }
+  // if duplicate found, set duplicate array pointer
+  const char *duplicateCheck = (flagduplicate) ? iflagduplicates.data():NULL;
 
-  // count wall boundary faces
-  nwbcface = 0;
+  // count boundary faces
+  nwbcface = nobcface = 0;
   for(n=0;n<ntypes;n++){
     nvert = nv[n];
     for(i=0;i<nc[n];i++){
-      for(j=0,flag=0;j<nvert && flag==0;j++){
+      flagwbc = flagobc = 0;
+      for(j=0;j<nvert;j++){
 	ii = vconn[n][nvert*i+j]-BASE;
-	if(iflag[ii]) flag=1;
+	if(iflagwbc[ii]) flagwbc=1;
+        if(iflagobc[ii]) flagobc=1;
       }
+
       // count faces
-      if(flag){
+      if(flagwbc || flagobc){
         ctype = celltypes[nvert];
         for(j=0;j<nvert;j++) inode[j] = vconn[n][nvert*i+j]-BASE;
 
@@ -455,7 +465,8 @@ void MeshBlock::tagBoundaryFaces(void){
           const int nfacevert = numfaceverts[ctype][f];
           const int *faceNodes = faceInfo[ctype][f];
 
-          if(checkFaceBoundaryNodes(inode,iflag.data(),nfacevert,faceNodes)) nwbcface++;
+          if(flagwbc && checkFaceBoundaryNodes(inode,iflagwbc.data(),nfacevert,faceNodes,NULL)) nwbcface++;
+          if(flagobc && checkFaceBoundaryNodes(inode,iflagobc.data(),nfacevert,faceNodes,duplicateCheck)) nobcface++;
         }
       }
     }
@@ -465,17 +476,23 @@ void MeshBlock::tagBoundaryFaces(void){
   wbcfacenode.resize(4*nwbcface);
   wbcfacebox.resize(nwbcface);
 
-  // fill wall boundary faces
-  nwbcface = 0;
+  // allocate outer face node list
+  obcfacenode.resize(4*nobcface);
+  obcfacebox.resize(nobcface);
+
+  // fill boundary faces
+  nwbcface = nobcface = 0;
   for(n=0;n<ntypes;n++){
     nvert = nv[n];
     for(i=0;i<nc[n];i++){
-      for(j=0,flag=0;j<nvert && flag==0;j++){
+      flagwbc = flagobc = 0;
+      for(j=0;j<nvert;j++){
 	ii = vconn[n][nvert*i+j]-BASE;
-	if(iflag[ii]) flag=1;
+	if(iflagwbc[ii]) flagwbc=1;
+        if(iflagobc[ii]) flagobc=1;
       }
       // count faces
-      if(flag){
+      if(flagwbc || flagobc){
         ctype = celltypes[nvert];
         for(j=0;j<nvert;j++) inode[j] = vconn[n][nvert*i+j]-BASE;
 
@@ -483,7 +500,8 @@ void MeshBlock::tagBoundaryFaces(void){
           const int nfacevert = numfaceverts[ctype][f];
           const int *faceNodes = faceInfo[ctype][f];
 
-          if(checkFaceBoundaryNodes(inode,iflag.data(),nfacevert,faceNodes)){
+          // check wall boundary condition face
+          if(flagwbc && checkFaceBoundaryNodes(inode,iflagwbc.data(),nfacevert,faceNodes,NULL)){
             for(d=0;d<3;d++) wbcfacenode[4*nwbcface+d] = inode[faceNodes[d]-BASE];
             wbcfacenode[4*nwbcface+3] = (nfacevert==4) ? inode[faceNodes[3]-BASE]:-1;
 
@@ -513,67 +531,9 @@ void MeshBlock::tagBoundaryFaces(void){
             // update face counter
             nwbcface++;
           }
-        }
-      }
-    }
-  }
 
-  /* ================== */
-  /* TAG OUTER BC FACES */
-  /* ================== */
-  // set to zero
-  std::fill(iflag.begin(),iflag.end(),0);
-
-  // set wall node flags
-  for(i=0;i<nobc;i++) iflag[obcnode[i]-BASE] = 1;
-
-  // count outer boundary faces
-  nobcface = 0;
-  for(n=0;n<ntypes;n++){
-    nvert = nv[n];
-    for(i=0;i<nc[n];i++){
-      for(j=0,flag=0;j<nvert && flag==0;j++){
-	ii = vconn[n][nvert*i+j]-BASE;
-	if(iflag[ii]) flag=1;
-      }
-      // count faces
-      if(flag){
-        ctype = celltypes[nvert];
-        for(j=0;j<nvert;j++) inode[j] = vconn[n][nvert*i+j]-BASE;
-
-        for(f=0;f<nfaces[ctype];f++){
-          const int nfacevert = numfaceverts[ctype][f];
-          const int *faceNodes = faceInfo[ctype][f];
-
-          if(checkFaceBoundaryNodes(inode,iflag.data(),nfacevert,faceNodes)) nobcface++;
-        }
-      }
-    }
-  }
-
-  // allocate outer face node list
-  obcfacenode.resize(4*nobcface);
-  obcfacebox.resize(nobcface);
-
-  // fill outer boundary faces
-  nobcface = 0;
-  for(n=0;n<ntypes;n++){
-    nvert = nv[n];
-    for(i=0;i<nc[n];i++){
-      for(j=0,flag=0;j<nvert && flag==0;j++){
-	ii = vconn[n][nvert*i+j]-BASE;
-	if(iflag[ii]) flag=1;
-      }
-      // count faces
-      if(flag){
-        ctype = celltypes[nvert];
-        for(j=0;j<nvert;j++) inode[j] = vconn[n][nvert*i+j]-BASE;
-
-        for(f=0;f<nfaces[ctype];f++){
-          const int nfacevert = numfaceverts[ctype][f];
-          const int *faceNodes = faceInfo[ctype][f];
-
-          if(checkFaceBoundaryNodes(inode,iflag.data(),nfacevert,faceNodes)){
+          // check outer boundary condition face
+          if(flagobc && checkFaceBoundaryNodes(inode,iflagobc.data(),nfacevert,faceNodes,duplicateCheck)){
             for(d=0;d<3;d++) obcfacenode[4*nobcface+d] = inode[faceNodes[d]-BASE];
             obcfacenode[4*nobcface+3] = (nfacevert==4) ? inode[faceNodes[3]-BASE]:-1;
 
@@ -612,7 +572,7 @@ void MeshBlock::tagBoundaryFaces(void){
 void MeshBlock::writeGridFile(int bid)
 {
   char fname[80];
-  char intstring[7];
+  char intstring[12];
   char hash,c;
   int i,n,j;
   int bodytag;
@@ -696,7 +656,7 @@ void MeshBlock::writeCellFile(int bid)
 {
   char fname[80];
   char qstr[3];
-  char intstring[7];
+  char intstring[12];
   char hash,c;
   int i,n,j;
   int bodytag;
@@ -781,8 +741,8 @@ void MeshBlock::writeCellFile(int bid)
 void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
 {
   char fname[80];
-  char qstr[3];
-  char intstring[7];
+  char qstr[12];
+  char intstring[12];
   char hash,c;
   int i,n,j;
   int bodytag;
@@ -942,7 +902,7 @@ void MeshBlock::markWallBoundary(int *sam,int nx[3],double extents[6])
   int i3,iv;
   int *iflag;
   int *inode;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
   double ds[3];
   double xv;
@@ -1648,7 +1608,7 @@ void MeshBlock::getQueryPoints2(OBB *obc,
 void MeshBlock::writeOBB(int bid)
 {
   FILE *fp;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
@@ -1958,7 +1918,7 @@ void MeshBlock::checkOrphans(void)
     }
   //fclose(fp);
   if (norphan > 0) {
-    char intstring[7];
+    char intstring[12];
     char fname[80];
     printf("myid/meshtag/norphan/nnodes/nobc=%d %d %d %d %d\n",myid,meshtag,norphan,nnodes,nobc);
     sprintf(intstring,"%d",100000+myid);

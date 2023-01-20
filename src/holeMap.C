@@ -55,7 +55,7 @@ void tioga::getHoleMap(void)
   int bufferSize;
   FILE *fp;
   char fname[80];
-  char intstring[7];
+  char intstring[12];
  //
  // get the local bounding box
  //
@@ -616,7 +616,10 @@ void tioga::getAdaptiveHoleMap(void){
   }
 
   // output the hole maps
-  //mb->writeBCnodes(WALLNODETYPE,meshtag-BASE);
+  //for(mbi=0; mbi<nblocks; mbi++){
+  //  auto& mb = mblocks[mbi];
+  //  mb->writeBCnodes(WALLNODETYPE,mb->getMeshTag()-BASE);
+  //}
   //this->outputAdaptiveHoleMap();
 }
 
@@ -631,7 +634,7 @@ void tioga::outputHoleMap(void)
   int ii,jj,kk,m;
   FILE *fp;
   double ds[3];
-  char intstring[7];
+  char intstring[12];
   char fname[80];
 
   for(i=0;i<nmesh;i++)

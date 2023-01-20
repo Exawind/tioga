@@ -56,7 +56,7 @@ void uniquenodes_octree(double *x, int *meshtag, double *rtag, int *itag,
                         int *nn);
 
 void qcoord_to_vertex(qcoord_t x,qcoord_t y,qcoord_t z,double *vertices,double vxyz[3]);
-char checkFaceBoundaryNodes(int *nodes,char *bcnodeflag,const int numfaceverts,const int *faceConn);
+char checkFaceBoundaryNodes(int *nodes,const char *bcnodeflag,const int numfaceverts,const int *faceConn,const char *duplicatenodeflag);
 int triBoxOverlap(double boxcenter[3],double boxhalfsize[3],double *pt1,double *pt2,double *pt3);
 
 #endif /* TIOGA_UTILS_H */

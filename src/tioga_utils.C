@@ -474,7 +474,7 @@ void transform2OBB(double xv[3],double xc[3],double vec[3][3],double xd[3])
 void writebbox(OBB *obb,int bid)
 {
   FILE *fp;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
@@ -517,7 +517,7 @@ void writebboxdiv(OBB *obb,int bid)
   int i,j,k,l,m,n;
   int iorder[8]={1, 2, 4, 3, 5, 6, 8, 7};
   FILE *fp;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
 
   for(j=0;j<3;j++) { mapdims[j]=12; mapdx[j]=2*obb->dxc[j]/mapdims[j]; mdx[j]=0.5*mapdx[j];mx0[j]=0;}
@@ -558,7 +558,7 @@ void writebboxdiv(OBB *obb,int bid)
 void writePoints(double *x,int nsearch,int bid)
 {
   FILE *fp;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
   int i;
 
@@ -1064,11 +1064,23 @@ void floodfill_level(level_octant_t *level){
   }
 }
 
-char checkFaceBoundaryNodes(int *nodes,char *bcnodeflag,
-                            const int numfaceverts,const int *faceConn){
+char checkFaceBoundaryNodes(int *nodes,const char *bcnodeflag,
+                            const int numfaceverts,const int *faceConn,
+                            const char *duplicatenodeflag){
   /* NOTE: faceConn is base 1 but nodes is base 0 */
   char bcFlag = 1;
   int v;
+
+  // if any node on face is duplicate tag (wall + outer bc), return 0 (false)
+  if(duplicatenodeflag){
+    for(v=0;v<numfaceverts;v++){
+      if(duplicatenodeflag[nodes[faceConn[v]-BASE]]){
+        printf("[tioga] WARNING: Duplicate tag found -- disabling overset node %d\n",
+                nodes[faceConn[v]-BASE]);
+        return 0;
+      }
+    }
+  }
 
   for(v=0;v<numfaceverts;v++) bcFlag &= bcnodeflag[nodes[faceConn[v]-BASE]];
   return bcFlag;

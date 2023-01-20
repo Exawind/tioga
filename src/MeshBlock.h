@@ -58,7 +58,7 @@ class MeshBlock
   int ncells;  /** < total number of cells */
   int ntypes;  /** < number of different types of cells */
   int *nv;     /** < number of vertices for each types of cell */
-  int *nc;     /**  < number of each of different kinds of cells (tets, prism, pyramids, hex etc) */
+  int *nc;     /** < number of each of different kinds of cells (tets, prism, pyramids, hex etc) */
   int nobc;    /** < number of overset boundary nodes */
   int nwbc;    /** < number of wall boundary nodes */
   int nvar;    /** < Number of variables */
@@ -69,8 +69,8 @@ class MeshBlock
   int **vconn;      /** < connectivity of each kind of cell */
   int *wbcnode;     /** < wall boundary node indices */
   int *obcnode;     /** < overset boundary node indices */
-  uint64_t *cellGID;/**< Global ID of the cell */
-  uint64_t *nodeGID;/**< Global ID for the nodes */
+  uint64_t *cellGID;/** < Global ID of the cell */
+  uint64_t *nodeGID;/** < Global ID for the nodes */
   //
   int nwbcface;     /** < number of wall boundary faces */
   int nobcface;     /** < number of outer boundary faces */
@@ -98,7 +98,7 @@ class MeshBlock
                                  who they donate to */
   int *interp2donor;
 
-  INTEGERLIST *cancelList;  /** receptors that need to be cancelled because of */
+  INTEGERLIST *cancelList;  /** receptors that need to be canceled because of */
   int ncancel;              /** conflicts with the state of their donors */
   void (*get_nodes_per_cell)(int*, int*);
   void (*get_receptor_nodes)(int *,int *,double *);
@@ -148,13 +148,13 @@ class MeshBlock
   //
   int nsearch;        /** < number of query points to search in this block */
   int *isearch;       /** < index of query points in the remote process */
-  int *tagsearch;       /** < index of query points in the remote process */
-  double *res_search;   /** < resolution of search points */
-  int *xtag;            /** < hash to determine if there are duplicates */
+  int *tagsearch;     /** < index of query points in the remote process */
+  double *res_search; /** < resolution of search points */
+  int *xtag;          /** < hash to determine if there are duplicates */
   double *xsearch;    /** < coordinates of the query points */
-  double *rst;            /**  natrural coordinates */
+  double *rst;        /** < natural coordinates */
   int *donorId;       /** < donor indices for those found */
-  std::vector<uint64_t> gid_search; /**< Global node ID for the query points */
+  std::vector<uint64_t> gid_search; /** < Global node ID for the query points */
   int donorCount;
 
   int myid;              /** < global mpi rank */
