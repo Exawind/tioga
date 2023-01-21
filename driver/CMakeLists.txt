@@ -21,7 +21,7 @@ if (TIOGA_ENABLE_ARBORX)
 endif()
 
 target_link_libraries(tiogadriver PUBLIC tioga)
-target_link_libraries(tiogadriver PRIVATE MPI::MPI_Fortran)
+target_link_libraries(tiogadriver PUBLIC MPI::MPI_Fortran)
 
 add_executable(tioga.exe testTioga.F90)
 # Using #ifdef requires preprocessing
@@ -32,8 +32,8 @@ target_link_libraries(tioga.exe tiogadriver)
 add_executable(tioga_read.exe testTioga_dataRead.f90)
 target_link_libraries(tioga_read.exe tiogadriver)
 
-#add_executable(poisson_mms.exe poisson_mms.f90)
-#target_link_libraries(poisson_mms.exe tiogadriver)
+add_executable(poisson_mms.exe poisson_mms.f90)
+target_link_libraries(poisson_mms.exe tiogadriver)
 
 #add_executable(gpu_test.exe)
 #target_sources(gpu_test.exe PRIVATE

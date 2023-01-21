@@ -15,10 +15,11 @@ program testTioga
 #ifdef TIOGA_USE_ARBORX
   use kokkos
 #endif
+  use mpi
   !
   implicit none
   !
-  include 'mpif.h'
+  !include 'mpif.h'
   !
   type(grid), target :: gr(2)
   type(grid), pointer :: g
