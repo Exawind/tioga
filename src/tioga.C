@@ -894,6 +894,8 @@ tioga::~tioga()
 	if (holeMap[i].existWall) TIOGA_FREE(holeMap[i].sam);
       delete [] holeMap;
     }
+  if(adaptiveHoleMap) delete [] adaptiveHoleMap;
+  if(meshblockComp) delete [] meshblockComp;
   if (pc) delete[] pc;
   if (pc_cart) delete[] pc_cart;
   if (sendCount) TIOGA_FREE(sendCount);

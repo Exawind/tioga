@@ -64,6 +64,7 @@ class tioga
   int nmesh;
   HOLEMAP *holeMap;
   ADAPTIVE_HOLEMAP *adaptiveHoleMap;
+  int USE_ADAPTIVE_HOLEMAP;
   MPI_Comm scomm;
   MPI_Group scomm_group;
   parallelComm *pc;
@@ -118,6 +119,7 @@ class tioga
         // obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         isym=3;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         mexclude=3,nfringe=1;
+        USE_ADAPTIVE_HOLEMAP=1;
         qblock=NULL;
         mblocks.clear();
         mtags.clear();
@@ -190,6 +192,8 @@ class tioga
 
   void getReceptorInfo(std::vector<int>&);
 
+  /** set hole map algorithm: [0] original hole map, [1] adaptive hole map */
+  void setHoleMapAlgorithm(int alg) {USE_ADAPTIVE_HOLEMAP=alg;};
   /** set symmetry bc */
   void setSymmetry(int syminput) { isym=syminput;};
   /** set resolutions for nodes and cells */

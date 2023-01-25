@@ -62,7 +62,7 @@ typedef int32_t qcoord_t;
 /*==================================================================*/
 /* ADAPTIVE HOLE MAP OCTANT INFO                                    */
 /*==================================================================*/
-#define USE_ADAPTIVE_HOLEMAP 1 // [0] original hole map, [1] adaptive hole map
+//#define USE_ADAPTIVE_HOLEMAP 1 // [0] original hole map, [1] adaptive hole map
 #define INTERSECT_ALG        1 // [0] point-box inclusion only
                                // [1] face-box intersection (water-tight)
 

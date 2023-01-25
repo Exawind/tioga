@@ -21,7 +21,7 @@ if (TIOGA_ENABLE_ARBORX)
 endif()
 
 target_link_libraries(tiogadriver PUBLIC tioga)
-target_link_libraries(tiogadriver PRIVATE MPI::MPI_Fortran)
+target_link_libraries(tiogadriver PUBLIC MPI::MPI_Fortran)
 
 add_executable(tioga.exe testTioga.F90)
 # Using #ifdef requires preprocessing
