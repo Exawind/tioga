@@ -254,6 +254,11 @@ extern "C" {
     tg->getDonorInfo(*btag,receptors,indices,frac,dcount);
   }
 
+  void tioga_setholemapalg_(int *alg)
+  {
+      tg->setHoleMapAlgorithm(*alg);
+  }
+
   void tioga_setsymmetry_(int *isym)
   {
     tg->setSymmetry(*isym);
