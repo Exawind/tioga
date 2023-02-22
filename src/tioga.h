@@ -119,7 +119,7 @@ class tioga
         // obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         isym=3;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         mexclude=3,nfringe=1;
-        USE_ADAPTIVE_HOLEMAP=1;
+        USE_ADAPTIVE_HOLEMAP=0; //Default to original hole map
         qblock=NULL;
         mblocks.clear();
         mtags.clear();
