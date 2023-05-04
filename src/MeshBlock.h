@@ -212,7 +212,7 @@ class MeshBlock
   /** basic destructor */
   ~MeshBlock();
 
-  void preprocess(void);
+  void preprocess(int use_adaptholemap);
 
   void tagBoundary(void);
 
@@ -442,18 +442,15 @@ class meshblockCompInfo {
     int nrank;
     int masterID;   /* master rank for distributing mesh block data */
     MPI_Comm comm;  /* communicator containing all complement ranks + master */
-    MPI_Request req;
 
     /* constructor */
     meshblockCompInfo(){
         comm = MPI_COMM_NULL;
-        req = MPI_REQUEST_NULL;
     };
 
     /* deconstructor */
    ~meshblockCompInfo(){
         if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
-        if(req != MPI_REQUEST_NULL) MPI_Request_free(&req);
     };
 };
 

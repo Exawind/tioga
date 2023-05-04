@@ -111,7 +111,7 @@ void MeshBlock::setData(TIOGA::MeshBlockInfo* minfo)
   TIOGA::gpu::copy_to_device(m_info_device, m_info, sizeof(TIOGA::MeshBlockInfo));
 }
 
-void MeshBlock::preprocess(void)
+void MeshBlock::preprocess(int use_adaptholemap)
 {
   int i;
   //
@@ -129,7 +129,7 @@ void MeshBlock::preprocess(void)
   obb=(OBB *) malloc(sizeof(OBB));
   findOBB(x,obb->xc,obb->dxc,obb->vec,nnodes);
   tagBoundary();
-  tagBoundaryFaces();
+  if(use_adaptholemap==1) tagBoundaryFaces();
 }
 
 void MeshBlock::tagBoundary(void)
@@ -1074,7 +1074,6 @@ void MeshBlock::markBoundaryAdaptiveMap(char nodetype2tag,
 
   const uint32_t noctants = level->elem_count;
   const qcoord_t levelh = OCTANT_LEN(level->level_id); // integer length of octant
-  const double int2dbl = (double) 1.0 / (double) OCTANT_ROOT_LEN; // integer length conversion
 
   // set node type data
   int nbc = (nodetype2tag == WALLNODETYPE) ? nwbc:nobc;
@@ -1086,9 +1085,9 @@ void MeshBlock::markBoundaryAdaptiveMap(char nodetype2tag,
   ds[2] = extents_hi[2] - extents_lo[2];
 
   // rescale ds: embed integer to double conversion
-  ds[0] *= int2dbl;
-  ds[1] *= int2dbl;
-  ds[2] *= int2dbl;
+  ds[0] *= INT2DBL;
+  ds[1] *= INT2DBL;
+  ds[2] *= INT2DBL;
 
   // octant physical length
   dx[0] = ds[0]*levelh;
@@ -1155,7 +1154,6 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(char nodetype2tag,
 
   const uint32_t noctants = level->elem_count;
   const qcoord_t levelh = OCTANT_LEN(level->level_id); // integer length of octant
-  const double int2dbl = (double) 1.0 / (double) OCTANT_ROOT_LEN; // integer length conversion
 
   // set node type data
   int nbcface = (nodetype2tag == WALLNODETYPE) ? nwbcface:nobcface;
@@ -1168,9 +1166,9 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(char nodetype2tag,
   ds[2] = extents_hi[2] - extents_lo[2];
 
   // rescale ds: embed integer to double conversion
-  ds[0] *= int2dbl;
-  ds[1] *= int2dbl;
-  ds[2] *= int2dbl;
+  ds[0] *= INT2DBL;
+  ds[1] *= INT2DBL;
+  ds[2] *= INT2DBL;
 
   // octant physical length
   dx[0] = ds[0]*levelh;

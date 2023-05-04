@@ -53,7 +53,7 @@ target_link_libraries(poisson_mms.exe tiogadriver)
 #    $<$<COMPILE_LANGUAGE:CXX>:-x hip>)
 #endif()
 
-install(TARGETS tiogadriver tioga.exe tioga_read.exe #poisson_mms.exe
+install(TARGETS tiogadriver tioga.exe tioga_read.exe poisson_mms.exe
   RUNTIME DESTINATION bin
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib)

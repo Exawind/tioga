@@ -277,7 +277,7 @@ void tioga::profile(void)
     auto& mb = mblocks[ib];
     mb->mexclude=mexclude;
     mb->nfringe=nfringe;
-    mb->preprocess();
+    mb->preprocess(USE_ADAPTIVE_HOLEMAP);
     //mb->writeGridFile(myid);
    }
   //mb->writeOBB(myid);

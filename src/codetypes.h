@@ -62,12 +62,11 @@ typedef int32_t qcoord_t;
 /*==================================================================*/
 /* ADAPTIVE HOLE MAP OCTANT INFO                                    */
 /*==================================================================*/
-//#define USE_ADAPTIVE_HOLEMAP 1 // [0] original hole map, [1] adaptive hole map
 #define INTERSECT_ALG        1 // [0] point-box inclusion only
                                // [1] face-box intersection (water-tight)
 
 /* Fixed Octree Constraints: Do Not Change */
-#define OCTANT_MAXLEVEL     19
+#define OCTANT_MAXLEVEL     30 // 32-bit integer
 #define OCTANT_CHILDREN     8
 
 /** The length of a side of the root quadrant */

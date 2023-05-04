@@ -152,7 +152,7 @@ extern "C" {
 
   void tioga_preprocess_grids_(void)
   {
-    tg->assembleComms();
+    if(tg->getHoleMapAlgorithm() == 1) tg->assembleComms(); // adaptive alg
     tg->profile();
   }
 
