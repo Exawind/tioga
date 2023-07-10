@@ -62,9 +62,9 @@ void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
 	}
       else if (nnodes==2)
 	{
-	  dxc[0]=TIOGA_MAX(1e-3,fabs(x[3]-x[0]))*0.5;
-	  dxc[1]=TIOGA_MAX(1e-3,fabs(x[4]-x[1]))*0.5;
-	  dxc[2]=TIOGA_MAX(1e-3,fabs(x[5]-x[2]))*0.5;
+	  dxc[0]=std::max(1e-3,fabs(x[3]-x[0]))*0.5;
+	  dxc[1]=std::max(1e-3,fabs(x[4]-x[1]))*0.5;
+	  dxc[2]=std::max(1e-3,fabs(x[5]-x[2]))*0.5;
           return;
 	}
       else
@@ -73,7 +73,7 @@ void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
           {
            i3=3*i;
            for(j=0;j<3;j++)
-            dxc[j]=TIOGA_MAX(1e-3,fabs(x[i3+j]-x[0]));
+            dxc[j]=std::max(1e-3,fabs(x[i3+j]-x[0]));
           }
 	 return;
         }
@@ -134,8 +134,8 @@ void findOBB(double *x,double xc[3],double dxc[3],double vec[3][3],int nnodes)
       //
       for(j=0;j<3;j++)
 	{
-	  xmax[j]=TIOGA_MAX(xmax[j],xd[j]);
-	  xmin[j]=TIOGA_MIN(xmin[j],xd[j]);
+	  xmax[j]=std::max(xmax[j],xd[j]);
+	  xmin[j]=std::min(xmin[j],xd[j]);
 	}
     }
   //
@@ -524,8 +524,8 @@ void uniquenodes(double *x,int *meshtag,double *rtag,int *itag,int *nn)
   
   for(i=0;i<nnodes;i++)
     for(j=0;j<3;j++) {
-      xmax[j]=TIOGA_MAX(xmax[j],x[3*i+j]);
-      xmin[j]=TIOGA_MIN(xmin[j],x[3*i+j]);
+      xmax[j]=std::max(xmax[j],x[3*i+j]);
+      xmin[j]=std::min(xmin[j],x[3*i+j]);
     }
 
   ds=(xmax[0]-xmin[0]+xmax[1]-xmin[1]+xmax[2]-xmin[2])/3.0/NSUB;
@@ -533,16 +533,16 @@ void uniquenodes(double *x,int *meshtag,double *rtag,int *itag,int *nn)
   for(j=0;j<3;j++) xmax[j]+=ds;
   for(j=0;j<3;j++) xmin[j]-=ds;
   
-  jmax=TIOGA_MIN(round((xmax[0]-xmin[0])*dsi),NSUB);
-  jmax=TIOGA_MAX(jmax,1);
+  jmax=std::min(round((xmax[0]-xmin[0])*dsi),static_cast<double>(NSUB));
+  jmax=std::max(jmax,1);
   dsx=(xmax[0]-xmin[0]+TOL)/jmax;
   dsxi=1./dsx;    
-  kmax=TIOGA_MIN(round((xmax[1]-xmin[1])*dsi),NSUB);
-  kmax=TIOGA_MAX(kmax,1);
+  kmax=std::min(round((xmax[1]-xmin[1])*dsi),static_cast<double>(NSUB));
+  kmax=std::max(kmax,1);
   dsy=(xmax[1]-xmin[1]+TOL)/kmax;
   dsyi=1./dsy;
-  lmax=TIOGA_MIN(round((xmax[2]-xmin[2])*dsi),NSUB);
-  lmax=TIOGA_MAX(lmax,1);
+  lmax=std::min(round((xmax[2]-xmin[2])*dsi),static_cast<double>(NSUB));
+  lmax=std::max(lmax,1);
   dsz=(xmax[2]-xmin[2]+TOL)/lmax;
   dszi=1./dsz;
   nsblks=jmax*kmax*lmax;
@@ -590,11 +590,11 @@ void uniquenodes(double *x,int *meshtag,double *rtag,int *itag,int *nn)
                  meshtag[p1]==meshtag[p2])
 	      {
 		if (p1 > p2) {
-		  rtag[p2]=TIOGA_MAX(rtag[p1],rtag[p2]);
+		  rtag[p2]=std::max(rtag[p1],rtag[p2]);
 		  itag[p1]=itag[p2];
 		}
 		else {
-		  rtag[p1]=TIOGA_MAX(rtag[p1],rtag[p2]);
+		  rtag[p1]=std::max(rtag[p1],rtag[p2]);
 		  itag[p2]=itag[p1];
 		}
 	      }
@@ -640,8 +640,8 @@ void uniqNodesTree(double *coord,
     for(i=0;i<nav;i++)
       for(j=0;j<nd;j++)
 	{
-	  xmin[j]=TIOGA_MIN(xmin[j],coord[ndim*elementsAvailable[i]+j]);
-	  xmax[j]=TIOGA_MAX(xmax[j],coord[ndim*elementsAvailable[i]+j]);
+	  xmin[j]=std::min(xmin[j],coord[ndim*elementsAvailable[i]+j]);
+	  xmax[j]=std::max(xmax[j],coord[ndim*elementsAvailable[i]+j]);
 	}
     for(j=0;j<nd;j++) { 
       xmid[j]=(xmax[j]+xmin[j])*0.5;
@@ -695,11 +695,11 @@ void uniqNodesTree(double *coord,
 		meshtag[p1]==meshtag[p2])
 	      {
 		if (p1 > p2) {
-		  rtag[p2]=TIOGA_MAX(rtag[p1],rtag[p2]);
+		  rtag[p2]=std::max(rtag[p1],rtag[p2]);
 		  itag[p1]=itag[p2];
 		}
 		else {
-		  rtag[p1]=TIOGA_MAX(rtag[p1],rtag[p2]);
+		  rtag[p1]=std::max(rtag[p1],rtag[p2]);
 		  itag[p2]=itag[p1];
 		}
 	      }
