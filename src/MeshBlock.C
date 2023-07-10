@@ -314,8 +314,8 @@ void MeshBlock::tagBoundary(void)
 		  xd[j]=obb->dxc[j];
 		  for(int k=0;k<3;k++) 
 		    xd[j]+=(x[3*inode[m]+k]-obb->xc[k])*obb->vec[j][k];
-		  xmin[j]=TIOGA_MIN(xd[j],xmin[j]);
-		  xmax[j]=TIOGA_MAX(xd[j],xmax[j]);
+		  xmin[j]=std::min(xd[j],xmin[j]);
+		  xmax[j]=std::max(xd[j],xmax[j]);
 		} 	    
 	    }
           for(int j=0;j<3;j++) { xmin[j]-=TOL; xmax[j]+=TOL;}
@@ -323,9 +323,9 @@ void MeshBlock::tagBoundary(void)
             for(int k=xmin[1]/mapdx[1];k<=xmax[1]/mapdx[1];k++)
               for(int l=xmin[2]/mapdx[2];l<=xmax[2]/mapdx[2];l++)
                 {
-                  idx[0]=TIOGA_MAX(TIOGA_MIN(j,mapdims[0]-1),0);
-                  idx[1]=TIOGA_MAX(TIOGA_MIN(k,mapdims[1]-1),0);
-                  idx[2]=TIOGA_MAX(TIOGA_MIN(l,mapdims[2]-1),0);
+                  idx[0]=std::max(std::min(j,mapdims[0]-1),0);
+                  idx[1]=std::max(std::min(k,mapdims[1]-1),0);
+                  idx[2]=std::max(std::min(l,mapdims[2]-1),0);
                   mapmask[idx[2]*mapdims[1]*mapdims[0]+idx[1]*mapdims[0]+idx[0]]=1;
                 }
 	  if (itag)
@@ -711,8 +711,8 @@ void MeshBlock::getWallBounds(int *mtag,int *existWall, double wbox[6])
       i3=3*inode;
       for(j=0;j<3;j++)
 	{
-	  wbox[j]=TIOGA_MIN(wbox[j],x[i3+j]);
-	  wbox[j+3]=TIOGA_MAX(wbox[j+3],x[i3+j]);
+	  wbox[j]=std::min(wbox[j],x[i3+j]);
+	  wbox[j+3]=std::max(wbox[j+3],x[i3+j]);
 	}
     }
   
@@ -799,14 +799,14 @@ void MeshBlock::markWallBoundary(int *sam,int nx[3],double extents[6])
 		    {
 		      xv=x[i3+k];
 		      iv=floor((xv-extents[k])/ds[k]);
-		      imin[k]=TIOGA_MIN(imin[k],iv);
-		      imax[k]=TIOGA_MAX(imax[k],iv);
+		      imin[k]=std::min(imin[k],iv);
+		      imax[k]=std::max(imax[k],iv);
 		    }
 		}
 	     for(j=0;j<3;j++)
               {
-	       imin[j]=TIOGA_MAX(imin[j],0);
-               imax[j]=TIOGA_MIN(imax[j],nx[j]-1);
+	       imin[j]=std::max(imin[j],0);
+               imax[j]=std::min(imax[j],nx[j]-1);
               }
 	      //
 	      // mark sam to 1
@@ -860,8 +860,8 @@ void MeshBlock::getReducedOBB(OBB *obc,double *realData)
 	      for(j=0;j<3;j++)
 		for(k=0;k<3;k++)
 		  xd[j]+=(x[i3+k]-obc->xc[k])*obc->vec[j][k];
-	      for(j=0;j<3;j++) bbox[j]=TIOGA_MIN(bbox[j],xd[j]);
-	      for(j=0;j<3;j++) bbox[j+3]=TIOGA_MAX(bbox[j+3],xd[j]);
+	      for(j=0;j<3;j++) bbox[j]=std::min(bbox[j],xd[j]);
+	      for(j=0;j<3;j++) bbox[j+3]=std::max(bbox[j+3],xd[j]);
 	    }
 	  iflag=0;
 	  for(j=0;j<3;j++) iflag=(iflag || (bbox[j] > obc->dxc[j]));
@@ -876,8 +876,8 @@ void MeshBlock::getReducedOBB(OBB *obc,double *realData)
 	      for(j=0;j<3;j++)
 		for(k=0;k<3;k++)
 		  xd[j]+=(x[i3+k]-obb->xc[k])*obb->vec[j][k];
-	      for(j=0;j<3;j++) realData[j]=TIOGA_MIN(realData[j],xd[j]);
-	      for(j=0;j<3;j++) realData[j+3]=TIOGA_MAX(realData[j+3],xd[j]);
+	      for(j=0;j<3;j++) realData[j]=std::min(realData[j],xd[j]);
+	      for(j=0;j<3;j++) realData[j+3]=std::max(realData[j+3],xd[j]);
 	    }
 	}
     }
@@ -908,8 +908,8 @@ void MeshBlock::getReducedOBB2(OBB *obc,double *realData)
       transform2OBB(xv[n],obb->xc,obb->vec,xd);
       for(j=0;j<3;j++)
  	{
-          xmin[j]=TIOGA_MIN(xmin[j],xd[j]+obb->dxc[j]);
-          xmax[j]=TIOGA_MAX(xmax[j],xd[j]+obb->dxc[j]);
+          xmin[j]=std::min(xmin[j],xd[j]+obb->dxc[j]);
+          xmax[j]=std::max(xmax[j],xd[j]+obb->dxc[j]);
         }
     }
   for(j=0;j<3;j++) 
@@ -917,8 +917,8 @@ void MeshBlock::getReducedOBB2(OBB *obc,double *realData)
       delta=0.01*(xmax[j]-xmin[j]);
       xmin[j]-=delta;
       xmax[j]+=delta;
-      imin[j]=TIOGA_MAX(xmin[j]/mapdx[j],0);
-      imax[j]=TIOGA_MIN(xmax[j]/mapdx[j],mapdims[j]-1);
+      imin[j]=std::max(xmin[j]/mapdx[j],0.0);
+      imax[j]=std::min(xmax[j]/mapdx[j],static_cast<double>(mapdims[j]-1));
     }
   lmin=mapdims[2]-1;
   kmin=mapdims[1]-1;
@@ -930,12 +930,12 @@ void MeshBlock::getReducedOBB2(OBB *obc,double *realData)
 	{
 	  indx=l*mapdims[1]*mapdims[0]+k*mapdims[0]+j;
 	  if (mapmask[indx]) {
-	    lmin=TIOGA_MIN(lmin,l);
-	    kmin=TIOGA_MIN(kmin,k);
-	    jmin=TIOGA_MIN(jmin,j);
-	    lmax=TIOGA_MAX(lmax,l);
-	    kmax=TIOGA_MAX(kmax,k);
-	    jmax=TIOGA_MAX(jmax,j);
+	    lmin=std::min(lmin,l);
+	    kmin=std::min(kmin,k);
+	    jmin=std::min(jmin,j);
+	    lmax=std::max(lmax,l);
+	    kmax=std::max(kmax,k);
+	    jmax=std::max(jmax,j);
 	  }
 	}
   bbox[0]=-obb->dxc[0]+jmin*mapdx[0];
@@ -1030,8 +1030,8 @@ void MeshBlock::getQueryPoints2(OBB *obc,
       transform2OBB(xv[n],obb->xc,obb->vec,xd);
       for(j=0;j<3;j++)
  	{
-          xmin[j]=TIOGA_MIN(xmin[j],xd[j]+obb->dxc[j]);
-          xmax[j]=TIOGA_MAX(xmax[j],xd[j]+obb->dxc[j]);
+          xmin[j]=std::min(xmin[j],xd[j]+obb->dxc[j]);
+          xmax[j]=std::max(xmax[j],xd[j]+obb->dxc[j]);
         }
     }
   
@@ -1040,8 +1040,8 @@ void MeshBlock::getQueryPoints2(OBB *obc,
       delta=0.01*(xmax[j]-xmin[j]);
       xmin[j]-=delta;
       xmax[j]+=delta;
-      imin[j]=TIOGA_MAX(xmin[j]/mapdx[j],0);
-      imax[j]=TIOGA_MIN(xmax[j]/mapdx[j],mapdims[j]-1);
+      imin[j]=std::max(xmin[j]/mapdx[j],0.0);
+      imax[j]=std::min(xmax[j]/mapdx[j],static_cast<double>(mapdims[j]-1));
       mdx[j]=0.5*mapdx[j];
     }
   //
@@ -1055,8 +1055,8 @@ void MeshBlock::getQueryPoints2(OBB *obc,
       transform2OBB(xv[m],obc->xc,obc->vec,xd);
       for(j=0;j<3;j++)
 	{
-	  xmin[j]=TIOGA_MIN(xmin[j],xd[j]);
-	  xmax[j]=TIOGA_MAX(xmax[j],xd[j]);
+	  xmin[j]=std::min(xmin[j],xd[j]);
+	  xmax[j]=std::max(xmax[j],xd[j]);
 	}
     }
   //printf("xmin :%f %f %f\n",xmin[0],xmin[1],xmin[2]);
@@ -1399,8 +1399,8 @@ void MeshBlock::check_for_uniform_hex(void)
       //
       for(int j=0;j<3;j++)
 	{
-	  xmax[j]=TIOGA_MAX(xmax[j],xd[j]);
-	  xmin[j]=TIOGA_MIN(xmin[j],xd[j]);
+	  xmax[j]=std::max(xmax[j],xd[j]);
+	  xmin[j]=std::min(xmin[j],xd[j]);
 	}
     }
         //
