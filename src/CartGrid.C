@@ -147,7 +147,7 @@ void CartGrid::preprocess(void)
   for (i=0;i<ngrids;i++)
     {
       for(n=0;n<3;n++)
-	xlosup[n]=(((xlosup[n]) <= xlo[3*i+n]) ? xlosup[n]: xlo[3*i+n]);
+	xlosup[n]=((xlosup[n] <= xlo[3*i+n]) ? xlosup[n]: xlo[3*i+n]);
       maxlevel=((maxlevel >= level_num[i]) ? maxlevel: level_num[i]);
     }
     maxlevel++;
