@@ -24,7 +24,6 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include <malloc.h>
 #include <stdint.h>
 #include "MeshBlock.h"
 #include "CartGrid.h"

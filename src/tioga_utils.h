@@ -61,47 +61,48 @@ char checkFaceBoundaryNodes(int *nodes,const char *bcnodeflag,const int numfacev
 int triBoxOverlap(double boxcenter[3],double boxhalfsize[3],double *pt1,double *pt2,double *pt3);
 
 /* inline functions */
-static inline
-double memory_usage(int mpi_rank,int timestep,int display){
-
-    /* get malloc info structure */
-    struct mallinfo my_mallinfo = mallinfo();
-
-    /*total memory reserved by the system for malloc currently */
-    double reserved_mem = my_mallinfo.arena;
-
-    /* get all the memory currently allocated to user by malloc, etc. */
-    double used_mem = my_mallinfo.hblkhd
-                    + my_mallinfo.usmblks
-                    + my_mallinfo.uordblks;
-
-    /* get memory not currently allocated to user but malloc controls */
-    double free_mem = my_mallinfo.fsmblks
-                    + my_mallinfo.fordblks;
-
-    /* get number of items currently allocated */
-    /* double number_allocated = my_mallinfo.ordblks + my_mallinfo.smblks; */
-
-    /* Print out concise malloc info line */
-    if(display && mpi_rank == 0){
-        printf("Step[%d]: %f MB(%.0f) malloc: %f MB reserved (%.0f unused)\n",
-            timestep,
-            used_mem / (1024.0 * 1024.0),
-            used_mem,
-            reserved_mem / (1024.0 * 1024.0),
-            free_mem);
-
-        if(mpi_rank == 0){
-            FILE *fp;
-            char filename[] = "tiogaMemUsage.dat";
-            fp=fopen(filename,"a");
-            fprintf(fp,"Step[%d]: %f MB(%.0f) malloc: %f MB reserved (%.0f unused)\n",
-                    timestep,used_mem / (1024.0 * 1024.0),used_mem,reserved_mem / (1024.0 * 1024.0), free_mem);
-            fclose(fp);
-        }
-
-    }
-    return used_mem;
-}
+//#include <malloc.h>
+//static inline
+//double memory_usage(int mpi_rank,int timestep,int display){
+//
+//    /* get malloc info structure */
+//    struct mallinfo my_mallinfo = mallinfo();
+//
+//    /*total memory reserved by the system for malloc currently */
+//    double reserved_mem = my_mallinfo.arena;
+//
+//    /* get all the memory currently allocated to user by malloc, etc. */
+//    double used_mem = my_mallinfo.hblkhd
+//                    + my_mallinfo.usmblks
+//                    + my_mallinfo.uordblks;
+//
+//    /* get memory not currently allocated to user but malloc controls */
+//    double free_mem = my_mallinfo.fsmblks
+//                    + my_mallinfo.fordblks;
+//
+//    /* get number of items currently allocated */
+//    /* double number_allocated = my_mallinfo.ordblks + my_mallinfo.smblks; */
+//
+//    /* Print out concise malloc info line */
+//    if(display && mpi_rank == 0){
+//        printf("Step[%d]: %f MB(%.0f) malloc: %f MB reserved (%.0f unused)\n",
+//            timestep,
+//            used_mem / (1024.0 * 1024.0),
+//            used_mem,
+//            reserved_mem / (1024.0 * 1024.0),
+//            free_mem);
+//
+//        if(mpi_rank == 0){
+//            FILE *fp;
+//            char filename[] = "tiogaMemUsage.dat";
+//            fp=fopen(filename,"a");
+//            fprintf(fp,"Step[%d]: %f MB(%.0f) malloc: %f MB reserved (%.0f unused)\n",
+//                    timestep,used_mem / (1024.0 * 1024.0),used_mem,reserved_mem / (1024.0 * 1024.0), free_mem);
+//            fclose(fp);
+//        }
+//
+//    }
+//    return used_mem;
+//}
 
 #endif /* TIOGA_UTILS_H */
