@@ -71,12 +71,12 @@ void ADT::buildADT(int d, int nelements,double *elementBbox)
      for(i=0;i<ndim/2;i++)
        {
 	 i2=2*i;
-	 adtExtents[i2]=TIOGA_MIN(adtExtents[i2],coord[j6+i]);
+	 adtExtents[i2]=std::min(adtExtents[i2],coord[j6+i]);
        }
        for(i=0;i<ndim/2;i++)
        {
 	 i2=2*i+1;
-	 adtExtents[i2]=TIOGA_MAX(adtExtents[i2],coord[j6+i+ndim/2]);
+	 adtExtents[i2]=std::max(adtExtents[i2],coord[j6+i+ndim/2]);
        }
    }
   //

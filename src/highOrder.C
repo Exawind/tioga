@@ -225,7 +225,7 @@ void MeshBlock::getInternalNodes(void)
 	{
 	  get_nodes_per_cell(&(ctag[i]),&(pointsPerCell[i]));
 	  ntotalPoints+=pointsPerCell[i];
-	  maxPointsPerCell=TIOGA_MAX(maxPointsPerCell,pointsPerCell[i]);
+	  maxPointsPerCell=std::max(maxPointsPerCell,pointsPerCell[i]);
       }
       //
       if (rxyz !=NULL) TIOGA_FREE(rxyz);

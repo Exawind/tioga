@@ -200,7 +200,7 @@ void MeshBlock::processDonors(HOLEMAP *holemap, int nmesh, int **donorRecords,do
                TRACEI(temp->donorData[1]);
                TRACEI(temp->donorData[2]);
               }
-              nodeRes[i]=TIOGA_MAX(nodeRes[i],temp->receptorRes);
+              nodeRes[i]=std::max(nodeRes[i],temp->receptorRes);
 	      temp=temp->next;
 	    }
 	  for(j=0;j<nmesh;j++)
@@ -762,7 +762,7 @@ void MeshBlock::resetCoincident(void)
     {
       iptr=interp2donor[i];
       if (iptr > -1) {
-        ireset[xtag[i]]=TIOGA_MIN(ireset[xtag[i]],interpList[iptr].cancel);
+        ireset[xtag[i]]=std::min(ireset[xtag[i]],interpList[iptr].cancel);
       }
     }
   for(i=0;i<nsearch;i++)
