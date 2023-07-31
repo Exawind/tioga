@@ -101,7 +101,7 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
 	{
 	  get_nodes_per_cell(&(ctag_cart[i]),&(pointsPerCell[i]));
 	  ntotalPointsCart+=pointsPerCell[i];
-	  maxPointsPerCell=TIOGA_MAX(maxPointsPerCell,pointsPerCell[i]);
+	  maxPointsPerCell=std::max(maxPointsPerCell,pointsPerCell[i]);
       }
       //
       if (rxyzCart !=NULL) TIOGA_FREE(rxyzCart);

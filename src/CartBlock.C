@@ -565,8 +565,8 @@ void CartBlock::writeCellFile(int bid)
 	{
 	  ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+
 	    (j+nf)*(dims[0]+2*nf)+(i+nf);
-          ibmin=TIOGA_MIN(ibmin,ibl_cell[ibindex]);
-          ibmax=TIOGA_MAX(ibmax,ibl_cell[ibindex]);
+          ibmin=std::min(ibmin,ibl_cell[ibindex]);
+          ibmax=std::max(ibmax,ibl_cell[ibindex]);
 	  fprintf(fp,"%d\n", ibl_cell[ibindex]);
 	}
 

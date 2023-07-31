@@ -181,8 +181,8 @@ findOBB(xsearch,obq->xc,obq->dxc,obq->vec,nsearch);
 		  xd[j]=0;
 		  for(k=0;k<3;k++)
 		    xd[j]+=(x[i3+k]-obq->xc[k])*obq->vec[j][k];
-		  xmin[j]=TIOGA_MIN(xmin[j],xd[j]);
-		  xmax[j]=TIOGA_MAX(xmax[j],xd[j]);
+		  xmin[j]=std::min(xmin[j],xd[j]);
+		  xmax[j]=std::max(xmax[j],xd[j]);
 		}
 	      for(j=0;j<3;j++)
 		{
@@ -243,8 +243,8 @@ findOBB(xsearch,obq->xc,obq->dxc,obq->vec,nsearch);
 	  i3=3*(vconn[n][nvert*i+m]-BASE);
 	  for(j=0;j<3;j++)
 	    {
-	      xmin[j]=TIOGA_MIN(xmin[j],x[i3+j]);
-	      xmax[j]=TIOGA_MAX(xmax[j],x[i3+j]);
+	      xmin[j]=std::min(xmin[j],x[i3+j]);
+	      xmax[j]=std::max(xmax[j],x[i3+j]);
 	    }
 	}
       //
