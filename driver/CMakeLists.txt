@@ -1,4 +1,5 @@
 enable_language(Fortran)
+find_package(MPI REQUIRED)
 
 set(TIOGA_EXE_SOURCES
   modules.f90
@@ -19,8 +20,8 @@ if (TIOGA_ENABLE_ARBORX)
   target_link_libraries(tiogadriver PRIVATE ArborX::ArborX)
 endif()
 
-target_link_libraries(tiogadriver PRIVATE tioga)
-target_link_libraries(tiogadriver PRIVATE MPI::MPI_Fortran)
+target_link_libraries(tiogadriver PUBLIC tioga)
+target_link_libraries(tiogadriver PUBLIC MPI::MPI_Fortran)
 
 add_executable(tioga.exe testTioga.F90)
 # Using #ifdef requires preprocessing

@@ -513,7 +513,7 @@ void CartBlock::writeCellFile(int bid)
   int ibmin,ibmax;
   char fname[80];
   char qstr[2];
-  char intstring[7];
+  char intstring[12];
   char hash,c;
   int i,n,j,k,ibindex;
   int bodytag;

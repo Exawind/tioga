@@ -4,8 +4,8 @@
 !
 !
 !     Create a unstructured grid partition
-!     composed of prizm layers on a sphere and 
-!     a Cartesian that overlaps it 
+!     composed of prizm layers on a sphere and
+!     a Cartesian that overlaps it
 !
 !     J. Sitaraman
 !     04/18/2011
@@ -13,7 +13,7 @@
 !     This code is not well commented and written
 !     in partial f90 style.
 !     Use with caution.
-!     
+!
 !     begin main program
 !
 !
@@ -37,9 +37,9 @@
       open(unit=15,file='input',form='formatted')
       read(15,inputs)
       close(15)
-      
+
       fname='data.tri'
-      if (myid==0) write(6,*) 'Generating ',numprocs,' partitions' 
+      if (myid==0) write(6,*) 'Generating ',numprocs,' partitions'
       !write(6,*) 'reading and constructing face info in partition :',myid
       if (myid < numprocs/2) then
        call getSurface(fname,myid,numprocs/2)
@@ -66,7 +66,7 @@
 !
       end
 !
-!     
+!
 !     read face information
 !
 !
@@ -129,12 +129,12 @@
             enddo
          enddo
          xc=xc/3
-         theta=atan(xc(3)/sqrt(xc(2)**2+xc(1)**2))         
+         theta=atan(xc(3)/sqrt(xc(2)**2+xc(1)**2))
          phi=atan2(xc(2),xc(1))
-         
+
          if (phi < 0) phi=phi+2*pi
-         
-         if ((theta-arange(1))*(theta-arange(2)) .le. 0. .and. 
+
+         if ((theta-arange(1))*(theta-arange(2)) .le. 0. .and.
      &        (phi-arange(3))*(phi-arange(4)).le.0) then
             nfaces=nfaces+1
             faceConn(1,nfaces)=f(1)
@@ -148,7 +148,7 @@
          vec3(1)=vec1(2)*vec2(3)-vec1(3)*vec2(2)
          vec3(2)=vec1(3)*vec2(1)-vec1(1)*vec2(3)
          vec3(3)=vec1(1)*vec2(2)-vec1(2)*vec2(1)
-         
+
          do k=1,3
             normT(:,f(k))=normT(:,f(k))+vec3
          enddo
@@ -192,10 +192,10 @@
 
 601   format('TITLE ="',a40,'"')
 602   format('VARIABLES ="X", "Y", "Z"')
-603   format('ZONE T="DATA",N=',i8,' E=',i8,' ET=QUADRILATERAL', 
+603   format('ZONE T="DATA",N=',i8,' E=',i8,' ET=QUADRILATERAL',
      &  ' F=FEPOINT')
 
-      ! 
+      !
       close(1)
       return
       end
@@ -267,7 +267,7 @@
          enddo
       enddo
       !
-      ! create hex connectivity 
+      ! create hex connectivity
       !
       nhex=0
       do l=1,nn(3)-1
@@ -335,9 +335,9 @@
       deallocate(x,ndc8)
       !
       return
-      end          
-!     
-!     
+      end
+!
+!
 !     generate  Prizms
 !
 !
@@ -371,7 +371,7 @@
       allocate(volConn(8,nCells))
 !
 !     allocate local arrays
-!     
+!
       allocate(faceConnT(3,nfaces))
       allocate(strandSpacing(nlayers+1))
 !
@@ -391,15 +391,15 @@
       !write(6,*) strandSpacing(l)
       !enddo
 !
-!     initalize the marching boundary
-!      
+!     initialize the marching boundary
+!
       faceConnT(:,1:nfaces)=faceConn(:,1:nfaces)
       xv(:,1:npts)=xf(:,1:npts)
       lsum=0
       lcells=0
 !
 !     begin generating volumes
-!    
+!
       do l=1,nlayers
          na=lsum+1
          nb=lsum+npts
@@ -428,7 +428,7 @@
       ! last npts nodes are overset bc nodes
       !
       allocate(wbcnode(nwbc))
-      allocate(obcnode(nwbc))
+      allocate(obcnode(nobc))
       !
       do i=1,nwbc
          wbcnode(i)=i
@@ -447,13 +447,13 @@
       !
       return
       end
-! 
-!        
-!     write tecplot compatible output file 
+!
+!
+!     write tecplot compatible output file
 !
       subroutine outputVolumes(myid)
 !
-      use volumeData 
+      use volumeData
       implicit none
 !
       integer myid
@@ -461,7 +461,7 @@
       character*128 :: fname,integer_string
 
       write(integer_string,"(I7)") myid
-      
+
       fname='cell'//trim(adjustl(integer_string))//'.plt'
       !write(6,*) 'writing partition :',myid,'to ',trim(adjustl(fname))
       open(unit=10,file=fname,form='formatted')
@@ -469,15 +469,15 @@
       write(10,*) 'TITLE =" Unstructured grid"   '
       write(10,*) 'VARIABLES ="X", "Y", "Z", "bodyTag"'
       write(10,606) nNodes,nCells
-      
+
       do i=1,nnodes
        write(10,605) xv(1,i),xv(2,i),xv(3,i),bodyTag(i)
       enddo
 
       do i=1,ncells
        write(10,1004) volConn(1,i),volConn(2,i),volConn(3,i),
-     &              volConn(4,i),volConn(5,i),volConn(6,i),
-     &               volConn(7,i),volConn(8,i)
+     &                volConn(4,i),volConn(5,i),volConn(6,i),
+     &                volConn(7,i),volConn(8,i)
       enddo
       do i=1,nwbc
          write(10,*) wbcnode(i)
@@ -491,8 +491,8 @@
   606 format('ZONE T="VOL_MIXED",N=',i8,' E=',i8,' ET=BRICK,',
      .' F=FEPOINT')
   605 format((3(E15.8,1X),I7))
-           
+
 1004  format(8(1X,I10))
-      return   
+      return
       end
 

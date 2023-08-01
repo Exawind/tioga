@@ -20,10 +20,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include "codetypes.h"
 #include "tioga.h"
 #include "globals.h"
-#include <string.h>
 //
 // All the interfaces that are 
 // accessible to third party f90 and C
@@ -152,6 +152,7 @@ extern "C" {
 
   void tioga_preprocess_grids_(void)
   {
+    if(tg->getHoleMapAlgorithm() == 1) tg->assembleComms(); // adaptive alg
     tg->profile();
   }
 
@@ -251,6 +252,11 @@ extern "C" {
   void tioga_getdonorinfo_(int *btag,int *receptors,int *indices,double *frac,int *dcount)
   {
     tg->getDonorInfo(*btag,receptors,indices,frac,dcount);
+  }
+
+  void tioga_setholemapalg_(int *alg)
+  {
+      tg->setHoleMapAlgorithm(*alg);
   }
 
   void tioga_setsymmetry_(int *isym)
