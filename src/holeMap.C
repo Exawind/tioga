@@ -197,7 +197,7 @@ void tioga::getHoleMap(void)
  */
 void tioga::getAdaptiveHoleMap(void){
   int maxtag,maxtagLocal;
-  int mbi,mi,mj;
+  int mbi,mi;
   int level_id;
 
   /* =========================== */
@@ -277,8 +277,8 @@ void tioga::getAdaptiveHoleMap(void){
     for(i=0; i<3; i++) bboxGlobal[3+i]=-BIGVALUE;
 
     // get the global bounding box info for this body (note the communicator)
-    MPI_Allreduce(bboxLocal,bboxGlobal,3,MPI_DOUBLE,MPI_MIN,mb->blockcomm);
-    MPI_Allreduce(&(bboxLocal[3]),&(bboxGlobal[3]),3,MPI_DOUBLE,MPI_MAX,mb->blockcomm);
+    MPI_Allreduce(mb->bboxLocalAHM,bboxGlobal,3,MPI_DOUBLE,MPI_MIN,mb->blockcomm);
+    MPI_Allreduce(&(mb->bboxLocalAHM[3]),&(bboxGlobal[3]),3,MPI_DOUBLE,MPI_MAX,mb->blockcomm);
 
     /* ======================================================= */
     /* Step 2: initialize and build adaptive map for this body */
@@ -292,11 +292,11 @@ void tioga::getAdaptiveHoleMap(void){
       }
 
       // add buffer to extents
-      dsmax = TIOGA_MAX(ds[0],ds[1]);
-      dsmax = TIOGA_MAX(dsmax,ds[2]);
+      dsmax = std::max(ds[0],ds[1]);
+      dsmax = std::max(dsmax,ds[2]);
       dsbox = dsmax*0.01;
-      for(j=0; j<3; j++) AHMOLocal.extents_lo[j] -= (2*dsbox);
-      for(j=0; j<3; j++) AHMOLocal.extents_hi[j] += (2*dsbox);
+      for(j=0; j<3; j++) AHMOLocal.extents_lo[j] -= (dsbox);
+      for(j=0; j<3; j++) AHMOLocal.extents_hi[j] += (dsbox);
 
       // initialize map for this body
       AHMOLocal.nlevel = 1;
@@ -368,7 +368,7 @@ void tioga::getAdaptiveHoleMap(void){
       nrefine = 0;
       for(i=0; i<lvl->elem_count; i++){
         refineFlag[i] = existWall[i] && existOuter[i];
-        if(existWall[i] && existOuter[i]) nrefine++;
+        if(refineFlag[i]) nrefine++;
       }
       int nchildren = OCTANT_CHILDREN*nrefine;
 
@@ -461,7 +461,10 @@ void tioga::getAdaptiveHoleMap(void){
           }
         }
       }
-      if(AHMOLocal.nlevel >= OCTANT_MAXLEVEL) adaptMap = 0;
+      if(AHMOLocal.nlevel >= OCTANT_MAXLEVEL && adaptMap == 1) {
+        printf("[tioga] ERROR Constructing the Adaptive Hole Map! Max level reached!\n");
+        exit(0);
+      }
     }
     // adaption complete: all ranks of this mesh-block is informed of global octree
 

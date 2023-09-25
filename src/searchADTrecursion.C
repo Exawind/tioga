@@ -37,12 +37,10 @@ void ADT::searchADT(MeshBlock *mb, int *cellIndex,double *xsearch)
   cellIndex[1]=0;
   //
   flag=1;
-  for(i=0;i<ndim/2;i++)
-    flag = (flag && (xsearch[i] >= adtExtents[2*i]-TOL));
-  for(i=0;i<ndim/2;i++)
-    flag= (flag && (xsearch[i] <= adtExtents[2*i+1]+TOL));
+  for(i=0;i<ndim/2;i++) flag = (flag && (xsearch[i] >= adtExtents[2*i]  -mb->searchTol));
+  for(i=0;i<ndim/2;i++) flag = (flag && (xsearch[i] <= adtExtents[2*i+1]+mb->searchTol));
   //
-  // call recursive routine to check intersections with 
+  // call recursive routine to check intersections with
   // ADT nodes
   //
   if (flag) searchIntersections(mb,cellIndex,adtIntegers,adtReals,
@@ -57,46 +55,35 @@ void searchIntersections(MeshBlock *mb,int *cellIndex,int *adtIntegers,double *a
   double element[ndim];
   bool flag;
   //
-  for(i=0;i<ndim;i++)
-    element[i]=coord[ndim*(adtIntegers[4*node])+i];
+  for(i=0;i<ndim;i++) element[i]=coord[ndim*(adtIntegers[4*node])+i];
   //
   flag=1;
-  for(i=0;i<ndim/2;i++)
-    flag = (flag && (xsearch[i] >=element[i]-TOL));
-  for(i=ndim/2;i<ndim;i++)
-    flag = (flag && (xsearch[i-ndim/2] <=element[i]+TOL));
+  for(i=0     ;i<ndim/2;i++) flag = (flag && (xsearch[i]        >=element[i]-mb->searchTol));
+  for(i=ndim/2;i<ndim;  i++) flag = (flag && (xsearch[i-ndim/2] <=element[i]+mb->searchTol));
   //
-  if (flag)
-    {
-      mb->checkContainment(cellIndex,adtIntegers[4*node],xsearch);
-      if (cellIndex[0] > -1 && cellIndex[1]==0) return;
-    }
+  if (flag) {
+    mb->checkContainment(cellIndex,adtIntegers[4*node],xsearch);
+    if (cellIndex[0] > -1 && cellIndex[1]==0) return;
+  }
   //
   // check the left and right children
   // now
   //
-  for(d=1;d<3;d++)
-    {
-      nodeChild=adtIntegers[4*node+d];
-      if (nodeChild > -1) {
-        nodeChild=adtIntegers[4*nodeChild+3];
-	for(i=0;i<ndim;i++)
-         {
-	  element[i]=adtReals[ndim*nodeChild+i];
-         }
+  for(d=1;d<3;d++){
+    nodeChild=adtIntegers[4*node+d];
+    if (nodeChild > -1) {
+      nodeChild=adtIntegers[4*nodeChild+3];
+        for(i=0;i<ndim;i++) element[i]=adtReals[ndim*nodeChild+i];
+
 	flag=1;
-	for(i=0;i<ndim/2;i++)
-	  flag = (flag && (xsearch[i] >=element[i]-TOL));
-	for(i=ndim/2;i<ndim;i++)
-	  flag = (flag && (xsearch[i-ndim/2] <=element[i]+TOL));	
-	if (flag)
-	  {
-	    searchIntersections(mb,cellIndex,adtIntegers,adtReals,coord,level+1,
-			       nodeChild,xsearch,nelem,ndim);
-	    if (cellIndex[0] > -1 && cellIndex[1]==0) return; 
-	  }
+        for(i=0;i<ndim/2;i++)    flag = (flag && (xsearch[i]        >=element[i]-mb->searchTol));
+        for(i=ndim/2;i<ndim;i++) flag = (flag && (xsearch[i-ndim/2] <=element[i]+mb->searchTol));
+	if (flag) {
+	  searchIntersections(mb,cellIndex,adtIntegers,adtReals,coord,level+1,
+                              nodeChild,xsearch,nelem,ndim);
+	  if (cellIndex[0] > -1 && cellIndex[1]==0) return;
+	}
       }
-    }
+  }
   return;
 }
-  

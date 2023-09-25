@@ -217,17 +217,21 @@ void MeshBlock::processDonors(HOLEMAP *holemap, int nmesh, int **donorRecords,do
 	    }
 	}
     }
-  for(i=0;i<nwbc;i++)
-   if (iblank[wbcnode[i]-BASE]==0) {
-     printf("--------------------------------------------------------------------\n");
-     printf("Alarm from process %d : wall node is being tagged as a hole %d %p\n",myid,wbcnode[i]-BASE,
-        donorList[wbcnode[i]-BASE]);
-     ii=wbcnode[i]-BASE;
-     printf("xloc=%e %e %e\n",x[3*ii],x[3*ii+1],x[3*ii+2]);
-     printf("Computations will continue, but may suffer from accuracy problems\n");
-     printf("Please recheck positions of your grids\n");
-     printf("--------------------------------------------------------------------\n");
+
+  if(!composite){
+    for(i=0;i<nwbc;i++){
+      if (iblank[wbcnode[i]-BASE]==HOLE) {
+        printf("--------------------------------------------------------------------\n");
+        printf("Alarm from process %d : wall node is being tagged as a hole %d %p\n",myid,wbcnode[i]-BASE,
+          donorList[wbcnode[i]-BASE]);
+        ii=wbcnode[i]-BASE;
+        printf("xloc=%e %e %e\n",x[3*ii],x[3*ii+1],x[3*ii+2]);
+        printf("Computations will continue, but may suffer from accuracy problems\n");
+        printf("Please recheck positions of your grids\n");
+        printf("--------------------------------------------------------------------\n");
+      }
     }
+  }
   //
   // mark mandatory fringes as neighbors (up to nfringe depth)
   // of hole points
@@ -401,7 +405,7 @@ void MeshBlock::processDonors(ADAPTIVE_HOLEMAP *holemap,int nmesh,
          TRACEI(temp->donorData[1]);
          TRACEI(temp->donorData[2]);
         }
-        nodeRes[i]=TIOGA_MAX(nodeRes[i],temp->receptorRes);
+        nodeRes[i]=std::max(nodeRes[i],temp->receptorRes);
         temp=temp->next;
       }
 
@@ -421,16 +425,18 @@ void MeshBlock::processDonors(ADAPTIVE_HOLEMAP *holemap,int nmesh,
     }
   }
 
-  for(i=0;i<nwbc;i++){
-    if(iblank[wbcnode[i]-BASE]==0){
-      fprintf(stderr,"--------------------------------------------------------------------\n");
-      fprintf(stderr,"Alarm from process %d : wall node is being tagged as a hole %d %p\n",
-                      myid,wbcnode[i]-BASE,donorList[wbcnode[i]-BASE]);
-      ii=wbcnode[i]-BASE;
-      fprintf(stderr,"xloc=%e %e %e\n",x[3*ii],x[3*ii+1],x[3*ii+2]);
-      fprintf(stderr,"Computations will continue, but may suffer from accuracy problems\n");
-      fprintf(stderr,"Please recheck positions of your grids\n");
-      fprintf(stderr,"--------------------------------------------------------------------\n");
+  if(!composite){
+    for(i=0;i<nwbc;i++){
+      if(iblank[wbcnode[i]-BASE]==HOLE){
+        fprintf(stderr,"--------------------------------------------------------------------\n");
+        fprintf(stderr,"Alarm from process %d : wall node is being tagged as a hole %d %p\n",
+                        myid,wbcnode[i]-BASE,donorList[wbcnode[i]-BASE]);
+        ii=wbcnode[i]-BASE;
+        fprintf(stderr,"xloc=%e %e %e\n",x[3*ii],x[3*ii+1],x[3*ii+2]);
+        fprintf(stderr,"Computations will continue, but may suffer from accuracy problems\n");
+        fprintf(stderr,"Please recheck positions of your grids\n");
+        fprintf(stderr,"--------------------------------------------------------------------\n");
+      }
     }
   }
 

@@ -80,6 +80,11 @@ class tioga
   //! Mesh Block Complement data
   meshblockCompInfo *meshblockComp;
 
+  //! Composite Body info
+  int ncomposite; /** < number of composite bodies */
+  std::vector<CompositeBody> compositeBody; /** < list of composite body structs */
+//std::vector<std::vector<char>> compositeBodyMap; /** < mesh block composite-body map flag   */
+
   //! Mesh blocks in this processor
   std::vector<std::unique_ptr<MeshBlock> > mblocks;
   //! Solver assigned mesh tags for the mesh blocks
@@ -116,7 +121,7 @@ class tioga
         pc_cart = NULL;
         meshblockComp=NULL;
         // obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
-        isym=3;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
+        isym=3;ihigh=0;nblocks=0;ncart=0;ncomposite=0;ihighGlobal=0;iamrGlobal=0;
         mexclude=3,nfringe=1;
         USE_ADAPTIVE_HOLEMAP=0; //Default to original hole map
         qblock=NULL;
@@ -131,6 +136,10 @@ class tioga
   void setCommunicator(MPI_Comm communicator,int id_proc,int nprocs);
 
   void assembleComms(void);
+
+  int  getNumCompositeBodies(){return ncomposite;}
+  void setNumCompositeBodies(int ncomposite);
+  void registerCompositeBody(int compbodytag,int *bodytags,int *dominancetags,int nbodytags,double searchTol);
 
   /** registerGrid data */
 

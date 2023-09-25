@@ -60,6 +60,7 @@ typedef int32_t qcoord_t;
 // #define NVAR               6
 #define WALLNODETYPE       0
 #define OUTERNODETYPE      1
+#define NON_UNIQUE_NODES   0
 /*==================================================================*/
 /* ADAPTIVE HOLE MAP OCTANT INFO                                    */
 /*==================================================================*/
@@ -251,5 +252,12 @@ typedef struct INTEGERLIST2
   double *realData;
   struct INTEGERLIST2 *next;
 } INTEGERLIST2;
+
+typedef struct CompositeBody
+{
+  double searchTol;
+  std::vector<int> bodyids;
+  std::vector<int> dominanceflags;
+} CompositeBody;
 
 #endif /* CODETYPES_H */

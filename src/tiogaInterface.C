@@ -150,6 +150,16 @@ extern "C" {
     tg->register_amr_solution(*ipatch,q,nvar_cell,nvar_node);
   }
 
+  void tioga_setcomposite_(int *ncomp)
+  {
+    tg->setNumCompositeBodies(*ncomp);
+  }
+
+  void tioga_register_composite_body_(int *compbodytag,int *bodytags,int *dominancetags,int *nbodytags,double *searchTol)
+  {
+    tg->registerCompositeBody(*compbodytag,bodytags,dominancetags,*nbodytags,*searchTol);
+  }
+
   void tioga_preprocess_grids_(void)
   {
     if(tg->getHoleMapAlgorithm() == 1) tg->assembleComms(); // adaptive alg

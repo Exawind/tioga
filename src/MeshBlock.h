@@ -22,6 +22,7 @@
 #define MESHBLOCK_H
 
 #include <vector>
+#include <algorithm>
 #include <stdint.h>
 #include <assert.h>
 #include "codetypes.h"
@@ -38,6 +39,11 @@ class CartGrid;
  * Jay Sitaraman
  * 02/20/2014
  */
+
+#define FRINGE -1
+#define HOLE    0
+#define FIELD   1
+
 class MeshBlock
 {
  private:
@@ -140,6 +146,8 @@ class MeshBlock
   int meshtag; /** < tag of the mesh that this block belongs to */
   int check_uniform_hex_flag;
   double resolutionScale;
+  double searchTol;
+  int dominanceFlag; /**< if dominanceflag=1: set noderes to tiny number */
   //
   // oriented bounding box of this partition
   //
@@ -161,7 +169,9 @@ class MeshBlock
   int blockcomm_id;      /** < mpi rank within this block */
   int blockcomm_numprocs;/** < number of mpi ranks within this blocks */
   MPI_Comm blockcomm;    /** < subgroup communicator for this mesh block */
+  char composite;        /** < mesh block composite body flag */
   char meshMaster;       /** < master rank for each body flag: [0] subordinate rank, [1] master rank */
+  double bboxLocalAHM[6];/** < wall bc node bounding box (without duplicate obc/wbc nodes) */
 
   double *cellRes;  /** < resolution for each cell */
   int ntotalPoints;        /**  total number of extra points to interpolate */
@@ -188,7 +198,7 @@ class MeshBlock
     obcnode=NULL; cellRes=NULL; nodeRes=NULL; elementBbox=NULL; elementList=NULL; adt=NULL; donorList=NULL;
     interpList=NULL; interp2donor=NULL; obb=NULL; nsearch=0; isearch=NULL; tagsearch=NULL;
     res_search=NULL;xsearch=NULL; donorId=NULL;xtag=NULL;
-    adt=NULL; cancelList=NULL; userSpecifiedNodeRes=NULL; userSpecifiedCellRes=NULL; nfringe=1;
+    adt=NULL; cancelList=NULL; userSpecifiedNodeRes=NULL; userSpecifiedCellRes=NULL; nfringe=1; composite=0;
     mexclude=3; nvar=0; interptype=0;
     blockcomm=MPI_COMM_NULL;
     // new vars
@@ -197,6 +207,7 @@ class MeshBlock
     interpList2=NULL;picked=NULL;ctag_cart=NULL;rxyzCart=NULL;donorIdCart=NULL;pickedCart=NULL;ntotalPointsCart=0;
     nreceptorCellsCart=0;ninterpCart=0;interpListCartSize=0;interpListCart=NULL;
     resolutionScale=1.0; receptorIdCart=NULL;
+    searchTol=TOL; dominanceFlag=0;
 
     cellGID = NULL;
     iblank_reduced=NULL;
@@ -350,6 +361,12 @@ class MeshBlock
   {
     p4estsearchpt=f1;
     check_intersect_p4est=f2;
+  }
+
+  void setCompositeFlag(double tol,int dominanceflag){
+    composite=1;
+    searchTol=tol;
+    dominanceFlag=dominanceflag;
   }
 
   void writeCellFile(int);
