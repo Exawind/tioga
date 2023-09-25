@@ -70,12 +70,12 @@ void MeshBlock::checkContainment(int *cellIndex, int adtElement, double *xsearch
       //
       for(m=0;m<nvert;m++)
 	{
-	  if ((frac[m]+TOL)*(frac[m]-1.0-TOL) > 0) 
+	  if ((frac[m]+searchTol)*(frac[m]-1.0-searchTol) > 0) 
 	    {
 	      cellIndex[0]=-1;
 	      return;
 	    }
-          if (fabs(frac[m]) < TOL && cellRes[icell]==BIGVALUE) cellIndex[1]=1;
+          if (fabs(frac[m]) < searchTol && cellRes[icell]==BIGVALUE) cellIndex[1]=1;
 	}
       
       return;

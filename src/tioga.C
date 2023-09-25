@@ -61,8 +61,12 @@ void tioga::setCommunicator(MPI_Comm communicator, int id_proc, int nprocs)
   //
 }
 
-void tioga::assembleComms(void)
-{
+void tioga::setNumCompositeBodies(int ncomp){
+  ncomposite=ncomp;
+  compositeBody.resize(ncomposite);
+}
+
+void tioga::assembleComms(void){
   MPI_Group meshblockIncludeGroup;
   MPI_Group meshblockExcludeGroup;
 
@@ -109,7 +113,7 @@ void tioga::assembleComms(void)
   /* Step B: create each subgroup per mesh tag */
   /* ========================================= */
   for(int mtag=1; mtag<=maxtag; mtag++){
-    meshblockCompInfo &MBC = meshblockComp[mtag-1];
+    meshblockCompInfo &MBC = meshblockComp[mtag-BASE];
 
     // check if body exists on rank
     char foundFlag = 0;
@@ -267,6 +271,18 @@ void tioga::register_unstructured_solution()
     qblock[iblk] = minfo->qnode.hptr;
     mblocks[iblk]->num_var() = minfo->num_vars;
   }
+}
+
+/**
+ * register a composite body
+ */
+void tioga::registerCompositeBody(int compbodytag,int *bodytags,int *dominancetags,int nbodytags,double searchTol){
+  // resize and fill composite body tag IDs
+  compositeBody[compbodytag].searchTol = searchTol;
+  compositeBody[compbodytag].bodyids.resize(nbodytags);
+  compositeBody[compbodytag].dominanceflags.resize(nbodytags);
+  for(int i=0; i<nbodytags; i++) compositeBody[compbodytag].bodyids[i] = bodytags[i];
+  for(int i=0; i<nbodytags; i++) compositeBody[compbodytag].dominanceflags[i] = dominancetags[i];
 }
 
 void tioga::profile(void)
@@ -691,8 +707,8 @@ void tioga::dataUpdate(int nvar,int interptype, int at_points)
     }
   if (fp!=NULL) fclose(fp);
   if (norphanPoint > 0 && iorphanPrint) {
-   printf("Warning::number of orphans in %d = %d of %d\n",myid,norphanPoint,
-        ntotalPoints);
+   printf("\e[0;31m" "Warning::" "\e[0m" "number of orphans in %d = %d of %d\n",
+           myid,norphanPoint,ntotalPoints);
     iorphanPrint=0;
    }
   //

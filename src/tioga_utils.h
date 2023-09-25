@@ -24,6 +24,40 @@
 /* header files */
 #include "tioga.h"
 
+/* system header files */
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+
+struct Node {
+  int id;
+  double x,y,z;
+  const double eps = 1E-10;
+
+  Node() { }
+  Node(int id,double *geo){
+    this->id = id;
+    this->x = geo[0];
+    this->y = geo[1];
+    this->z = geo[2];
+  }
+
+  bool operator==(const Node& otherNode) const {
+    return (otherNode.id == id) || ((abs(this->x - otherNode.x) <= this->eps) &&
+                                    (abs(this->y - otherNode.y) <= this->eps) &&
+                                    (abs(this->z - otherNode.z) <= this->eps));
+  }
+
+  struct HashFunction {
+    size_t operator()(const Node& node) const {
+      size_t xHash = std::hash<int>()(int(node.x));
+      size_t yHash = std::hash<int>()(int(node.y)) << 1;
+      size_t zHash = std::hash<int>()(int(node.z)) << 2;
+      return xHash ^ yHash ^ zHash;
+    }
+  };
+};
+
 /* function declarations */
 void findOBB(double *x, double xc[3], double dxc[3], double vec[3][3],
              int nnodes);

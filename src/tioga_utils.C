@@ -199,12 +199,13 @@ int search_octant(double *xpt,double ds[3],ADAPTIVE_HOLEMAP *AHM,
   xlo[2] = AHM->meta.extents_lo[2] + ds[2]*INT2DBL*parent->z;
 
   /* check intersection with box around each point */
-  if(xpt[0] < xlo[0])       return OUTSIDE_SB;
-  if(xpt[0] > xlo[0]+dx[0]) return OUTSIDE_SB;
-  if(xpt[1] < xlo[1])       return OUTSIDE_SB;
-  if(xpt[1] > xlo[1]+dx[1]) return OUTSIDE_SB;
-  if(xpt[2] < xlo[2])       return OUTSIDE_SB;
-  if(xpt[2] > xlo[2]+dx[2]) return OUTSIDE_SB;
+  const double TOL2 = 0.0;
+  if(xpt[0] < xlo[0]+TOL2)       return OUTSIDE_SB;
+  if(xpt[0] > xlo[0]+dx[0]-TOL2) return OUTSIDE_SB;
+  if(xpt[1] < xlo[1]+TOL2)       return OUTSIDE_SB;
+  if(xpt[1] > xlo[1]+dx[1]-TOL2) return OUTSIDE_SB;
+  if(xpt[2] < xlo[2]+TOL2)       return OUTSIDE_SB;
+  if(xpt[2] > xlo[2]+dx[2]-TOL2) return OUTSIDE_SB;
 
   // point exists inside this octant: need to check if leaf or parent
   // check if parent is refined: [yes] search children, [no] return filltype
@@ -1073,12 +1074,15 @@ char checkFaceBoundaryNodes(int *nodes,const char *bcnodeflag,
   // if any node on face is duplicate tag (wall + outer bc), return 0 (false)
   if(duplicatenodeflag){
     for(v=0;v<numfaceverts;v++){
-      if(duplicatenodeflag[nodes[faceConn[v]-BASE]]){
-        printf("[tioga] WARNING: Duplicate tag found -- disabling overset node %d\n",
-                nodes[faceConn[v]-BASE]);
-        return 0;
-      }
+      bcFlag &= !duplicatenodeflag[nodes[faceConn[v]-BASE]];
+
+      //if(duplicatenodeflag[nodes[faceConn[v]-BASE]]){
+      //  printf("[tioga] WARNING: Duplicate tag found -- disabling overset node %d\n",
+      //          nodes[faceConn[v]-BASE]);
+      //  return 0;
+      //}
     }
+    if(bcFlag == 0) return 0;
   }
 
   for(v=0;v<numfaceverts;v++) bcFlag &= bcnodeflag[nodes[faceConn[v]-BASE]];
