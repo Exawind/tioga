@@ -514,8 +514,8 @@ void MeshBlock::tagBoundaryFaces(void){
               i3=3*inode[m];
 
               for(d=0;d<3;d++){
-                bboxCell[d]  =TIOGA_MIN(bboxCell[d],  x[i3+d]);
-                bboxCell[d+3]=TIOGA_MAX(bboxCell[d+3],x[i3+d]);
+                bboxCell[d]  =std::min(bboxCell[d],  x[i3+d]);
+                bboxCell[d+3]=std::max(bboxCell[d+3],x[i3+d]);
               }
             }
 
@@ -546,8 +546,8 @@ void MeshBlock::tagBoundaryFaces(void){
               i3=3*inode[m];
 
               for(d=0;d<3;d++){
-                bboxCell[d]  =TIOGA_MIN(bboxCell[d],  x[i3+d]);
-                bboxCell[d+3]=TIOGA_MAX(bboxCell[d+3],x[i3+d]);
+                bboxCell[d]  =std::min(bboxCell[d],  x[i3+d]);
+                bboxCell[d+3]=std::max(bboxCell[d+3],x[i3+d]);
               }
             }
 

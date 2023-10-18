@@ -401,7 +401,7 @@ void MeshBlock::processDonors(ADAPTIVE_HOLEMAP *holemap,int nmesh,
          TRACEI(temp->donorData[1]);
          TRACEI(temp->donorData[2]);
         }
-        nodeRes[i]=TIOGA_MAX(nodeRes[i],temp->receptorRes);
+        nodeRes[i]=std::max(nodeRes[i],temp->receptorRes);
         temp=temp->next;
       }
 

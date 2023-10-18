@@ -292,8 +292,8 @@ void tioga::getAdaptiveHoleMap(void){
       }
 
       // add buffer to extents
-      dsmax = TIOGA_MAX(ds[0],ds[1]);
-      dsmax = TIOGA_MAX(dsmax,ds[2]);
+      dsmax = std::max(ds[0],ds[1]);
+      dsmax = std::max(dsmax,ds[2]);
       dsbox = dsmax*0.01;
       for(j=0; j<3; j++) AHMOLocal.extents_lo[j] -= (2*dsbox);
       for(j=0; j<3; j++) AHMOLocal.extents_hi[j] += (2*dsbox);
