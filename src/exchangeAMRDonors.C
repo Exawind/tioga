@@ -213,7 +213,12 @@ void tioga::exchangeAMRDonors(void)
 	    }
 	}
     }
-  for(i=0;i<ncart;i++) cb[i].processDonors(holeMap,nmesh);
+
+  if (USE_ADAPTIVE_HOLEMAP){
+     for(i=0;i<ncart;i++) cb[i].processDonors(adaptiveHoleMap,nmesh);
+  } else{
+     for(i=0;i<ncart;i++) cb[i].processDonors(holeMap,nmesh);
+  }
   pc_cart->clearPackets(sndPack,rcvPack);  
   for(i=0;i<nsend;i++)
     {
