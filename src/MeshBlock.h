@@ -450,7 +450,11 @@ class meshblockCompInfo {
 
     /* deconstructor */
    ~meshblockCompInfo(){
-        if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+	int sflag;
+	MPI_Finalized(&sflag);
+	if(!sflag){
+           if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+	}
     };
 };
 

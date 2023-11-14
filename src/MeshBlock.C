@@ -1717,8 +1717,11 @@ MeshBlock::~MeshBlock()
   if (mapmask) TIOGA_FREE(mapmask);
   if (uindx) TIOGA_FREE(uindx);
   if (invmap) TIOGA_FREE(invmap);
-
-  if (blockcomm != MPI_COMM_NULL) MPI_Comm_free(&blockcomm);
+  int sflag;
+  MPI_Finalized(&sflag);
+  if(!sflag){
+     if (blockcomm != MPI_COMM_NULL) MPI_Comm_free(&blockcomm);
+  }
 
   if (m_info_device) TIOGA_FREE_DEVICE(m_info_device);
 
