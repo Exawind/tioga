@@ -35,6 +35,17 @@ target_link_libraries(tioga_read.exe tiogadriver)
 add_executable(poisson_mms.exe poisson_mms.f90)
 target_link_libraries(poisson_mms.exe tiogadriver)
 
+set(GMSH_SOURCES
+  gmsh_io.C
+)
+
+add_library(gmsh_lib ${GMSH_SOURCES})
+add_executable(tioga_gmsh.exe gmsh_test.C)
+target_link_libraries(tioga_gmsh.exe gmsh_lib)
+
+add_executable(tioga_abuttingmesh.exe testTioga_abuttingMesh.f90)
+target_link_libraries(tioga_abuttingmesh.exe tiogadriver gmsh_lib)
+
 #add_executable(gpu_test.exe)
 #target_sources(gpu_test.exe PRIVATE
 #  gpu_test.C)
