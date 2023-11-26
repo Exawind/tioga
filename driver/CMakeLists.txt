@@ -7,12 +7,18 @@ set(TIOGA_EXE_SOURCES
   poisson_utils.f90
 )
 
+set(GMSH_SOURCES
+  gmsh_io.C
+)
+
 if (TIOGA_ENABLE_ARBORX)
   list(APPEND TIOGA_EXE_SOURCES
       kokkos.f90
       kokkos.C
   )
 endif()
+
+add_library(gmsh_lib ${GMSH_SOURCES})
 
 add_library(tiogadriver ${TIOGA_EXE_SOURCES})
 
@@ -22,6 +28,7 @@ endif()
 
 target_link_libraries(tiogadriver PUBLIC tioga)
 target_link_libraries(tiogadriver PUBLIC MPI::MPI_Fortran)
+target_link_libraries(tiogadriver PUBLIC gmsh_lib)
 
 add_executable(tioga.exe testTioga.F90)
 # Using #ifdef requires preprocessing
@@ -35,11 +42,6 @@ target_link_libraries(tioga_read.exe tiogadriver)
 add_executable(poisson_mms.exe poisson_mms.f90)
 target_link_libraries(poisson_mms.exe tiogadriver)
 
-set(GMSH_SOURCES
-  gmsh_io.C
-)
-
-add_library(gmsh_lib ${GMSH_SOURCES})
 add_executable(tioga_gmsh.exe gmsh_test.C)
 target_link_libraries(tioga_gmsh.exe gmsh_lib)
 
