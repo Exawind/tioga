@@ -60,9 +60,7 @@ void test(){
 
     //  Allocate memory.
     std::vector<double> node_x(dim*node_num);
-    std::vector<std::vector<int>> element_node;
-
-    element_node.resize(TYPE_NUM_MAX);
+    std::vector<int> element_node[TYPE_NUM_MAX];
     for(int i = 1; i < TYPE_NUM_MAX; i++){
         element_node[i].resize(elem_counts[i]*TYPE_NNODES[i]);
       //printf("ALLOCATING %d %d %d\n",i,elem_counts[i],TYPE_NNODES[i]);
@@ -70,8 +68,7 @@ void test(){
 
     //  Get the data.
     gmsh_data_read(gmsh_filename,dim,
-                   node_x.data(),
-                   element_node);
+                   node_x,element_node);
 
 //    for(int i = 1; i < TYPE_NUM_MAX; i++){
 //        printf("ELEMENT TYPE %s\n",TYPE_NAME[i]);

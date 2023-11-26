@@ -259,7 +259,115 @@ return
 !
 end subroutine readGrid_from_file
 
+subroutine readGrid_gmsh(g,myid)
+  !
+  use iso_c_binding
+  use gridtype
+  implicit none
+  !
+  type(grid), intent(inout) :: g
+  integer, intent(in) :: myid
+  !
+  ! local variables
+  !
+  character *128 :: fname,integer_string
+  character*1 :: hash
+  integer :: i,junk,j,m
+  real*8 :: rho,u,v,w,p,e,xx,yy,zz,rhoinf,pinf,uinf
+  real*8 :: fac,rsq
+  real*8 :: SIXTH=1./6
+  real*8 :: EIGHTH=1./8
 
+  type(c_ptr) :: xyz
+  type(c_ptr) :: ndc4,ndc5,ndc6,ndc8
+  type(c_ptr) :: wbc,obc
+
+ if(myid>0)then
+  g%nwbc = 0
+  g%nobc = 0
+  g%nv = 0
+  g%n4 = 0
+  g%n5 = 0
+  g%n6 = 0
+  g%n8 = 0
+ else
+  call tioga_gmsh_reader(g%nv,xyz,           & ! vertex count, coordinates
+                         g%nwbc,g%nobc,      & ! wall/outer bc node counts
+                         wbc,obc,            & ! wall/outer bc arrays
+                         g%n4,g%n5,g%n6,g%n8,& ! element counts
+                         ndc4,ndc5,ndc6,ndc8 ) ! element node connectivities
+
+  ! set Fortran pointers to C pointers
+  call c_f_pointer(xyz, g%x,       [3*g%nv])
+  call c_f_pointer(wbc, g%wbcnode, [g%nwbc])
+  call c_f_pointer(obc, g%obcnode, [g%nobc])
+  call c_f_pointer(ndc4,g%ndc4,    [4,g%n4])
+  call c_f_pointer(ndc5,g%ndc5,    [5,g%n5])
+  call c_f_pointer(ndc6,g%ndc6,    [6,g%n6])
+  call c_f_pointer(ndc8,g%ndc8,    [8,g%n8])
+ endif
+
+  print*,"GMSH Nodes: ",g%nv,g%nwbc,g%nobc
+  print*,"GMSH Elems: ",g%n4,g%n5,g%n6,g%n8
+  !print*,"X: ",g%x(4:6)
+  !print*,"NDC8: ",g%ndc8(:,g%n8)
+
+  g%ncells=g%n4+g%n5+g%n6+g%n8
+  g%nvar=5
+  g%nghost=0
+  g%ndof=g%ncells+g%nghost
+  !
+  allocate(g%bodytag(g%nv),g%iblank(g%nv))
+  allocate(g%scal(g%nvar))
+  allocate(g%xcentroid(3*g%ndof))
+  allocate(g%q(g%nvar*g%nv))
+  allocate(g%dq(3*g%nvar*g%nv))
+  !
+  g%bodytag = 3
+  g%iblank = 1
+  !
+  ! read coordinates and body tag
+  ! also create some conservative variables
+  !
+  rhoinf=1.
+  uinf=0.5
+  pinf=1/1.4
+  !
+  do i=1,g%nv
+     xx=g%x(3*i-2)
+     yy=g%x(3*i-1)
+     zz=g%x(3*i)
+     rsq=xx**2+yy**2+zz**2
+     fac=0.1*exp(-rsq*0.5)
+
+     rho=rhoinf*(1-fac)
+     u=uinf+fac*xx/(rsq+0.01)
+     v=fac*yy/(rsq+0.01)
+     w=fac*zz/(rsq+0.01)
+     p=pinf*(1-fac*fac)
+     e=p/0.4+0.5*rho*(u**2+v**2+w**2)
+
+     g%q(g%nvar*(i-1)+1)=rho
+     g%q(g%nvar*(i-1)+2)=rho*u
+     g%q(g%nvar*(i-1)+3)=rho*v
+     g%q(g%nvar*(i-1)+4)=rho*w
+     g%q(g%nvar*(i-1)+5)=e
+  enddo
+  !
+  g%scal=1
+  g%nmax=8
+  !
+  ! read wall and overset boundary nodes
+  !
+  !
+  !do i=1,g%nwbc
+  !   read(2,*) g%wbcnode(i)
+  !enddo
+  !!
+  !do i=1,g%nobc
+  !   read(2,*) g%obcnode(i)
+  !enddo
+end subroutine readGrid_gmsh
 
 !=====================================================================
 !

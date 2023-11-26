@@ -8,51 +8,119 @@ using namespace std;
 /* header files */
 # include "gmsh_io.hpp"
 
+#define BASE 1
+#define _X 0
+#define _Y 1
+#define _Z 2
+
 /* ========================================================================== */
 /*                               GMSH INTERFACE                               */
 /* ========================================================================== */
 extern "C" {
-  void tioga_gmsh_reader_(int *nnodes,double *xyz,int *nwbc, int *nobc){
-    std::string gmsh_filename = "billet-cap.3D.Q1.12K.msh";
+  void tioga_gmsh_reader_(int *nnodes,double **xyz,
+                          int *nwbc, int *nobc,
+                          int **wbc_t,int **obc_t,
+                          int *n4,int *n5,int *n6,int *n8,
+                          int **ndc4,int **ndc5,int **ndc6,int **ndc8){
+    std::string gmsh_filename = "billet-cap.3D.Q1.27K.tet.msh";
     int dim,node_num;
     int element_num;
+    double eps=1.0E-12;
+    double x,y,z;
 
-    cout << "\nTEST:\n Read data from a file.\n";
+    // remove excess memory
+    obc.clear();
+    wbc.clear();
+    node_x.clear();
+    for(int i = 0; i < TYPE_NUM_MAX; i++) element_node[i].clear();
+
+    cout << "\nGMSH:\n Read data from a file.\n";
 
     //  Get the data size.
     std::vector<int> elem_counts(TYPE_NUM_MAX,0);
     gmsh_size_read(gmsh_filename,node_num,dim,element_num,elem_counts.data());
 
-    cout << " \n Node data read from file \"" << gmsh_filename << "\"\n\n";
+    cout << " Node data read from file \"" << gmsh_filename << "\"\n\n";
     cout << "  Number of nodes = "      << node_num << "\n";
     cout << "  Spatial dimension = "    << dim << "\n";
-    cout << "  Number of elements: "    << "\n";
-    for(int i = 1; i < TYPE_NUM_MAX; i++){
-        printf("    %s %d\n", TYPE_NAME[i],elem_counts[i]);
-    }
+    cout << "  Elements counts: "    << "\n";
+    for(int i = 1; i < TYPE_NUM_MAX; i++) printf("    %s %d\n",TYPE_NAME[i],elem_counts[i]);
     cout << endl;
 
     //  Allocate memory.
-    std::vector<double> node_x(dim*node_num);
-    std::vector<std::vector<int>> element_node;
-
-    element_node.resize(TYPE_NUM_MAX);
+    node_x.resize(dim*node_num);
     for(int i = 1; i < TYPE_NUM_MAX; i++){
         element_node[i].resize(elem_counts[i]*TYPE_NNODES[i]);
       //printf("ALLOCATING %d %d %d\n",i,elem_counts[i],TYPE_NNODES[i]);
     }
 
-    //  Get the data.
+    // Get data.
     gmsh_data_read(gmsh_filename,dim,
-                   node_x.data(),
-                   element_node);
+                   node_x,element_node);
+
+    // fixed geometry boundaries for msh
+    double outerboxTop = 1.33; //y-direction
+    double innerboxTop = 1.05; //y-direction
+    double outerboxh = 0.2, obh = outerboxh*0.5;
+    double innerboxh = 0.08, ibh = innerboxh*0.5;
+    double rad = 1.0;
+
+    // count/fill overset BC nodes
+    std::vector<char> bcall(node_num,0);
+    for(int i=0;i<node_num;i++) bcall[i] =  (node_x[3*i+_Y] >= outerboxTop-eps);// top overset face
+    for(int i=0;i<node_num;i++) bcall[i] += (node_x[3*i+_X] <= -outerboxh+eps); // xlo overset face
+    for(int i=0;i<node_num;i++) bcall[i] += (node_x[3*i+_X] >=  outerboxh-eps); // xhi overset face
+    for(int i=0;i<node_num;i++) bcall[i] += (node_x[3*i+_Z] <= -outerboxh+eps); // zlo overset face
+    for(int i=0;i<node_num;i++) bcall[i] += (node_x[3*i+_Z] >=  outerboxh-eps); // zhi overset face
+
+    int nobc_ = 0;
+    for(int i=0;i<node_num;i++) nobc_ += (bcall[i] > 0);
+
+    obc.resize(nobc_); nobc_ = 0;
+    for(int i=0;i<node_num;i++) {
+      if(bcall[i] > 0) obc[nobc_++] = i+BASE;
+    }
+
+    // count/fill wall BC nodes
+    std::fill(bcall.begin(), bcall.end(), 0);
+    for(int i=0;i<node_num;i++) {
+        x = node_x[3*i+_X]; y = node_x[3*i+_Y]; z = node_x[3*i+_Z];
+        double radiusSqr = x*x + y*y + z*z;
+
+        bcall[i] = (radiusSqr <=  rad+eps); // sphere surface
+
+        if(y <= innerboxTop+eps){
+            if(x >= -ibh-eps && x <= ibh+eps){
+                if(z >= -ibh-eps && z <= ibh+eps){
+                    bcall[i] = 1;
+                }
+            }
+        }
+    }
+
+    int nwbc_ = 0;
+    for(int i=0;i<node_num;i++) nwbc_ += (bcall[i] > 0);
+
+    wbc.resize(nwbc_); nwbc_ = 0;
+    for(int i=0;i<node_num;i++) {
+      if(bcall[i] > 0) wbc[nwbc_++] = i+BASE;
+    }
 
     // assign mesh stats
     *nnodes = node_num;
-    xyz = node_x.data();
-    *nwbc = 0;
-    *nobc = 0;
-
+    *xyz = node_x.data();
+    *nwbc = nwbc_;
+    *nobc = nobc_;
+    *wbc_t = wbc.data();
+    *obc_t = obc.data();
+    *n4 = elem_counts[TYPE_TET];
+    *n5 = elem_counts[TYPE_PYR];
+    *n6 = elem_counts[TYPE_PRI];
+    *n8 = elem_counts[TYPE_HEX];
+    *ndc4 = element_node[TYPE_TET].data();
+    *ndc5 = element_node[TYPE_PYR].data();
+    *ndc6 = element_node[TYPE_PRI].data();
+    *ndc8 = element_node[TYPE_HEX].data();
   }
 }
 /* ========================================================================== */
@@ -118,8 +186,9 @@ int ch_to_digit(char ch){
 //    the nodes that make up each element.
 //
 //****************************************************************************80
-void gmsh_data_read(string gmsh_filename, int node_dim, double *node_x,
-                    std::vector<std::vector<int>> &element_nodes){
+void gmsh_data_read(string gmsh_filename, int node_dim,
+                    std::vector<double> &node_x,
+                    std::vector<int> element_nodes[]){
     int i,j,k;
     int level;
     int length;
@@ -164,7 +233,7 @@ void gmsh_data_read(string gmsh_filename, int node_dim, double *node_x,
                     text.erase(0, length);
                     node_x[i+j*node_dim] = x;
                 }
-                j = j + 1;
+                j++;
             }
         }
     }
@@ -183,7 +252,6 @@ void gmsh_data_read(string gmsh_filename, int node_dim, double *node_x,
             // read element number
             s_to_i4(text, length, ierror);
             level = 2;
-            j = 0;
         } else if(level == 2){
             if(s_begin(text, "$EndElements")){
                 break;
@@ -199,7 +267,7 @@ void gmsh_data_read(string gmsh_filename, int node_dim, double *node_x,
                 int num_nodes = getElementNumNodes(elem_type);
 
                 //printf("Filling Elem %d of type %d: count %d, num_nodes %d\n",em_id,elem_type,element_count,num_nodes);
-                int *elem_nodes = &(element_nodes[getElementType(elem_type)].data())[num_nodes*element_count];
+                int * const elem_nodes = &(element_nodes[getElementType(elem_type)][num_nodes*element_count]);
 
                 // read element nodes
                 for(i = 0; i < num_nodes; i++){
@@ -281,6 +349,32 @@ void gmsh_size_read(string gmsh_filename, int &node_num, int &node_dim,
         cerr << "GMSH_SIZE_READ - Fatal error!\n";
         cerr << "  Could not open input file \"" << gmsh_filename << "\"\n";
         exit(1);
+    }
+
+    level = 0;
+    for(;;){
+        getline(input, text);
+        if(input.eof()) break;
+
+        if(level == 0){
+            if(s_begin(text, "$MeshFormat")) level = 1;
+        } else if(level == 1){
+            if(s_begin(text, "$EndMeshFormat")) {
+                break;
+            } else {
+                double fmt_a = s_to_r8(text, length, ierror);
+                text.erase(0, length);
+                double fmt_b = s_to_r8(text, length, ierror);
+                text.erase(0, length);
+                double fmt_c = s_to_r8(text, length, ierror);
+                text.erase(0, length);
+
+                if((int) 10*fmt_a != 22){
+                    cout << "ERROR - GMSH FORMAT 2.2 ONLY: read format=" << fmt_a << endl;
+                    exit(1);
+                }
+            }
+        }
     }
 
     level = 0;
