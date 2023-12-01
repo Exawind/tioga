@@ -21,6 +21,7 @@
 #include "tioga.h"
 #include <assert.h>
 #include <vector>
+#include <iostream>
 
 using namespace TIOGA;
 /**
@@ -66,7 +67,177 @@ void tioga::setNumCompositeBodies(int ncomp){
   compositeBody.resize(ncomposite);
 }
 
-void tioga::assembleComms(void){
+/**
+ * register a composite body
+ */
+void tioga::registerCompositeBody(int compbodytag,int nbodytags,int *meshtags,int *dominancetags,double searchTol){
+  // resize and fill composite body tag IDs
+  compositeBody[compbodytag-BASE].searchTol = searchTol;
+  compositeBody[compbodytag-BASE].bodyids.resize(nbodytags);
+  compositeBody[compbodytag-BASE].dominanceflags.resize(nbodytags);
+  for(int i=0; i<nbodytags; i++) compositeBody[compbodytag-BASE].bodyids[i] = meshtags[i];
+  for(int i=0; i<nbodytags; i++) compositeBody[compbodytag-BASE].dominanceflags[i] = dominancetags[i];
+}
+
+void tioga::assembleCompositeMap(void){
+  int bodyi,bodyj;
+  int maxtag;
+  int i,j;
+
+  if(ncomposite>0){
+    /* ================================= */
+    /* 1. set mesh block composite flags */
+    /* ================================= */
+    for(int mbi=0; mbi<nblocks; mbi++){
+      auto& mb = mblocks[mbi];
+      int mbtag = mb->getMeshTag()-BASE;
+
+      for(int cb=0; cb<ncomposite; cb++){
+        CompositeBody &Composite = compositeBody[cb];
+
+        int nbodies = Composite.bodyids.size();
+        for(i=0; i<nbodies; i++){
+          bodyi = Composite.bodyids[i]-BASE;
+          if(bodyi == mbtag) mb->setCompositeFlag(Composite.searchTol,Composite.dominanceflags[i]);
+        }
+      }
+    }
+
+    /* ======================================== */
+    /* 2. assemble composite body communicators */
+    /* ======================================== */
+    // calculate max number of mesh tags
+    int maxtagLocal = -BIGINT;
+    for(int mbi=0; mbi<nblocks; mbi++){
+      auto& mb = mblocks[mbi];
+      int mbtag = mb->getMeshTag();
+
+      maxtagLocal = (maxtagLocal < mbtag) ? mbtag:maxtagLocal;
+    }
+    MPI_Allreduce(&maxtagLocal,&maxtag,1,MPI_INT,MPI_MAX,scomm);
+
+    // resize the composite body map: number of composite bodies
+    compositeBodyMap.resize(ncomposite);
+
+    // fill composite map: all ranks have compositeBody info -> compositeBodyMap is globally known
+    for(int cb=0; cb<ncomposite; cb++){
+      CompositeBody &Composite = compositeBody[cb];
+
+      // resize the composite body map: [#MB]x[#MB]
+      compositeBodyMap[cb].resize(maxtag);
+      for(i=0; i<maxtag; i++) compositeBodyMap[cb][i].resize(maxtag,0); // fill 0
+
+      int nbodies = Composite.bodyids.size();
+      for(i=0; i<nbodies; i++){
+        bodyi = Composite.bodyids[i]-BASE;
+        for(j=i+1; j<nbodies; j++){
+          bodyj = Composite.bodyids[j]-BASE;
+          compositeBodyMap[cb][bodyi][bodyj]=1;
+          compositeBodyMap[cb][bodyj][bodyi]=1; //transpose
+        }
+      }
+    }
+
+    // assemble composite-body communication schedules
+    assembleCompositeComms();
+  }
+}
+
+void tioga::assembleCompositeComms(void){
+  MPI_Group meshblockCompositeGroup;
+
+  int maxtag,maxtagLocal;
+  int compositecount;
+
+  std::vector<char> existMeshTag(numprocs);
+  std::vector<int> comp_list(numprocs);
+
+  /* ===================================== */
+  /* set mesh body ranks and communicators */
+  /* ===================================== */
+  /* NOTE: There is one task.
+   *  1. Build communicator between all COMPOSITE ranks of a body
+   *     + the master rank of that body.
+   *   1a. For each body, we set the rank with lowest id as the rank master
+   *   1b. Build body composite subgroup/communicator and new rank IDs.
+   */
+
+  /* ================================ */
+  /* Step A: count max number of tags */
+  /* ================================ */
+  maxtagLocal = -BIGINT;
+  for(int mbi=0; mbi<nblocks; mbi++){
+    auto& mb = mblocks[mbi];
+    int mbtag = mb->getMeshTag();
+
+    maxtagLocal = (maxtagLocal < mbtag) ? mbtag:maxtagLocal;
+  }
+  MPI_Allreduce(&maxtagLocal,&maxtag,1,MPI_INT,MPI_MAX,scomm);
+
+  // allocate mesh block complement communicators and rank master arrays
+  if(meshblockComposite) delete [] meshblockComposite;
+  meshblockComposite = new meshblockCompInfo[maxtag];
+
+  /* ========================================= */
+  /* Step B: create each subgroup per mesh tag */
+  /* ========================================= */
+  for(int cb=0; cb<ncomposite; cb++){
+    CompositeBody &Composite = compositeBody[cb];
+    int nbodies = Composite.bodyids.size();
+
+    for(int i=0; i<nbodies; i++){
+      int bodyi = Composite.bodyids[i]-BASE;
+      meshblockCompInfo &MBC = meshblockComposite[bodyi];
+
+      // 1. set composite master rank ID (use complement info)
+      MBC.masterID = meshblockComplement[bodyi].masterID;
+      MPI_Allreduce(MPI_IN_PLACE,&(MBC.masterID),1,MPI_INT,MPI_MAX,scomm);
+      MBC.comm = MPI_COMM_NULL;
+
+      // 2. find if other ranks with mesh blocks in same composite body
+      char foundFlag = 0;
+      for(int j=0; j<nbodies && foundFlag==0; j++){
+        int bodyj = Composite.bodyids[j]-BASE;
+
+        for(int mbi=0; mbi<nblocks; mbi++){
+          auto& mb = mblocks[mbi];
+          int mbtag = mb->getMeshTag();
+          if(bodyj == mbtag-BASE){foundFlag = 1; break;}
+        }
+      }
+
+      // 3. inform all ranks of which ranks are involved in this mesh tag
+      std::fill(existMeshTag.begin(),existMeshTag.end(),0);
+      MPI_Allgather(&foundFlag,1,MPI_CHAR,existMeshTag.data(),1,MPI_CHAR,scomm);
+
+      // reset composite rank lists
+      std::fill(comp_list.begin(),comp_list.end(),0);
+
+      // create MPI subgroup ranks for this mesh tag: composite list
+      compositecount = 0;
+      for(int ii=0; ii<numprocs; ii++){
+        // add rank i to composite list
+        if(existMeshTag[ii]) comp_list[compositecount++] = ii;
+      }
+
+      // construct the subgroups using the composite rank lists
+      MPI_Group_incl(scomm_group,compositecount,comp_list.data(),&meshblockCompositeGroup);
+
+      // create composite MPI subgroup communicator and rank info
+      MPI_Comm_create(scomm,meshblockCompositeGroup,&(MBC.comm));
+      MPI_Comm_rank(MBC.comm,&(MBC.id));
+      MPI_Comm_size(MBC.comm,&(MBC.nrank));
+
+      //printf("My GID[%2d] (comp rank %2d of %2d), body_tag[%d] of %d blocks, master rank %d, %d\n",
+      //        myid,MBC.id,MBC.nrank,bodyi,maxtag,MBC.masterID,myid == MBC.masterID);
+
+      // cleanup memory
+      MPI_Group_free(&meshblockCompositeGroup);
+    }
+  }
+}
+
+void tioga::assembleComplementComms(void){
   MPI_Group meshblockIncludeGroup;
   MPI_Group meshblockExcludeGroup;
 
@@ -106,19 +277,19 @@ void tioga::assembleComms(void){
   MPI_Allreduce(&maxtagLocal,&maxtag,1,MPI_INT,MPI_MAX,scomm);
 
   // allocate mesh block complement communicators and rank master arrays
-  if(meshblockComp) delete [] meshblockComp;
-  meshblockComp = new meshblockCompInfo[maxtag];
+  if(meshblockComplement) delete [] meshblockComplement;
+  meshblockComplement = new meshblockCompInfo[maxtag];
 
   /* ========================================= */
   /* Step B: create each subgroup per mesh tag */
   /* ========================================= */
   for(int mtag=1; mtag<=maxtag; mtag++){
-    meshblockCompInfo &MBC = meshblockComp[mtag-BASE];
+    meshblockCompInfo &MBC = meshblockComplement[mtag-BASE];
 
     // check if body exists on rank
     char foundFlag = 0;
     for(int mbi=0; mbi<nblocks; mbi++){
-      if(mytag[mbi] == mtag){foundFlag = 1; break;}
+      if(mtags[mbi] == mtag){foundFlag = 1; break;}
     }
 
     // inform all ranks of which ranks are involved in this mesh tag
@@ -271,18 +442,6 @@ void tioga::register_unstructured_solution()
     qblock[iblk] = minfo->qnode.hptr;
     mblocks[iblk]->num_var() = minfo->num_vars;
   }
-}
-
-/**
- * register a composite body
- */
-void tioga::registerCompositeBody(int compbodytag,int *bodytags,int *dominancetags,int nbodytags,double searchTol){
-  // resize and fill composite body tag IDs
-  compositeBody[compbodytag].searchTol = searchTol;
-  compositeBody[compbodytag].bodyids.resize(nbodytags);
-  compositeBody[compbodytag].dominanceflags.resize(nbodytags);
-  for(int i=0; i<nbodytags; i++) compositeBody[compbodytag].bodyids[i] = bodytags[i];
-  for(int i=0; i<nbodytags; i++) compositeBody[compbodytag].dominanceflags[i] = dominancetags[i];
 }
 
 void tioga::profile(void)
@@ -911,7 +1070,7 @@ tioga::~tioga()
       delete [] holeMap;
     }
   if(adaptiveHoleMap) delete [] adaptiveHoleMap;
-  if(meshblockComp) delete [] meshblockComp;
+  if(meshblockComplement) delete [] meshblockComplement;
   if (pc) delete[] pc;
   if (pc_cart) delete[] pc_cart;
   if (sendCount) TIOGA_FREE(sendCount);

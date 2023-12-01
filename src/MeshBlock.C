@@ -835,7 +835,7 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
     }
   //
   sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"flow%s.dat",&(intstring[1]));
+  sprintf(fname,"flow%s.tec",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"BTAG\"");
@@ -926,12 +926,12 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
 	    }
 	}
     }
-  fprintf(fp,"%d\n",nwbc);
-  for(i=0;i<nwbc;i++)
-    fprintf(fp,"%d\n",wbcnode[i]);
-  fprintf(fp,"%d\n",nobc);
-  for(i=0;i<nobc;i++)
-    fprintf(fp,"%d\n",obcnode[i]);
+//  fprintf(fp,"%d\n",nwbc);
+//  for(i=0;i<nwbc;i++)
+//    fprintf(fp,"%d\n",wbcnode[i]);
+//  fprintf(fp,"%d\n",nobc);
+//  for(i=0;i<nobc;i++)
+//    fprintf(fp,"%d\n",obcnode[i]);
   fclose(fp);
   return;
 }
@@ -1253,6 +1253,112 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(char nodetype2tag,
 
     // get octant since it hasn't been tagged
     octant_full_t &oct = level->octants[j];
+
+    // octant bounds: x
+    xlo[0] = extents_lo[0] + ds[0]*oct.x;
+    xlo[1] = extents_lo[1] + ds[1]*oct.y;
+    xlo[2] = extents_lo[2] + ds[2]*oct.z;
+
+    box2.x.lo = xlo[0]; box2.x.hi = xlo[0] + dx[0];
+    box2.y.lo = xlo[1]; box2.y.hi = xlo[1] + dx[1];
+    box2.z.lo = xlo[2]; box2.z.hi = xlo[2] + dx[2];
+
+    // possible overlap: use face intersection test
+    for(d=0; d<3; d++) boxcenter[d] = xlo[d] + halfdx[d];
+
+    // loop all boundary faces
+    for(i=0; i<nbcface; i++){
+
+      // box of face
+      box_t &box1 = bcfacebox[i];
+
+      // test bounds of octant
+      if(overlapping1D(box1.x,box2.x) &&
+         overlapping1D(box1.y,box2.y) &&
+         overlapping1D(box1.z,box2.z)){
+        /* possible overlap: use face intersection test */
+
+        // load face boundary nodes: set pointer to nodes
+        inode = &bcfacenode[4*i]; // last node may be -1
+
+        // get node indices and coordinates for this boundary face
+        // load 1st three nodes
+        double *pt1 = &x[3*inode[0]];
+        double *pt2 = &x[3*inode[1]];
+        double *pt3 = &x[3*inode[2]];
+
+        // test triangle 1: pass first 3 triangles
+        if(triBoxOverlap(boxcenter,halfdx,pt1,pt2,pt3)){
+          tagList[j] = 1;
+          break; // jump to next octant (break from inner BC loop)
+        }
+
+        // if quad, test second triangle using last node
+        nvert = (inode[3] == -1) ? 3:4; // number of face vertices
+        if(nvert == 4){
+          double *pt4 = &x[3*inode[3]];
+          if(triBoxOverlap(boxcenter,halfdx,pt1,pt2,pt4)){
+            tagList[j] = 1;
+            break; // jump to next octant (break from inner BC loop)
+          }
+        }
+      }
+    }
+  }
+}
+
+void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(char nodetype2tag,
+                                                        double extents_lo[3],
+                                                        double extents_hi[3],
+                                                        uint8_t level_id,
+                                                        uint32_t noctants,
+                                                        octant_coordinates_t *octants,
+                                                        uint8_t *taggedList,
+                                                        uint8_t *tagList){
+  int *inode;
+  int nvert;
+  int i,j;
+  int d;
+
+  double boxcenter[3];
+  double ds[3],dx[3],halfdx[3];
+  double xlo[3];
+  box_t box2;
+
+  const qcoord_t levelh = OCTANT_LEN(level_id); // integer length of octant
+
+  // set node type data
+  int nbcface = (nodetype2tag == WALLNODETYPE) ? nwbcface:nobcface;
+  std::vector<int> &bcfacenode = (nodetype2tag == WALLNODETYPE) ? wbcfacenode:obcfacenode;
+  std::vector<box_t> &bcfacebox = (nodetype2tag == WALLNODETYPE) ? wbcfacebox:obcfacebox;
+
+  // octree physical lengths
+  ds[0] = extents_hi[0] - extents_lo[0];
+  ds[1] = extents_hi[1] - extents_lo[1];
+  ds[2] = extents_hi[2] - extents_lo[2];
+
+  // rescale ds: embed integer to double conversion
+  ds[0] *= INT2DBL;
+  ds[1] *= INT2DBL;
+  ds[2] *= INT2DBL;
+
+  // octant physical length
+  dx[0] = ds[0]*levelh;
+  dx[1] = ds[1]*levelh;
+  dx[2] = ds[2]*levelh;
+
+  halfdx[0] = 0.5*dx[0];
+  halfdx[1] = 0.5*dx[1];
+  halfdx[2] = 0.5*dx[2];
+
+  // mark octant intersecting boundary face
+  for(j=0; j<noctants; j++){
+    // check if tagged already OR
+    // if taggedList provided, then octant must also be tagged in other list
+    if(tagList[j] || (taggedList && taggedList[j]==0)) continue;
+
+    // get octant since it hasn't been tagged
+    octant_coordinates_t &oct = octants[j];
 
     // octant bounds: x
     xlo[0] = extents_lo[0] + ds[0]*oct.x;

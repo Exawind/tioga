@@ -155,14 +155,17 @@ extern "C" {
     tg->setNumCompositeBodies(*ncomp);
   }
 
-  void tioga_register_composite_body_(int *compbodytag,int *bodytags,int *dominancetags,int *nbodytags,double *searchTol)
+  void tioga_register_composite_body_(int *compbodytag,int *nbodytags,int *bodytags,int *dominancetags,double *searchTol)
   {
-    tg->registerCompositeBody(*compbodytag,bodytags,dominancetags,*nbodytags,*searchTol);
+    tg->registerCompositeBody(*compbodytag,*nbodytags,bodytags,dominancetags,*searchTol);
   }
 
   void tioga_preprocess_grids_(void)
   {
-    if(tg->getHoleMapAlgorithm() == 1) tg->assembleComms(); // adaptive alg
+    if(tg->getHoleMapAlgorithm() == 1){
+      tg->assembleComplementComms(); // build complement rank communicators
+      if(tg->getNumCompositeBodies()>0) tg->assembleCompositeMap(); // abutting meshes (AFTER assembleComplementComms)
+    }
     tg->profile();
   }
 

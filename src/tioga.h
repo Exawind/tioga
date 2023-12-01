@@ -78,12 +78,15 @@ class tioga
   int iorphanPrint;
 
   //! Mesh Block Complement data
-  meshblockCompInfo *meshblockComp;
+  meshblockCompInfo *meshblockComplement;
+
+  //! Mesh Block Composite data
+  meshblockCompInfo *meshblockComposite;
 
   //! Composite Body info
   int ncomposite; /** < number of composite bodies */
   std::vector<CompositeBody> compositeBody; /** < list of composite body structs */
-//std::vector<std::vector<char>> compositeBodyMap; /** < mesh block composite-body map flag   */
+  std::vector<std::vector<std::vector<char>>> compositeBodyMap; /** < mesh block composite-body map flag   */
 
   //! Mesh blocks in this processor
   std::vector<std::unique_ptr<MeshBlock> > mblocks;
@@ -119,7 +122,8 @@ class tioga
         holeMap=NULL; adaptiveHoleMap=NULL;
         pc=NULL; sendCount=NULL; recvCount=NULL;
         pc_cart = NULL;
-        meshblockComp=NULL;
+        meshblockComplement=NULL;
+        meshblockComposite=NULL;
         // obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         isym=3;ihigh=0;nblocks=0;ncart=0;ncomposite=0;ihighGlobal=0;iamrGlobal=0;
         mexclude=3,nfringe=1;
@@ -135,11 +139,14 @@ class tioga
   /** set communicator */
   void setCommunicator(MPI_Comm communicator,int id_proc,int nprocs);
 
-  void assembleComms(void);
+  void assembleComplementComms(void);
+  void assembleCompositeComms(void);
+  void assembleCompositeMap(void);
 
   int  getNumCompositeBodies(){return ncomposite;}
   void setNumCompositeBodies(int ncomposite);
-  void registerCompositeBody(int compbodytag,int *bodytags,int *dominancetags,int nbodytags,double searchTol);
+
+  void registerCompositeBody(int compbodytag,int nbodytags,int *meshtags,int *dominancetags,double searchTol);
 
   /** registerGrid data */
 

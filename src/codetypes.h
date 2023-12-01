@@ -60,12 +60,14 @@ typedef int32_t qcoord_t;
 // #define NVAR               6
 #define WALLNODETYPE       0
 #define OUTERNODETYPE      1
-#define NON_UNIQUE_NODES   0
 /*==================================================================*/
 /* ADAPTIVE HOLE MAP OCTANT INFO                                    */
 /*==================================================================*/
-#define INTERSECT_ALG        1 // [0] point-box inclusion only
-                               // [1] face-box intersection (water-tight)
+#define INTERSECT_ALG       1 // [0] point-box inclusion only
+                              // [1] face-box intersection (water-tight)
+
+#define NON_UNIQUE_NODES    1 // [0] wbc nodes are NOT listed as obc nodes
+                              // [1] wbc nodes may also be listed as obc nodes
 
 /* Fixed Octree Constraints: Do Not Change */
 #define OCTANT_MAXLEVEL     30 // 32-bit integer
@@ -108,6 +110,30 @@ typedef int32_t qcoord_t;
 #define ZLO 4
 #define ZHI 5
 
+/* Mesh Block Complement/Composite Rank Data */
+class meshblockCompInfo {
+  public:
+    int nreq;
+    int id;
+    int nrank;
+    int masterID;   /* master rank for distributing mesh block data */
+    MPI_Comm comm;  /* communicator containing all complement ranks + master */
+
+    /* constructor */
+    meshblockCompInfo(){
+        nreq = 0;
+        id = -1;
+        nrank = 0;
+        masterID = -1;
+        comm = MPI_COMM_NULL;
+    };
+
+    /* destructor */
+   ~meshblockCompInfo(){
+        if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+    };
+};
+
 typedef struct {
   double lo;  /**< lower bound */
   double hi;  /**< upper bound */
@@ -130,6 +156,11 @@ typedef struct octant_full
   struct octant_full *children[8]; /**< [64B] children octants if refined */
 } octant_full_t;
 
+typedef struct octant_coordinates
+{
+  qcoord_t x, y, z;     /**< [12B] binary coordinates */
+} octant_coordinates_t;
+
 /** 3D octant datatype: 48 bytes per octant */
 typedef struct octant
 {
@@ -146,6 +177,13 @@ typedef struct level_octant
   uint8_t level_id;         /**< level number */
   std::vector<octant_full_t> octants; /**< [elem_count] locally stored octants */
 } level_octant_t;
+
+typedef struct level_octant_coordinate
+{
+  uint8_t level_id;     /**< level number */
+  uint32_t elem_count;  /**< number of octants in level */
+  std::vector<octant_coordinates_t> octants; /**< [elem_count] octant list */
+} level_octant_coordinate_t;
 
 typedef struct level
 {
@@ -171,6 +209,19 @@ typedef struct {
   uint64_t leaf_count;  /**< total leaf octant count */
   uint64_t elem_count;  /**< total octant count */
 } ahm_meta_t ;
+
+typedef struct {
+  uint8_t nlevel;       /**< number of levels in map */
+  double extents_lo[3]; /**< lower coordinates of tree */
+  double extents_hi[3]; /**< upper coordinates of tree */
+  uint64_t elem_count;  /**< total octant count */
+} ahm_meta_minimal_t ;
+
+typedef struct ADAPTIVE_HOLEMAP_COMPOSITE
+{
+  ahm_meta_minimal_t meta;  /**< adaptive hole map meta data */
+  level_octant_coordinate_t levels[OCTANT_MAXLEVEL];
+} ADAPTIVE_HOLEMAP_COMPOSITE;
 
 typedef struct ADAPTIVE_HOLEMAP
 {
