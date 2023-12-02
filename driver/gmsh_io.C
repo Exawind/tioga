@@ -22,6 +22,8 @@ extern "C" {
                           int **wbc_t,int **obc_t,
                           int *n4,int *n5,int *n6,int *n8,
                           int **ndc4,int **ndc5,int **ndc6,int **ndc8){
+    printf("\x1B[1;31m[WARNING] GMSH Reader has hard-coded mesh file and"
+            " OBC/WBC registration for billet cap mesh!\x1B[0m\n");
     std::string gmsh_filename = "billet-cap-big.3D.Q1.60K.tet.msh";
     int dim,node_num;
     int element_num;

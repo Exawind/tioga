@@ -765,11 +765,11 @@ void tioga::getAdaptiveHoleMap(void){
   }
 
   // output the hole maps
-  for(mbi=0; mbi<nblocks; mbi++){
-    auto& mb = mblocks[mbi];
-    mb->writeBCnodes(WALLNODETYPE,mb->getMeshTag()-BASE);
-  }
-  this->outputAdaptiveHoleMap();
+//  for(mbi=0; mbi<nblocks; mbi++){
+//    auto& mb = mblocks[mbi];
+//    mb->writeBCnodes(WALLNODETYPE,mb->getMeshTag()-BASE);
+//  }
+//  this->outputAdaptiveHoleMap();
 }
 
 /**
