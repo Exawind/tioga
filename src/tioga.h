@@ -146,7 +146,7 @@ class tioga
   int  getNumCompositeBodies(){return ncomposite;}
   void setNumCompositeBodies(int ncomposite);
 
-  void registerCompositeBody(int compbodytag,int nbodytags,int *meshtags,int *dominancetags,double searchTol);
+  void registerCompositeBody(int compbodytag,int nbodytags,int *meshtags,int *dominancetags,double searchTol=TOL);
 
   /** registerGrid data */
 

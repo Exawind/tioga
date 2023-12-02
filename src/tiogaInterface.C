@@ -155,9 +155,10 @@ extern "C" {
     tg->setNumCompositeBodies(*ncomp);
   }
 
-  void tioga_register_composite_body_(int *compbodytag,int *nbodytags,int *bodytags,int *dominancetags,double *searchTol)
+  void tioga_register_composite_body_(int *compbodytag,int *nbodytags,int *bodytags,int *dominancetags)
   {
-    tg->registerCompositeBody(*compbodytag,*nbodytags,bodytags,dominancetags,*searchTol);
+    //tg->registerCompositeBody(*compbodytag,*nbodytags,bodytags,dominancetags,*searchTol);
+    tg->registerCompositeBody(*compbodytag,*nbodytags,bodytags,dominancetags);
   }
 
   void tioga_preprocess_grids_(void)

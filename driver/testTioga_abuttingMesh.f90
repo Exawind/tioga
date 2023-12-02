@@ -76,8 +76,7 @@ program testTioga_abuttingMesh
   bodytags(2) = 3       ! billet tag (Base-1 indexing)
   dominancetags(1) = 0  ! sphere mesh is non-dominant
   dominancetags(2) = 1  ! billet mesh is dominant
-  searchTol = 1.0E-6    ! set tolerance to abutting-mesh node distance
-  call tioga_register_composite_body(compositebodytag,nbodytags,bodytags,dominancetags,searchTol)
+  call tioga_register_composite_body(compositebodytag,nbodytags,bodytags,dominancetags)
   ! ============================================================================================================================== !
   !
   ! register the grids

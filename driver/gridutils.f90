@@ -334,6 +334,8 @@ subroutine readGrid_gmsh(g,myid)
   pinf=1/1.4
   !
   do i=1,g%nv
+    ! shift y coordinates for testing
+    !g%x(3*i-1) = g%x(3*i-1) - 1.0E-2
      xx=g%x(3*i-2)
      yy=g%x(3*i-1)
      zz=g%x(3*i)
