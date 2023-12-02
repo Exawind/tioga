@@ -51,7 +51,7 @@ void searchIntersections(MeshBlock *mb,int *cellIndex,int *adtIntegers,double *a
 			 double *coord,int level,int node,double *xsearch,int nelem,int ndim)
 {
   int i;
-  int d,nodeChild,dimcut;
+  int d,nodeChild;
   double element[ndim];
   bool flag;
   //
@@ -73,17 +73,17 @@ void searchIntersections(MeshBlock *mb,int *cellIndex,int *adtIntegers,double *a
     nodeChild=adtIntegers[4*node+d];
     if (nodeChild > -1) {
       nodeChild=adtIntegers[4*nodeChild+3];
-        for(i=0;i<ndim;i++) element[i]=adtReals[ndim*nodeChild+i];
+      for(i=0;i<ndim;i++) element[i]=adtReals[ndim*nodeChild+i];
 
-	flag=1;
-        for(i=0;i<ndim/2;i++)    flag = (flag && (xsearch[i]        >=element[i]-mb->searchTol));
-        for(i=ndim/2;i<ndim;i++) flag = (flag && (xsearch[i-ndim/2] <=element[i]+mb->searchTol));
-	if (flag) {
-	  searchIntersections(mb,cellIndex,adtIntegers,adtReals,coord,level+1,
-                              nodeChild,xsearch,nelem,ndim);
-	  if (cellIndex[0] > -1 && cellIndex[1]==0) return;
-	}
+      flag=1;
+      for(i=0;i<ndim/2;i++)    flag = (flag && (xsearch[i]        >=element[i]-mb->searchTol));
+      for(i=ndim/2;i<ndim;i++) flag = (flag && (xsearch[i-ndim/2] <=element[i]+mb->searchTol));
+      if (flag) {
+	searchIntersections(mb,cellIndex,adtIntegers,adtReals,coord,level+1,
+                            nodeChild,xsearch,nelem,ndim);
+	if (cellIndex[0] > -1 && cellIndex[1]==0) return;
       }
+    }
   }
   return;
 }
