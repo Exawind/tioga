@@ -33,26 +33,49 @@ struct Node {
   int id;
   double x,y,z;
   const double eps = 1E-10;
+  const double binScaling = 1.0E4; // see note below
 
+  /*< NOTE: Increase this number (e.g.,1.0E5) if lots of x/y/z pts are verry close.
+   *
+   *  Background Info:
+   *    We want to create unique hashes based on coordinates;
+   *    by scaling the coordinates, we get better hash spreading.
+   *
+   *    Example: say we have x-coordinates
+   *     x1 = 1.2456
+   *     x2 = 1.2467
+   *  >> xHash(1E4 * x1) = hash(int(1245.6)) = hash(1245)
+   *  >> xHash(1E4 * x2) = hash(int(1246.7)) = hash(1246)
+   *     Thus, xHash(x1) != xHash(x2), so no lookup collisions
+   *     (so no '==' check).
+   *
+   *  If we did not perform bin scaling, all coordinates with same whole number
+   *  part (left digits of decimal part) would result in the same Hash,
+   *  thus requiring the expensive `operator==(const Node& otherNode)' check,
+   *  which is an N^2 algorithm (horrific scaling for even a small number of pts).
+   */
   Node() { }
   Node(int id,double *geo){
-    this->id = id;
-    this->x = geo[0];
-    this->y = geo[1];
-    this->z = geo[2];
+    this->id = id;   /*< node id */
+    this->x = geo[0];/*< x-coordinate of point */
+    this->y = geo[1];/*< y-coordinate of point */
+    this->z = geo[2];/*< z-coordinate of point */
   }
 
+  // checks if two nodes are the same: either by ID or by spatial distance
   bool operator==(const Node& otherNode) const {
     return (otherNode.id == id) || ((abs(this->x - otherNode.x) <= this->eps) &&
                                     (abs(this->y - otherNode.y) <= this->eps) &&
                                     (abs(this->z - otherNode.z) <= this->eps));
   }
 
+  // creates the hash value for inserting unique nodes into an std::unordered_set;
+  // if two nodes have the same hash value, the 'operator==' is called.
   struct HashFunction {
     size_t operator()(const Node& node) const {
-      size_t xHash = std::hash<int>()(int(1000.0*node.x));
-      size_t yHash = std::hash<int>()(int(1000.0*node.y)) << 1;
-      size_t zHash = std::hash<int>()(int(1000.0*node.z)) << 2;
+      size_t xHash = std::hash<int>()(int(node.binScaling*node.x));
+      size_t yHash = std::hash<int>()(int(node.binScaling*node.y)) << 1;
+      size_t zHash = std::hash<int>()(int(node.binScaling*node.z)) << 2;
       return xHash ^ yHash ^ zHash;
     }
   };
