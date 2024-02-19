@@ -15,10 +15,11 @@ program testTioga
 #ifdef TIOGA_USE_ARBORX
   use kokkos
 #endif
+  use mpi
   !
   implicit none
   !
-  include 'mpif.h'
+  !include 'mpif.h'
   !
   type(grid), target :: gr(2)
   type(grid), pointer :: g
@@ -59,7 +60,9 @@ program testTioga
   call tioga_init_f90(mpi_comm_world)
   call mpi_barrier(mpi_comm_world,ierr)
   !
-  
+  ! set hole map algorithm: [0] fixed (original), [1] adaptive
+  call tioga_setholemapalg(1)
+  !
   ntypes=1
   nv1=6
   nv2=8

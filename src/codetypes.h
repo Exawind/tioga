@@ -25,12 +25,14 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<vector>
 #include<algorithm>
 #include "mpi.h"
 /*====================================================================*/
 /*  Floating point definition                                         */
 /*====================================================================*/
 # define REAL double
+typedef int32_t qcoord_t;
 /*====================================================================*/
 /*  Base for indexing (0 or 1) */
 /*====================================================================*/
@@ -56,8 +58,30 @@
 #define HOLEMAPSIZE        192
 // #define NFRINGE            3
 // #define NVAR               6
+#define WALLNODETYPE       0
+#define OUTERNODETYPE      1
 /*==================================================================*/
-/* inline debugging tools                                             */
+/* ADAPTIVE HOLE MAP OCTANT INFO                                    */
+/*==================================================================*/
+#define INTERSECT_ALG        1 // [0] point-box inclusion only
+                               // [1] face-box intersection (water-tight)
+
+/* Fixed Octree Constraints: Do Not Change */
+#define OCTANT_MAXLEVEL     30 // 32-bit integer
+#define OCTANT_CHILDREN     8
+
+/** The length of a side of the root quadrant */
+#define OCTANT_ROOT_LEN   ((qcoord_t) 1 << OCTANT_MAXLEVEL)
+/** The length of a octant of level l */
+#define OCTANT_LEN(l) ((qcoord_t) 1 << (OCTANT_MAXLEVEL - (l)))
+/** Conversion from integer coordinates to double coordinates */
+#define INT2DBL ((double) 1.0 / (double) OCTANT_ROOT_LEN)
+
+#define OUTSIDE_SB 0
+#define INSIDE_SB  1
+#define WALL_SB    2
+/*==================================================================*/
+/* inline debugging tools                                           */
 /*==================================================================*/
 # define TRACEI(x)  printf("#tioga:\t"#x" =%d\n",x);
 # define TRACED(x)  printf("#tioga:\t"#x" =%.16e\n",x);
@@ -73,9 +97,87 @@
 // #define Abs(aa) (((aa) >= 0)? (aa): -(aa))
 // #define Round(aa) (int) ((fabs((aa) - floor(aa)) >= HALF)? ceil(aa): floor(aa))
 // #define swap(a,b) { a=a+b;b=a-b;a=a-b;}
-/*********************************************************************/
-/* Code specific types */
-/*********************************************************************/
+/*===================================================================*/
+/* Code specific types                                               */
+/*===================================================================*/
+#define XLO 0
+#define XHI 1
+#define YLO 2
+#define YHI 3
+#define ZLO 4
+#define ZHI 5
+
+typedef struct {
+  double lo;  /**< lower bound */
+  double hi;  /**< upper bound */
+} bound_t;
+
+typedef struct {
+  bound_t x;  /**< x bounds */
+  bound_t y;  /**< y bounds */
+  bound_t z;  /**< z bounds */
+} box_t;
+
+/** The 3D full octant datatype: 130 bytes per octant */
+typedef struct octant_full
+{
+  qcoord_t x, y, z; /**< [12B] binary coordinates */
+  uint32_t id;      /**< [4B] element id on level */
+  uint8_t filltype; /**< [1B] floodfill: [0] inside SB, [1] outside SB, [2] hole SB */
+  uint8_t refined;  /**< [1B] flag if refined (i.e. is a parent) */
+  struct octant_full *nhbr[6];     /**< [48B] neighbor octant list */
+  struct octant_full *children[8]; /**< [64B] children octants if refined */
+} octant_full_t;
+
+/** 3D octant datatype: 48 bytes per octant */
+typedef struct octant
+{
+  qcoord_t x, y, z;     /**< [12B] binary coordinates */
+  uint8_t filltype;     /**< [1B]  floodfill: [0] inside SB, [1] outside SB, [2] hole SB */
+  uint8_t leafflag;     /**< [1B]  flag if refined (i.e. is a parent) */
+  uint8_t pad[2];       /**< [2B]  padding */
+  uint32_t children[8]; /**< [32B] children octant IDs */
+} octant_t;
+
+typedef struct level_octant
+{
+  uint32_t elem_count;      /**< number of octants in level */
+  uint8_t level_id;         /**< level number */
+  std::vector<octant_full_t> octants; /**< [elem_count] locally stored octants */
+} level_octant_t;
+
+typedef struct level
+{
+  uint8_t level_id;     /**< level number */
+  uint32_t elem_count;  /**< number of octants in level */
+  std::vector<octant_t> octants; /**< [elem_count] octant list */
+} level_t;
+
+typedef struct ADAPTIVE_HOLEMAP_OCTANT
+{
+  int8_t existWall;     /**< flag to indicate map contains wall */
+  double extents_lo[3]; /**< lower coordinates of tree */
+  double extents_hi[3]; /**< upper coordinates of tree */
+
+  uint8_t nlevel;       /**< number of levels */
+  level_octant_t levels[OCTANT_MAXLEVEL];
+} ADAPTIVE_HOLEMAP_OCTANT;
+
+typedef struct {
+  uint8_t nlevel;       /**< number of levels in map */
+  double extents_lo[3]; /**< lower coordinates of tree */
+  double extents_hi[3]; /**< upper coordinates of tree */
+  uint64_t leaf_count;  /**< total leaf octant count */
+  uint64_t elem_count;  /**< total octant count */
+} ahm_meta_t ;
+
+typedef struct ADAPTIVE_HOLEMAP
+{
+  uint8_t existWall;    /**< flag to indicate map contains wall */
+  ahm_meta_t meta;      /**< adaptive hole map meta data */
+  level_t levels[OCTANT_MAXLEVEL];
+} ADAPTIVE_HOLEMAP;
+
 typedef struct HOLEMAP
 {
   int existWall;
@@ -84,7 +186,6 @@ typedef struct HOLEMAP
   int *sam;
   double extents[6];
 } HOLEMAP;
-
 
 typedef struct OBB
 {
@@ -98,7 +199,8 @@ typedef struct OBB
   int tag_remote;
   int send_tag;
   int recv_tag;
-}OBB;
+} OBB;
+
 typedef struct DONORLIST
 {
   int donorData[4];
@@ -148,6 +250,6 @@ typedef struct INTEGERLIST2
   int *intData;
   double *realData;
   struct INTEGERLIST2 *next;
-}INTEGERLIST2; 
+} INTEGERLIST2;
 
 #endif /* CODETYPES_H */

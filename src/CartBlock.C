@@ -25,6 +25,7 @@
 #include "cartUtils.h"
 #include "linCartInterp.h"
 #include "linklist.h"
+#include "tioga_utils.h"
 
 void CartBlock::registerData(int lid, TIOGA::AMRMeshInfo* minfo)
 {
@@ -302,6 +303,12 @@ void CartBlock::processDonors(HOLEMAP *holemap, int nmesh)
   processIblank(holemap, nmesh, true); // for node receptors
 }
 
+void CartBlock::processDonors(ADAPTIVE_HOLEMAP *holemap, int nmesh)
+{
+  processIblank(holemap, nmesh, false); // for cell receptors
+  processIblank(holemap, nmesh, true); // for node receptors
+}
+
 void CartBlock::processIblank(HOLEMAP *holemap, int nmesh, bool isNodal)
 {
   //FILE*fp;
@@ -475,6 +482,172 @@ void CartBlock::processIblank(HOLEMAP *holemap, int nmesh, bool isNodal)
   // fclose(fp);
 }
 
+void CartBlock::processIblank(ADAPTIVE_HOLEMAP *holemap, int nmesh, bool isNodal)
+{
+  //FILE*fp;
+  char fname[80];
+  char qstr[2];
+  char intstring[7];
+  int ni,nj,nk,ibcheck;
+
+  DONORLIST *temp;
+  int* iflag=(int *)malloc(sizeof(int)*nmesh);
+  double* xtmp=(double *)malloc(sizeof(double)*3);
+
+  // set variables based on isNodal flag
+  int idof = isNodal ? (ncell-1) : -1;
+  int* iblank = isNodal ? ibl_node : ibl_cell;
+  int nX = isNodal ? (dims[0]+1) : dims[0];
+  int nY = isNodal ? (dims[1]+1) : dims[1];
+  int nZ = isNodal ? (dims[2]+1) : dims[2];
+
+  //
+  // first mark hole points
+  //
+  for(int k=0;k<nZ;k++)
+    for(int j=0;j<nY;j++)
+      for(int i=0;i<nX;i++)
+      {
+        idof++;
+
+        if(isNodal) {
+          xtmp[0] = xlo[0] + i*dx[0];
+          xtmp[1] = xlo[1] + j*dx[1];
+          xtmp[2] = xlo[2] + k*dx[2];
+        }
+        else {
+          xtmp[0] = xlo[0] + (i+0.5)*dx[0];
+          xtmp[1] = xlo[1] + (j+0.5)*dx[1];
+          xtmp[2] = xlo[2] + (k+0.5)*dx[2];
+        }
+
+        if (donorList[idof]==NULL)
+        {
+          for(int h=0;h<nmesh;h++)
+            if (holemap[h].existWall)
+            {
+	      int SB_val = checkAdaptiveHoleMap(&xtmp[0],&holemap[h]);
+              if (SB_val != OUTSIDE_SB)
+              {
+                int ibindex = isNodal ?
+                    cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
+                    cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
+                iblank[ibindex]=0;
+                break;
+              }
+            }
+        }
+        else
+        {
+          temp=donorList[idof];
+          for(int h=0;h<nmesh;h++) iflag[h]=0;
+          while(temp!=NULL)
+          {
+            int meshtagdonor=temp->donorData[1]-BASE;
+            iflag[meshtagdonor]=1;
+            temp=temp->next;
+          }
+          for(int h=0;h<nmesh;h++)
+          {
+            if (holemap[h].existWall)
+            {
+              if (!iflag[h]){
+	        int SB_val = checkAdaptiveHoleMap(&xtmp[0],&holemap[h]);
+                if (SB_val != OUTSIDE_SB)
+                {
+                  int ibindex = isNodal ?
+                      cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
+                      cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
+                  iblank[ibindex]=0;
+                  break;
+                }
+		}
+            }
+          }
+        }
+      }
+
+  //
+  // mark fringe points
+  //
+  idof = isNodal ? (ncell-1) : -1;
+  for(int k=0;k<nZ;k++)
+    for(int j=0;j<nY;j++)
+      for(int i=0;i<nX;i++)
+      {
+        idof++;
+        int ibindex = isNodal ?
+            cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
+            cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
+
+        if (iblank[ibindex]==0)
+        {
+          if (donorList[idof]!=NULL)
+          {
+            temp=donorList[idof];
+            while(temp!=NULL)
+            {
+              temp->cancel=1;
+              temp=temp->next;
+            }
+          }
+        }
+        else
+        {
+          if ((temp=donorList[idof])!=NULL)
+          {    
+             // simplify logic here: the first one on the list is the
+             // best donor anyway, accept it if its not a mandatory
+             // receptor on the donor side
+             if (temp->donorRes < BIGVALUE) 
+              {
+                iblank[ibindex]=-1;
+                temp=temp->next;
+              }
+             // cancel other donors if some exist
+             while(temp!=NULL)
+              {  
+                temp->cancel=1;
+                temp=temp->next;
+              }
+           } 
+        } 
+      }
+      
+
+  /* FIXME: this piece of code needs to be modified to account for isNodal
+  for(k=0;k<dims[2];k++)
+    for(j=0;j<dims[1];j++)
+      for(i=0;i<dims[0];i++)
+      {
+        ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
+        if (ibl_cell[ibindex]==1)
+        {
+          ibcheck=1;
+          for(nk=-1;nk<2;nk++)
+            for(nj=-1;nj<2;nj++)
+              for(ni=-1;ni<2;ni++)
+              {
+                ibindex=(k+nf+nk)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf+nj)*(dims[0]+2*nf)+i+nf+ni;
+                if ((ibindex < 0) || (ibindex >= dims[0]*dims[1]*dims[2])) continue;
+                ibcheck=ibcheck && (ibl_cell[ibindex]!=0);
+              }
+          if (!ibcheck)
+          {
+            printf("fixing orphan: myid/globalid/localid/(i,j,k)=%d %d %d %d %d %d \n",
+              myid,global_id,local_id,i,j,k);
+            ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
+            ibl_cell[ibindex]=0;
+          }
+        }
+      }
+  */
+
+  if (iflag) TIOGA_FREE(iflag);
+  if (xtmp)  TIOGA_FREE(xtmp);
+  // fclose(fp);
+}
+
 void CartBlock::getCancellationData(int *cancelledData, int *ncancel)
 {
   int i,j,k,m,isNodal;
@@ -513,7 +686,7 @@ void CartBlock::writeCellFile(int bid)
   int ibmin,ibmax;
   char fname[80];
   char qstr[2];
-  char intstring[7];
+  char intstring[12];
   char hash,c;
   int i,n,j,k,ibindex;
   int bodytag;
