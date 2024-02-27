@@ -19,8 +19,120 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "codetypes.h"
 #include "mpi.h"
+#include <algorithm>
+#include <numeric>
 #include "parallelComm.h"
 #define REAL double
+
+void parallelComm::sendRecvPacketsAll2(PACKET *sndPack, PACKET *rcvPack)
+{
+  int i;
+  int *sint,*sreal,*rint,*rreal;
+  //
+  sint=(int *)malloc(sizeof(int)*numprocs);
+  sreal=(int *) malloc(sizeof(int)*numprocs);
+  rint=(int *)malloc(sizeof(int)*numprocs);
+  rreal=(int *) malloc(sizeof(int)*numprocs);
+  //
+  for(i=0;i<numprocs;i++){
+    sint[i]=sndPack[i].nints;			
+    sreal[i]=sndPack[i].nreals;
+  }
+  //
+  MPI_Alltoall(sint,1,MPI_INT,rint,1,MPI_INT,scomm);
+  MPI_Alltoall(sreal,1,MPI_INT,rreal,1,MPI_INT,scomm);
+  //
+  for(i=0;i<numprocs;i++) {
+    rcvPack[i].nints=rint[i];
+    rcvPack[i].nreals=rreal[i];
+  }
+  //
+
+  int all_snd_nints = std::accumulate(sint, sint + numprocs, 0);
+  int all_rcv_nints = std::accumulate(rint, rint + numprocs, 0);
+  int *all_snd_intData, *all_rcv_intData;
+  all_snd_intData=(int *) malloc(sizeof(int)*all_snd_nints);
+  all_rcv_intData=(int *) malloc(sizeof(int)*all_rcv_nints);
+  std::vector<int> snd_int_displs(numprocs+1, 0);
+  std::vector<int> rcv_int_displs(numprocs+1, 0);
+  for (int i=1; i <= numprocs; i++) {
+    snd_int_displs[i] = snd_int_displs[i-1] + sint[i-1];
+    rcv_int_displs[i] = rcv_int_displs[i-1] + rint[i-1];
+  }
+  for (int i=0; i < numprocs; i++) {
+    int displ = snd_int_displs[i];
+    for(int j=0; j < sint[i]; j++){
+      all_snd_intData[displ+j] = sndPack[i].intData[j];
+    }
+  }
+
+  int all_snd_nreals = std::accumulate(sreal, sreal + numprocs, 0);
+  int all_rcv_nreals = std::accumulate(rreal, rreal + numprocs, 0);
+  REAL *all_snd_realData, *all_rcv_realData;
+  all_snd_realData=(REAL *) malloc(sizeof(REAL)*all_snd_nreals);
+  all_rcv_realData=(REAL *) malloc(sizeof(REAL)*all_rcv_nreals);
+  std::vector<int> snd_real_displs(numprocs+1, 0);
+  std::vector<int> rcv_real_displs(numprocs+1, 0);
+  for (int i=1; i <= numprocs; i++) {
+    snd_real_displs[i] = snd_real_displs[i-1] + sreal[i-1];
+    rcv_real_displs[i] = rcv_real_displs[i-1] + rreal[i-1];
+  }
+  for (int i=0; i < numprocs; i++) {
+    int displ = snd_real_displs[i];
+    for(int j=0; j < sreal[i]; j++){
+      all_snd_realData[displ+j] = sndPack[i].realData[j];
+    }
+  }
+
+  MPI_Alltoallv(all_snd_intData,
+                sint,
+                snd_int_displs.data(),
+                MPI_INT,
+                all_rcv_intData,
+                rint,
+                rcv_int_displs.data(),
+                MPI_INT,
+                scomm);
+  MPI_Alltoallv(all_snd_realData,
+                sreal,
+                snd_real_displs.data(),
+                MPI_DOUBLE,
+                all_rcv_realData,
+                rreal,
+                rcv_real_displs.data(),
+                MPI_DOUBLE,
+                scomm);
+
+  for(i=0;i<numprocs;i++){
+    if (rcvPack[i].nints > 0) {
+      rcvPack[i].intData=(int *) malloc(sizeof(int)*rcvPack[i].nints);
+    }
+    if (rcvPack[i].nreals > 0) {
+      rcvPack[i].realData=(REAL *) malloc(sizeof(REAL)*rcvPack[i].nreals);
+    }
+  }
+  for (int i=0; i < numprocs; i++) {
+    int displ = rcv_int_displs[i];
+    for(int j=0; j < rint[i]; j++){
+      rcvPack[i].intData[j] = all_rcv_intData[displ+j];
+    }
+  }
+  for (int i=0; i < numprocs; i++) {
+    int displ = rcv_real_displs[i];
+    for(int j=0; j < rreal[i]; j++){
+      rcvPack[i].realData[j] = all_rcv_realData[displ+j];
+    }
+  }
+
+  TIOGA_FREE(all_snd_intData);
+  TIOGA_FREE(all_rcv_intData);
+  TIOGA_FREE(all_snd_realData);
+  TIOGA_FREE(all_rcv_realData);
+  TIOGA_FREE(sint);
+  TIOGA_FREE(sreal);
+  TIOGA_FREE(rint);
+  TIOGA_FREE(rreal);
+}
 
 void parallelComm::sendRecvPacketsAll(PACKET *sndPack, PACKET *rcvPack)
 {

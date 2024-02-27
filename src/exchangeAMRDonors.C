@@ -20,6 +20,7 @@
 #include "codetypes.h"
 #include "tioga.h"
 #include <assert.h>
+#include <iostream>
 
 using namespace TIOGA;
 
@@ -170,7 +171,28 @@ void tioga::exchangeAMRDonors(void)
   //
   // send to All because there is no gain for now
   //  
-  pc_cart->sendRecvPacketsAll(sndPack,rcvPack);
+  pc_cart->sendRecvPacketsAll2(sndPack,rcvPack);
+  //pc_cart->sendRecvPacketsAll(sndPack,rcvPack);
+  // for (i = 0; i < numprocs; i++) {
+  //   for(int j = 0; j < rcvPack[i].nints; j++){
+  //       if (rcvPack2[i].intData[j] != rcvPack[i].intData[j]) {
+  //           std::cout << "int recv: " << rcvPack2[i].intData[j] << " "
+  //                     << rcvPack[i].intData[j] << std::endl;
+  //       }
+  //       else{
+  //         std::cout << "these ints are the same" << std::endl;
+  //       }
+  //     }
+  //   for(int j = 0; j < rcvPack[i].nreals; j++){
+  //       if (rcvPack2[i].realData[j] != rcvPack[i].realData[j]) {
+  //           std::cout << "real recv: " << rcvPack2[i].realData[j] << " "
+  //                     << rcvPack[i].realData[j] << std::endl;
+  //       }
+  //       else{
+  //         std::cout << "these reals are the same" << std::endl;
+  //       }
+  //     }
+  // }
   //
   // decode the data now
   //

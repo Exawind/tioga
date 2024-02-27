@@ -50,8 +50,10 @@ class parallelComm
  ~parallelComm() { if (sndMap) free(sndMap);
                    if (rcvMap) free(rcvMap);}
 
-  void sendRecvPacketsAll(PACKET *sndPack,PACKET *rcvPack);
+  void sendRecvPacketsAll2(PACKET *sndPack,PACKET *rcvPack);
   
+  void sendRecvPacketsAll(PACKET *sndPack,PACKET *rcvPack);
+
   void sendRecvPackets(PACKET *sndPack,PACKET *rcvPack);
 
   void sendRecvPacketsCheck(PACKET *sndPack,PACKET *rcvPack);
