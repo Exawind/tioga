@@ -26,7 +26,7 @@ jobs:
         extensions: 'h,cpp'
         clangFormatVersion: 16
   CPU:
-    #needs: Formatting
+    needs: Formatting
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
@@ -102,7 +102,7 @@ jobs:
         cat build-output-warnings.txt
         exit $(tail -n 1 build-output-warnings.txt | awk '{print $2}')
   Lint-clang-tidy:
-    # needs: Formatting
+    needs: Formatting
     runs-on: ubuntu-latest
     steps:
       - name: Clone
@@ -171,7 +171,7 @@ jobs:
           cat clang-tidy-ci-report.txt
           exit $(tail -n 1 clang-tidy-ci-report.txt | awk '{print $2}')
   Lint-codeql:
-    # needs: Formatting
+    needs: Formatting
     runs-on: ubuntu-latest
     steps:
       - name: Clone
@@ -219,7 +219,7 @@ jobs:
         with:
           sarif_file: sarif-results/cpp.sarif
   Lint-codespell:
-    # needs: Formatting
+    needs: Formatting
     runs-on: ubuntu-latest
     steps:
       - name: Clone
