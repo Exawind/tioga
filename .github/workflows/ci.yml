@@ -188,12 +188,14 @@ jobs:
       - name: Configure
         run: |
           echo "NPROCS=$(nproc)" >> $GITHUB_ENV
+          export MPICH_CXX=$(which clang++)
+          export MPICH_CC=$(which clang)
           cmake \
             -B ${{runner.workspace}}/build-ci-codeql \
             -DCMAKE_INSTALL_PREFIX:PATH=${{runner.workspace}}/install-codeql \
             -DCMAKE_BUILD_TYPE:STRING=Debug \
-            -DCMAKE_CXX_COMPILER:STRING=clang++ \
-            -DCMAKE_C_COMPILER:STRING=clang \
+            -DCMAKE_CXX_COMPILER:STRING=mpicxx \
+            -DCMAKE_C_COMPILER:STRING=mpicc \
             ${{github.workspace}}
       - name: Build
         run: |
