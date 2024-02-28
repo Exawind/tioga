@@ -19,25 +19,28 @@ using gpuError_t = hipError_t;
 constexpr gpuError_t gpuSuccess = hipSuccess;
 
 inline gpuError_t gpuGetLastError() { return hipGetLastError(); }
-inline const char* gpuGetErrorString(gpuError_t err) { return hipGetErrorString(err); }
+inline const char* gpuGetErrorString(gpuError_t err)
+{
+    return hipGetErrorString(err);
+}
 
 #define TIOGA_HIP_CHECK_ERROR(call)                                            \
-  do {                                                                         \
-    TIOGA::gpu::gpuError_t gpu_ierr = (call);                                  \
-    if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                                  \
-      std::string err_str(                                                     \
-        std::string("TIOGA GPU error: ") + __FILE__ + ":" +                    \
-        std::to_string(__LINE__) + ": " +                                      \
-        TIOGA::gpu::gpuGetErrorString(gpu_ierr));                              \
-      throw std::runtime_error(err_str);                                       \
-    }                                                                          \
-  } while (0)
+    do {                                                                       \
+        TIOGA::gpu::gpuError_t gpu_ierr = (call);                              \
+        if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                              \
+            std::string err_str(                                               \
+                std::string("TIOGA GPU error: ") + __FILE__ + ":" +            \
+                std::to_string(__LINE__) + ": " +                              \
+                TIOGA::gpu::gpuGetErrorString(gpu_ierr));                      \
+            throw std::runtime_error(err_str);                                 \
+        }                                                                      \
+    } while (0)
 
-#define TIOGA_GPU_CALL(call) hip ## call
+#define TIOGA_GPU_CALL(call) hip##call
 #define TIOGA_GPU_CALL_CHECK(call) TIOGA_HIP_CHECK_ERROR(TIOGA_GPU_CALL(call))
 
-#define TIOGA_GPU_LAUNCH_FUNC(func, blocks, threads, sharedmem, stream, ...) \
-  hipLaunchKernelGGL(func, blocks, threads, sharedmem, stream, __VA_ARGS__);
+#define TIOGA_GPU_LAUNCH_FUNC(func, blocks, threads, sharedmem, stream, ...)   \
+    hipLaunchKernelGGL(func, blocks, threads, sharedmem, stream, __VA_ARGS__);
 
 template <typename T>
 inline T* allocate_on_device(const size_t size)
@@ -77,16 +80,12 @@ inline void deallocate_device(T** dptr)
 template <typename T>
 inline void memset_on_device(T* dptr, T val, const size_t sz)
 {
-  TIOGA_HIP_CHECK_ERROR(hipMemset(dptr, val, sz));
+    TIOGA_HIP_CHECK_ERROR(hipMemset(dptr, val, sz));
 }
 
-inline void synchronize()
-{
-  hipDeviceSynchronize();
-}
+inline void synchronize() { hipDeviceSynchronize(); }
 
 } // namespace gpu
 } // namespace TIOGA
-
 
 #endif /* TIOGA_HIP_H */
