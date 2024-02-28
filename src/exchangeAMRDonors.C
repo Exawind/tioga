@@ -171,6 +171,13 @@ void tioga::exchangeAMRDonors(void)
   //
   // send to All because there is no gain for now
   //  
+  for(int i=0;i<nsend;i++){
+    if((sndPack[i].nints==2) && (sndPack[i].nreals==0)){
+      if (sndPack[i].intData) TIOGA_FREE(sndPack[i].intData);
+      if (sndPack[i].realData) TIOGA_FREE(sndPack[i].realData);
+      sndPack[i].nints=sndPack[i].nreals=0;
+    }
+  }	
   pc_cart->sendRecvPacketsAll2(sndPack,rcvPack);
   //pc_cart->sendRecvPacketsAll(sndPack,rcvPack);
   // for (i = 0; i < numprocs; i++) {
