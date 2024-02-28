@@ -159,6 +159,18 @@ void tioga::exchangeAMRDonors(void)
 	}
       }
     }
+
+  // Remove sends that won't be used. The first 2 ints are obdonors
+  // and obreceptors. If nothing else is being sent, then these won't
+  // be used so we can safely remove them and avoid unnecessary
+  // communication
+  for(int i=0;i<nsend;i++){
+    if((sndPack[i].nints==2) && (sndPack[i].nreals==0)){
+      if (sndPack[i].intData) TIOGA_FREE(sndPack[i].intData);
+      if (sndPack[i].realData) TIOGA_FREE(sndPack[i].realData);
+      sndPack[i].nints=sndPack[i].nreals=0;
+    }
+  }
   //if (myid==0) {
   //for(i=0;i<nsend;i++)
   //  printf("intcount/intcount=%d %d\n",sndPack[i].nints,intcount[i]);
@@ -171,35 +183,7 @@ void tioga::exchangeAMRDonors(void)
   //
   // send to All because there is no gain for now
   //  
-  for(int i=0;i<nsend;i++){
-    if((sndPack[i].nints==2) && (sndPack[i].nreals==0)){
-      if (sndPack[i].intData) TIOGA_FREE(sndPack[i].intData);
-      if (sndPack[i].realData) TIOGA_FREE(sndPack[i].realData);
-      sndPack[i].nints=sndPack[i].nreals=0;
-    }
-  }	
-  pc_cart->sendRecvPacketsAll2(sndPack,rcvPack);
-  //pc_cart->sendRecvPacketsAll(sndPack,rcvPack);
-  // for (i = 0; i < numprocs; i++) {
-  //   for(int j = 0; j < rcvPack[i].nints; j++){
-  //       if (rcvPack2[i].intData[j] != rcvPack[i].intData[j]) {
-  //           std::cout << "int recv: " << rcvPack2[i].intData[j] << " "
-  //                     << rcvPack[i].intData[j] << std::endl;
-  //       }
-  //       else{
-  //         std::cout << "these ints are the same" << std::endl;
-  //       }
-  //     }
-  //   for(int j = 0; j < rcvPack[i].nreals; j++){
-  //       if (rcvPack2[i].realData[j] != rcvPack[i].realData[j]) {
-  //           std::cout << "real recv: " << rcvPack2[i].realData[j] << " "
-  //                     << rcvPack[i].realData[j] << std::endl;
-  //       }
-  //       else{
-  //         std::cout << "these reals are the same" << std::endl;
-  //       }
-  //     }
-  // }
+  pc_cart->sendRecvPacketsAll(sndPack,rcvPack);
   //
   // decode the data now
   //
