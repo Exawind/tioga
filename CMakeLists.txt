@@ -80,7 +80,7 @@ if(TIOGA_ENABLE_CLANG_TIDY)
   endif()
 endif()
 if(CLANG_TIDY_EXE)
-  set_target_properties(tioga tiogadriver ${amr_wind_exe_name}
+  set_target_properties(tioga
                         PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--config-file=${CMAKE_SOURCE_DIR}/.clang-tidy")
 endif()
 
