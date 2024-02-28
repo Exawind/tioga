@@ -133,6 +133,8 @@ jobs:
           key: ccache-${{github.workflow}}-${{github.job}}-git-${{github.sha}}
           restore-keys: |
                ccache-${{github.workflow}}-${{github.job}}-git-
+      - name: Dependencies
+        run: sudo apt-get install -y mpich libmpich-dev
       - name: Configure
         run: |
           cmake \
