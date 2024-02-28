@@ -16,27 +16,43 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 #ifndef LINCARTINTERP_H
 #define LINCARTINTERP_H
 
 #include <vector>
 
-namespace cart_interp
-{
-void compute_1d_bases(const std::vector<double>& ref_coord,
-  std::vector<double>& phi_x, std::vector<double>& phi_y, std::vector<double>& phi_z);
+namespace cart_interp {
+void compute_1d_bases(
+    const std::vector<double>& ref_coord,
+    std::vector<double>& phi_x,
+    std::vector<double>& phi_y,
+    std::vector<double>& phi_z);
 
-void compute_linear_weights(const std::vector<double>& ref_coord, double* weights);
+void compute_linear_weights(
+    const std::vector<double>& ref_coord, double* weights);
 
 void compute_ref_coords_cell(double* ref_ratio, std::vector<double>& ref_coord);
 
 void compute_ref_coords_node(double* ref_ratio, std::vector<double>& ref_coord);
 
-void create_donor_stencil(const int nf, int* ijk_cell, int* dims, double* ref_ratio, int* ijk_stencil, bool isNodal);
+void create_donor_stencil(
+    const int nf,
+    int* ijk_cell,
+    int* dims,
+    double* ref_ratio,
+    int* ijk_stencil,
+    bool isNodal);
 
-void linear_interpolation(const int nf, int* ijk_cell, int* dims, double* ref_ratio,
-  int* nw, int* ijk_stencil, double* weights, bool isNodal);
-} // namespacee cart_interp
+void linear_interpolation(
+    const int nf,
+    int* ijk_cell,
+    int* dims,
+    double* ref_ratio,
+    int* nw,
+    int* ijk_stencil,
+    double* weights,
+    bool isNodal);
+} // namespace cart_interp
 
 #endif /* LINCARTINTERP_H */

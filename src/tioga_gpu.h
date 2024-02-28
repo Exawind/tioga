@@ -13,22 +13,24 @@ namespace TIOGA {
 namespace gpu {
 
 #if defined(TIOGA_HAS_GPU)
-#define TIOGA_GPU_CHECK_ERROR(call) {                                             \
-        TIOGA::gpu::gpuError_t gpu_ierr = (call);                                 \
-        if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                                 \
-            std::string errStr(std::string("TIOGA GPU error: ") + __FILE__        \
-                               + ":" + std::to_string(__LINE__)                   \
-                               + ": " + TIOGA::gpu::gpuGetErrorString(gpu_ierr)); \
-            throw std::runtime_error(errStr);                                     \
-        }}
+#define TIOGA_GPU_CHECK_ERROR(call)                                            \
+    {                                                                          \
+        TIOGA::gpu::gpuError_t gpu_ierr = (call);                              \
+        if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                              \
+            std::string errStr(                                                \
+                std::string("TIOGA GPU error: ") + __FILE__ + ":" +            \
+                std::to_string(__LINE__) + ": " +                              \
+                TIOGA::gpu::gpuGetErrorString(gpu_ierr));                      \
+            throw std::runtime_error(errStr);                                  \
+        }                                                                      \
+    }
 #else
-#define TIOGA_GPU_CHECK_ERROR(call)  (call)
+#define TIOGA_GPU_CHECK_ERROR(call) (call)
 #endif
 
 #define TIOGA_FREE_DEVICE(dptr) TIOGA::gpu::deallocate_device(&dptr)
 
-}
-}
-
+} // namespace gpu
+} // namespace TIOGA
 
 #endif /* TIOGA_GPU_H */

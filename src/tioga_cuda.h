@@ -19,24 +19,27 @@ using gpuError_t = cudaError_t;
 constexpr gpuError_t gpuSuccess = cudaSuccess;
 
 inline gpuError_t gpuGetLastError() { return cudaGetLastError(); }
-inline const char* gpuGetErrorString(gpuError_t err) { return cudaGetErrorString(err); }
+inline const char* gpuGetErrorString(gpuError_t err)
+{
+    return cudaGetErrorString(err);
+}
 
 #define TIOGA_CUDA_CHECK_ERROR(call)                                           \
-  do {                                                                         \
-    TIOGA::gpu::gpuError_t gpu_ierr = (call);                                  \
-    if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                                  \
-      std::string err_str(                                                     \
-        std::string("TIOGA GPU error: ") + __FILE__ + ":" +                    \
-        std::to_string(__LINE__) + ": " +                                      \
-        TIOGA::gpu::gpuGetErrorString(gpu_ierr));                              \
-      throw std::runtime_error(err_str);                                       \
-    }                                                                          \
-  } while (0)
+    do {                                                                       \
+        TIOGA::gpu::gpuError_t gpu_ierr = (call);                              \
+        if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                              \
+            std::string err_str(                                               \
+                std::string("TIOGA GPU error: ") + __FILE__ + ":" +            \
+                std::to_string(__LINE__) + ": " +                              \
+                TIOGA::gpu::gpuGetErrorString(gpu_ierr));                      \
+            throw std::runtime_error(err_str);                                 \
+        }                                                                      \
+    } while (0)
 
-#define TIOGA_GPU_CALL(call) cuda ## call
+#define TIOGA_GPU_CALL(call) cuda##call
 #define TIOGA_GPU_CALL_CHECK(call) TIOGA_CUDA_CHECK_ERROR(TIOGA_GPU_CALL(call))
 
-#define TIOGA_GPU_LAUNCH_FUNC(func, blocks, threads, sharedmem, stream, ...) \
+#define TIOGA_GPU_LAUNCH_FUNC(func, blocks, threads, sharedmem, stream, ...)   \
     func<<<blocks, threads, sharedmem, stream>>>(__VA_ARGS__);
 
 template <typename T>
@@ -50,21 +53,24 @@ inline T* allocate_on_device(const size_t size)
 template <typename T>
 inline void copy_to_device(T* dptr, const T* hptr, const size_t size)
 {
-    TIOGA_CUDA_CHECK_ERROR(cudaMemcpy(dptr, hptr, size, cudaMemcpyHostToDevice));
+    TIOGA_CUDA_CHECK_ERROR(
+        cudaMemcpy(dptr, hptr, size, cudaMemcpyHostToDevice));
 }
 
 template <typename T>
 inline T* push_to_device(const T* hptr, const size_t size)
 {
     T* dptr = allocate_on_device<T>(size);
-    TIOGA_CUDA_CHECK_ERROR(cudaMemcpy(dptr, hptr, size, cudaMemcpyHostToDevice));
+    TIOGA_CUDA_CHECK_ERROR(
+        cudaMemcpy(dptr, hptr, size, cudaMemcpyHostToDevice));
     return dptr;
 }
 
 template <typename T>
 inline void pull_from_device(T* hptr, T* dptr, const size_t size)
 {
-    TIOGA_CUDA_CHECK_ERROR(cudaMemcpy(hptr, dptr, size, cudaMemcpyDeviceToHost));
+    TIOGA_CUDA_CHECK_ERROR(
+        cudaMemcpy(hptr, dptr, size, cudaMemcpyDeviceToHost));
 }
 
 template <typename T>
@@ -77,16 +83,12 @@ inline void deallocate_device(T** dptr)
 template <typename T>
 inline void memset_on_device(T* dptr, T val, const size_t sz)
 {
-  TIOGA_CUDA_CHECK_ERROR(cudaMemset(dptr, val, sz));
+    TIOGA_CUDA_CHECK_ERROR(cudaMemset(dptr, val, sz));
 }
 
-inline void synchronize()
-{
-  cudaDeviceSynchronize();
-}
+inline void synchronize() { cudaDeviceSynchronize(); }
 
 } // namespace gpu
 } // namespace TIOGA
-
 
 #endif /* TIOGA_CUDA_H */

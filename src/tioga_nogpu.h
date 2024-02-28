@@ -54,11 +54,10 @@ inline void deallocate_device(T** dptr)
 template <typename T>
 inline void memset_on_device(T* dptr, T val, const size_t sz)
 {
-  std::memset(dptr, val, sz);
+    std::memset(dptr, val, sz);
 }
 
-}
-}
-
+} // namespace gpu
+} // namespace TIOGA
 
 #endif /* TIOGA_NOGPU_H */

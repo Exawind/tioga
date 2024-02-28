@@ -24,10 +24,7 @@ struct MeshBlockInfo
     static constexpr int max_vertex_types = 4;
     using GlobalIDType = uint64_t;
 
-    enum QVarType {
-        ROW = 0,
-        COL
-    };
+    enum QVarType { ROW = 0, COL };
 
     TiogaView<int> wall_ids;
     TiogaView<int> overset_ids;
