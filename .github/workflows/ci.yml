@@ -101,6 +101,70 @@ jobs:
           | awk 'BEGIN{i=0}{print $0}{i++}END{print "Warnings: "i}' > build-output-warnings.txt
         cat build-output-warnings.txt
         exit $(tail -n 1 build-output-warnings.txt | awk '{print $2}')
+  Lint-clang-tidy:
+    # needs: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Setup
+        run: |
+          echo "NPROCS=$(nproc)" >> $GITHUB_ENV
+          echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
+          echo "CCACHE_COMPRESSLEVEL=1" >> $GITHUB_ENV
+          echo "CCACHE_LOGFILE=${{github.workspace}}/ccache.log.txt" >> $GITHUB_ENV
+          echo "CCACHE_EXTRAFILES=${{github.workspace}}/.clang-tidy" >> $GITHUB_ENV
+          echo "CCACHE_MAXSIZE=50M" >> $GITHUB_ENV
+          echo "CTCACHE_DIR=~/.cache/ctcache" >> $GITHUB_ENV
+      - name: Install Ccache
+        run: |
+          wget https://github.com/ccache/ccache/releases/download/v4.8/ccache-4.8-linux-x86_64.tar.xz
+          sudo curl https://raw.githubusercontent.com/matus-chochlik/ctcache/7fd516e91c17779cbc6fc18bd119313d9532dd90/clang-tidy-cache -Lo /usr/bin/clang-tidy-cache
+          tar xvf ccache-4.8-linux-x86_64.tar.xz
+          sudo cp -f ccache-4.8-linux-x86_64/ccache /usr/local/bin/
+          sudo chmod +x /usr/bin/clang-tidy-cache
+          mkdir -p ~/.cache/ctcache
+      - name: Set Up Ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache
+          key: ccache-${{github.workflow}}-${{github.job}}-git-${{github.sha}}
+          restore-keys: |
+               ccache-${{github.workflow}}-${{github.job}}-git-
+      - name: Configure
+        run: |
+          cmake \
+          -B ${{runner.workspace}}/build-clang-tidy \
+          -DCMAKE_BUILD_TYPE:STRING=Release \
+          -DCMAKE_CXX_COMPILER:STRING=clang++ \
+          -DCMAKE_C_COMPILER:STRING=clang \
+          -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache \
+          ${{github.workspace}}
+      - name: Check
+        working-directory: ${{runner.workspace}}/build-clang-tidy
+        run: |
+          cmake --build . --parallel ${{env.NPROCS}} 2>&1 | tee -a clang-tidy-full-report.txt
+          cat clang-tidy-full-report.txt | grep "warning:" | grep -v "submods" | sort | uniq | \
+            awk 'BEGIN{i=0}{print $0}{i++}END{print "Warnings: "i}' > clang-tidy-ci-report.txt
+      - name: Ccache Report
+        run: |
+          ls ~/.cache
+          ls ~/.cache/ccache
+          du -hs ~/.cache/ccache
+          ls ~/.cache/ctcache
+          du -hs ~/.cache/ctcache
+          ccache -s
+      - name: Full report
+        working-directory: ${{runner.workspace}}/build-clang-tidy
+        run: cat clang-tidy-full-report.txt
+      - name: Short report
+        working-directory: ${{runner.workspace}}/build-clang-tidy
+        run: |
+          echo "::add-matcher::.github/problem-matchers/gcc.json"
+          cat clang-tidy-ci-report.txt
+          exit $(tail -n 1 clang-tidy-ci-report.txt | awk '{print $2}')
   Lint-codeql:
     # needs: Formatting
     runs-on: ubuntu-latest
@@ -115,6 +179,8 @@ jobs:
           languages: cpp
           queries: +security-and-quality
           config-file: ./.github/codeql/codeql-config.yml
+      - name: Dependencies
+        run: sudo apt-get install -y mpich libmpich-dev
       - name: Configure
         run: |
           echo "NPROCS=$(nproc)" >> $GITHUB_ENV
