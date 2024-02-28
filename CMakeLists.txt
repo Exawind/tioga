@@ -11,6 +11,7 @@ option(TIOGA_OUTPUT_STATS "Output statistics for TIOGA holecutting (default: off
 option(TIOGA_ENABLE_CUDA "Enable CUDA support (default: off)" OFF)
 option(TIOGA_ENABLE_HIP "Enable AMD HIP support (default: off)" OFF)
 option(TIOGA_ENABLE_ARBORX "Enable ArborX (default: off)" OFF)
+option(TIOGA_ENABLE_CLANG_TIDY "Compile with clang-tidy static analysis" OFF)
 
 # CUDA specific options
 #set(TIOGA_CUDA_SM "70" CACHE STRING "CUDA arch option")
@@ -62,6 +63,25 @@ endif()
 
 if (BUILD_GRIDGEN_EXE)
   add_subdirectory(gridGen)
+endif()
+
+if(TIOGA_ENABLE_CLANG_TIDY)
+  find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+  if(CLANG_TIDY_EXE)
+    message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
+    #find_program (CLANG_TIDY_CACHE_EXE NAMES "clang-tidy-cache")
+    #if(CLANG_TIDY_CACHE_EXE)
+    #  message(STATUS "clang-tidy-cache found: ${CLANG_TIDY_CACHE_EXE}")
+    #  set(CLANG_TIDY_EXE "${CLANG_TIDY_CACHE_PATH};${CLANG_TIDY_EXE}"
+    #      CACHE STRING "A combined command to run clang-tidy with caching wrapper")
+    #endif()
+  else()
+    message(WARNING "clang-tidy not found.")
+  endif()
+endif()
+if(CLANG_TIDY_EXE)
+  set_target_properties(tioga tiogadriver ${amr_wind_exe_name}
+                        PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--config-file=${CMAKE_SOURCE_DIR}/.clang-tidy")
 endif()
 
 # CMake installation configuration
