@@ -6,3 +6,5 @@ GPATH
 GRTAGS
 GTAGS
 
+.ccls-cache
+.DS_Store

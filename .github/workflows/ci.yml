@@ -3,35 +3,49 @@ name: TIOGA CI
 on:
   push:
     branches:
-      - master
       - exawind
   pull_request:
     branches:
-      - master
       - exawind
 
+concurrency:
+  group: ${{github.ref}}-${{github.head_ref}}-ci
+  cancel-in-progress: true
+
 jobs:
-  build:
-    runs-on: ${{matrix.os}}
-    strategy:
-      matrix:
-        #os: [ubuntu-latest, macos-latest]
-        os: [ ubuntu-latest ]
-        build_type: [Release, Debug]
-        include:
-          # - os: macos-latest
-          #   build_deps: brew install open-mpi && brew link gcc
-          - os: ubuntu-latest
-            build_deps: sudo apt-get install mpich libmpich-dev
-    name: ${{matrix.os}} - ${{matrix.build_type}}
+  Formatting:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: ${{matrix.build_deps}}
-      - name: Configure and build
-        run: |
-          cmake -Bbuild -DCMAKE_Fortran_COMPILER=$(which mpif90) .
-          cmake --build build -- -j $(nproc)
+    - name: Clone
+      uses: actions/checkout@v4
+    - name: Check formatting
+      uses: DoozyX/clang-format-lint-action@v0.16.2
+      with:
+        source: './src'
+        exclude: '.'
+        extensions: 'h,cpp'
+        clangFormatVersion: 16
+  # build:
+  #   runs-on: ${{matrix.os}}
+  #   strategy:
+  #     matrix:
+  #       #os: [ubuntu-latest, macos-latest]
+  #       os: [ ubuntu-latest ]
+  #       build_type: [Release, Debug]
+  #       include:
+  #         # - os: macos-latest
+  #         #   build_deps: brew install open-mpi && brew link gcc
+  #         - os: ubuntu-latest
+  #           build_deps: sudo apt-get install mpich libmpich-dev
+  #   name: ${{matrix.os}} - ${{matrix.build_type}}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Install dependencies
+  #       run: ${{matrix.build_deps}}
+  #     - name: Configure and build
+  #       run: |
+  #         cmake -Bbuild -DCMAKE_Fortran_COMPILER=$(which mpif90) .
+  #         cmake --build build -- -j $(nproc)
 
   # analyze:
   #   name: CodeQL analysis
