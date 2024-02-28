@@ -65,6 +65,17 @@ void parallelComm::sendRecvPacketsAll2(PACKET *sndPack, PACKET *rcvPack)
       all_snd_intData[displ+j] = sndPack[i].intData[j];
     }
   }
+  MPI_Request int_request;
+  MPI_Ialltoallv(all_snd_intData,
+                sint,
+                snd_int_displs.data(),
+                MPI_INT,
+                all_rcv_intData,
+                rint,
+                rcv_int_displs.data(),
+                MPI_INT,
+                scomm,
+                &int_request);
 
   int all_snd_nreals = std::accumulate(sreal, sreal + numprocs, 0);
   int all_rcv_nreals = std::accumulate(rreal, rreal + numprocs, 0);
@@ -83,17 +94,8 @@ void parallelComm::sendRecvPacketsAll2(PACKET *sndPack, PACKET *rcvPack)
       all_snd_realData[displ+j] = sndPack[i].realData[j];
     }
   }
-
-  MPI_Alltoallv(all_snd_intData,
-                sint,
-                snd_int_displs.data(),
-                MPI_INT,
-                all_rcv_intData,
-                rint,
-                rcv_int_displs.data(),
-                MPI_INT,
-                scomm);
-  MPI_Alltoallv(all_snd_realData,
+  MPI_Request real_request;
+  MPI_Ialltoallv(all_snd_realData,
                 sreal,
                 snd_real_displs.data(),
                 MPI_DOUBLE,
@@ -101,8 +103,10 @@ void parallelComm::sendRecvPacketsAll2(PACKET *sndPack, PACKET *rcvPack)
                 rreal,
                 rcv_real_displs.data(),
                 MPI_DOUBLE,
-                scomm);
+                scomm,
+                &real_request);
 
+  MPI_Wait(&int_request, MPI_STATUS_IGNORE);
   for(i=0;i<numprocs;i++){
     if (rcvPack[i].nints > 0) {
       rcvPack[i].intData=(int *) malloc(sizeof(int)*rcvPack[i].nints);
@@ -111,6 +115,8 @@ void parallelComm::sendRecvPacketsAll2(PACKET *sndPack, PACKET *rcvPack)
       rcvPack[i].realData=(REAL *) malloc(sizeof(REAL)*rcvPack[i].nreals);
     }
   }
+
+  MPI_Wait(&real_request, MPI_STATUS_IGNORE);
   for (int i=0; i < numprocs; i++) {
     int displ = rcv_int_displs[i];
     for(int j=0; j < rint[i]; j++){
