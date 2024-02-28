@@ -22,6 +22,7 @@
 #define CODETYPES_H
 
 //#define MPICH_SKIP_MPICXX
+#include<stdint.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
