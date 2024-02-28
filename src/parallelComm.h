@@ -51,7 +51,7 @@ class parallelComm
                    if (rcvMap) free(rcvMap);}
 
   void sendRecvPacketsAll(PACKET *sndPack,PACKET *rcvPack);
-
+  
   void sendRecvPackets(PACKET *sndPack,PACKET *rcvPack);
 
   void sendRecvPacketsCheck(PACKET *sndPack,PACKET *rcvPack);

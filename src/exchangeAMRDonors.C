@@ -20,7 +20,6 @@
 #include "codetypes.h"
 #include "tioga.h"
 #include <assert.h>
-#include <iostream>
 
 using namespace TIOGA;
 
