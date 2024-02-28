@@ -137,11 +137,13 @@ jobs:
         run: sudo apt-get install -y mpich libmpich-dev
       - name: Configure
         run: |
+          export MPICH_CXX=$(which clang++)
+          export MPICH_CC=$(which clang)
           cmake \
           -B ${{runner.workspace}}/build-clang-tidy \
           -DCMAKE_BUILD_TYPE:STRING=Release \
-          -DCMAKE_CXX_COMPILER:STRING=clang++ \
-          -DCMAKE_C_COMPILER:STRING=clang \
+          -DCMAKE_CXX_COMPILER:STRING=mpicxx \
+          -DCMAKE_C_COMPILER:STRING=mpicc \
           -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache \
           ${{github.workspace}}
       - name: Check
