@@ -1,4 +1,4 @@
-# Tioga
+# TIOGA - Topology Independent Overset Grid Assembler
 
 [![TIOGA CI](https://github.com/Exawind/tioga/actions/workflows/ci.yml/badge.svg)](https://github.com/Exawind/tioga/actions/workflows/ci.yml)
 
@@ -22,13 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 Contact:
 
 Jay Sitaraman
+jsitaraman@gmail.com
+(301) 741 3216
 Parallel Geometric Algorithms LLC
 814 S Mary Ave,
 Sunnyvale,
 CA 94087
-
-jsitaraman@gmail.com
-(301) 741 3216TIOGA - Topology Independent Overset Grid Assmebler
 
 ## Functionality
 
@@ -39,36 +38,30 @@ parts. It can accept high-order call-back functions to perform p-consistent
 interpolation and searches for formulations with internal degrees of freedom
 within a computational element.
 
-Authored by Jay Sitaraman
-jsitaraman@gmail.com
-(301) 741 3216
-
-# Notes
+## Notes
 
 TIOGA is free software since it was developed in the personal
-time of the author. It is expected to serve as an academic/research 
+time of the author. It is expected to serve as an academic/research
 counterpart for PUNDIT (which is the product of the CREATE A/V program
-and is export controlled). TIOGA has a subset of the functionality of 
+and is export controlled). TIOGA has a subset of the functionality of
 PUNDIT and is about 3x slower owing to the use of Alternating Digital Tree (ADT)
 searches as the baseline point-location algorithm.
 
-# News
+## News
 
 TIOGA is currently under development with funding from the DoE ExaWind program
 towards developing overset capability in the DoE NALU code for large scale
 wind farm simulations
 
-See tioga/LICENSE
+## References
 
-# References
-
-Michael J. Brazell, Jayanarayanan Sitaraman, Dimitri J. Mavriplis, An overset mesh approach for 3D mixed element 
-high-order discretizations, In Journal of Computational Physics, Volume 322, 2016, 
+Michael J. Brazell, Jayanarayanan Sitaraman, Dimitri J. Mavriplis, An overset mesh approach for 3D mixed element
+high-order discretizations, In Journal of Computational Physics, Volume 322, 2016,
 Pages 33-51, ISSN 0021-9991, https://doi.org/10.1016/j.jcp.2016.06.031.
 (http://www.sciencedirect.com/science/article/pii/S002199911630256X)
 
 
-Roget, B. and Sitaraman, J., "Robust and efficient overset grid assembly for partitioned unstructured meshes", 
+Roget, B. and Sitaraman, J., "Robust and efficient overset grid assembly for partitioned unstructured meshes",
 Journal of Computational Physics, v 260, March 2014, Pages 1-24
 
 Brazell, M., Sitaraman J. and Mavriplis D.,"An Overset Mesh Approach for 3D Mixed
