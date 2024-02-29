@@ -48,9 +48,6 @@ void tioga::exchangeAMRDonors(void)
   //
   // setup communicator for all to all now
   // since the receiver side is unknown
-  // FIXME:
-  // add sophisticated code later to fix the all_to_all
-  // using MPI-2 standard
   //
   pc_cart->getMap(&nsend_sav,&nrecv_sav,&sndMap,&rcvMap);
   sndMapAll=(int *)malloc(sizeof(int)*pc_cart->numprocs);
