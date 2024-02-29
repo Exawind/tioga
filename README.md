@@ -19,15 +19,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-Contact:
-
-Jay Sitaraman
-jsitaraman@gmail.com
-(301) 741 3216
-Parallel Geometric Algorithms LLC
-814 S Mary Ave,
-Sunnyvale,
-CA 94087
+Contact: Jay Sitaraman, jsitaraman@gmail.com, (301) 741 3216, Parallel Geometric Algorithms LLC, 814 S Mary Ave, Sunnyvale, CA 94087
 
 ## Functionality
 
@@ -50,8 +42,8 @@ searches as the baseline point-location algorithm.
 ## News
 
 TIOGA is currently under development with funding from the DoE ExaWind program
-towards developing overset capability in the DoE NALU code for large scale
-wind farm simulations
+towards developing overset capability in the DoE ExaWind codes for large scale
+wind farm simulations.
 
 ## References
 
