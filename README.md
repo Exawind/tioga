@@ -1,3 +1,7 @@
+# Tioga
+
+[![TIOGA CI](https://github.com/Exawind/tioga/actions/workflows/ci.yml/badge.svg)](https://github.com/Exawind/tioga/actions/workflows/ci.yml)
+
 Tioga is a library for overset grid assembly on parallel distributed systems
 Copyright (C) 2015 Jay Sitaraman
 
@@ -26,8 +30,7 @@ CA 94087
 jsitaraman@gmail.com
 (301) 741 3216TIOGA - Topology Independent Overset Grid Assmebler
 
-Functionality:
---------------
+## Functionality
 
 TIOGA can perform overset grid connectivity in 3-D between
 multiple unstructured (or structured) meshes that are in a distributed
@@ -40,8 +43,7 @@ Authored by Jay Sitaraman
 jsitaraman@gmail.com
 (301) 741 3216
 
-Notes:
-------
+# Notes
 
 TIOGA is free software since it was developed in the personal
 time of the author. It is expected to serve as an academic/research 
@@ -50,18 +52,15 @@ and is export controlled). TIOGA has a subset of the functionality of
 PUNDIT and is about 3x slower owing to the use of Alternating Digital Tree (ADT)
 searches as the baseline point-location algorithm.
 
-News:
------
+# News
+
 TIOGA is currently under development with funding from the DoE ExaWind program
 towards developing overset capability in the DoE NALU code for large scale
 wind farm simulations
 
 See tioga/LICENSE
 
-
-References:
------------
-
+# References
 
 Michael J. Brazell, Jayanarayanan Sitaraman, Dimitri J. Mavriplis, An overset mesh approach for 3D mixed element 
 high-order discretizations, In Journal of Computational Physics, Volume 322, 2016, 
