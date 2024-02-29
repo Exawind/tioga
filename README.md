@@ -41,9 +41,10 @@ searches as the baseline point-location algorithm.
 
 ## News
 
-TIOGA is currently under development with funding from the DoE ExaWind program
-towards developing overset capability in the DoE ExaWind codes for large scale
-wind farm simulations.
+TIOGA is currently under development with funding from the DoE ExaWind
+program towards developing overset capability in the DoE ExaWind codes
+for large scale wind farm simulations. The original code is available
+[here](https://github.com/jsitaraman/tioga).
 
 ## References
 
