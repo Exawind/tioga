@@ -48,9 +48,6 @@ void tioga::exchangeAMRDonors(void)
   //
   // setup communicator for all to all now
   // since the receiver side is unknown
-  // FIXME:
-  // add sophisticated code later to fix the all_to_all
-  // using MPI-2 standard
   //
   pc_cart->getMap(&nsend_sav,&nrecv_sav,&sndMap,&rcvMap);
   sndMapAll=(int *)malloc(sizeof(int)*pc_cart->numprocs);
@@ -158,6 +155,18 @@ void tioga::exchangeAMRDonors(void)
 	}
       }
     }
+
+  // Remove sends that won't be used. The first 2 ints are obdonors
+  // and obreceptors. If nothing else is being sent, then these won't
+  // be used so we can safely remove them and avoid unnecessary
+  // communication
+  for(int i=0;i<nsend;i++){
+    if((sndPack[i].nints==2) && (sndPack[i].nreals==0)){
+      if (sndPack[i].intData) TIOGA_FREE(sndPack[i].intData);
+      if (sndPack[i].realData) TIOGA_FREE(sndPack[i].realData);
+      sndPack[i].nints=sndPack[i].nreals=0;
+    }
+  }
   //if (myid==0) {
   //for(i=0;i<nsend;i++)
   //  printf("intcount/intcount=%d %d\n",sndPack[i].nints,intcount[i]);
