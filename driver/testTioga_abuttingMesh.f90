@@ -12,6 +12,7 @@ program testTioga_abuttingMesh
   use mpi
   implicit none
 
+  integer :: nbodies
   type(grid), target :: gr(3)
   type(grid), pointer :: g
   integer :: myid,numprocs,ierr,nsave
@@ -27,6 +28,9 @@ program testTioga_abuttingMesh
   integer :: dcount,fcount
   integer, allocatable :: receptorInfo(:),inode(:)
   real*8, allocatable :: frac(:)
+  integer :: ncomposite,nbodytags,compositebodytag
+  integer :: bodytags(2),dominancetags(2)
+  real*8  :: searchTol
   !
   ! initialize mpi
   !
@@ -52,6 +56,30 @@ program testTioga_abuttingMesh
   !
   call tioga_setholemapalg(1)
   !
+  ! ============================================================================================================================== !
+  ! COMPOSITE BODY/ABUTTING MESHES
+  !
+  ! set number of grids per rank
+  !
+  nbodies = merge(3,2,myid==0)
+  !
+  ! set number of composite bodies (abutting mesh)
+  !
+  ncomposite = 1 ! number of composite bodies
+  call tioga_setcomposite(ncomposite)
+  !
+  ! register composite body
+  !
+  compositebodytag = 1  ! set composite body tag (Base-1 index in [1,ncomposite])
+  nbodytags = 2         ! two bodies for composite body
+  bodytags(1) = 1       ! sphere tag (Base-1 indexing)
+  bodytags(2) = 3       ! billet tag (Base-1 indexing)
+  dominancetags(1) = 0  ! sphere mesh is non-dominant
+  dominancetags(2) = 1  ! billet mesh is dominant
+  searchTol = 1.0E-6    ! set tolerance to abutting-mesh node distance
+  call tioga_register_composite_body(compositebodytag,nbodytags,bodytags,dominancetags,searchTol)
+  ! ============================================================================================================================== !
+  !
   ! register the grids
   !
   ntypes=1
@@ -65,8 +93,9 @@ program testTioga_abuttingMesh
     call tioga_registergrid_data_mb(ib,g%bodytag(1),g%nv,g%x,g%iblank,g%nwbc,g%nobc,g%wbcnode,g%obcnode,ntypes,nv2,g%n8,g%ndc8)
    endif
   enddo
-
-!  ! register gmsh grid
+  !
+  ! register gmsh grid
+  !
   if(myid == 0)then
     g=>gr(3)
     call tioga_registergrid_data_mb(3,g%bodytag(1),g%nv,g%x,g%iblank,   &
@@ -109,7 +138,7 @@ program testTioga_abuttingMesh
 !  return
 
   call cpu_time(t1)
-  do ib=1,3
+  do ib=1,nbodies
     g=>gr(ib)
     m=1
     do i=1,g%nv
@@ -145,7 +174,7 @@ program testTioga_abuttingMesh
 !   deallocate(receptorInfo,inode,frac)
 !  end do
 
-  do ib=1,3
+  do ib=1,nbodies
     g=>gr(ib)
     call tioga_registersolution(g%bodytag(1),g%q)
   enddo
@@ -163,7 +192,7 @@ program testTioga_abuttingMesh
   ! problem here
   !
   rnorm=0d0
-  do ib=1,3
+  do ib=1,nbodies
    g=>gr(ib)
    m=1
    do i=1,g%nv

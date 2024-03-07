@@ -1,6 +1,9 @@
 *.o
 *.a
 build/*
+case/flow*
+case/grid
+case/fort*
 
 GPATH
 GRTAGS

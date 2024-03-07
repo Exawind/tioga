@@ -22,7 +22,7 @@ extern "C" {
                           int **wbc_t,int **obc_t,
                           int *n4,int *n5,int *n6,int *n8,
                           int **ndc4,int **ndc5,int **ndc6,int **ndc8){
-    std::string gmsh_filename = "billet-cap.3D.Q1.27K.tet.msh";
+    std::string gmsh_filename = "billet-cap-big.3D.Q1.60K.tet.msh";
     int dim,node_num;
     int element_num;
     double eps=1.0E-12;
@@ -47,25 +47,24 @@ extern "C" {
     for(int i = 1; i < TYPE_NUM_MAX; i++) printf("    %s %d\n",TYPE_NAME[i],elem_counts[i]);
     cout << endl;
 
-    //  Allocate memory.
+    //  allocate memory
     node_x.resize(dim*node_num);
     for(int i = 1; i < TYPE_NUM_MAX; i++){
         element_node[i].resize(elem_counts[i]*TYPE_NNODES[i]);
       //printf("ALLOCATING %d %d %d\n",i,elem_counts[i],TYPE_NNODES[i]);
     }
 
-    // Get data.
-    gmsh_data_read(gmsh_filename,dim,
-                   node_x,element_node);
+    // read gmsh mesh data
+    gmsh_data_read(gmsh_filename,dim,node_x,element_node);
 
-    // fixed geometry boundaries for msh
-    double outerboxTop = 1.33; //y-direction
-    double innerboxTop = 1.05; //y-direction
-    double outerboxh = 0.2, obh = outerboxh*0.5;
-    double innerboxh = 0.08, ibh = innerboxh*0.5;
+    // fixed geometry boundaries for msh: DO NOT CHANGE
+    double outerboxTop = 1.60; //y-direction
+    double innerboxTop = 1.30; //y-direction
+    double outerboxh = 0.6;
+    double ibh = 0.3;
     double rad = 1.0;
 
-    // count/fill overset BC nodes
+    // count overset bc nodes
     std::vector<char> bcall(node_num,0);
     for(int i=0;i<node_num;i++) bcall[i] =  (node_x[3*i+_Y] >= outerboxTop-eps);// top overset face
     for(int i=0;i<node_num;i++) bcall[i] += (node_x[3*i+_X] <= -outerboxh+eps); // xlo overset face
@@ -73,6 +72,7 @@ extern "C" {
     for(int i=0;i<node_num;i++) bcall[i] += (node_x[3*i+_Z] <= -outerboxh+eps); // zlo overset face
     for(int i=0;i<node_num;i++) bcall[i] += (node_x[3*i+_Z] >=  outerboxh-eps); // zhi overset face
 
+    // fill overset bc nodes
     int nobc_ = 0;
     for(int i=0;i<node_num;i++) nobc_ += (bcall[i] > 0);
 
@@ -81,13 +81,19 @@ extern "C" {
       if(bcall[i] > 0) obc[nobc_++] = i+BASE;
     }
 
-    // count/fill wall BC nodes
+    // count wall bc nodes
     std::fill(bcall.begin(), bcall.end(), 0);
     for(int i=0;i<node_num;i++) {
         x = node_x[3*i+_X]; y = node_x[3*i+_Y]; z = node_x[3*i+_Z];
         double radiusSqr = x*x + y*y + z*z;
 
-        bcall[i] = (radiusSqr <=  rad+eps); // sphere surface
+         // sphere surface
+        bcall[i] = (radiusSqr <= rad+eps);
+//        if(x >= -1.5*ibh-eps && x <= 1.5*ibh+eps){
+//            if(z >= -1.5*ibh-eps && z <= 1.5*ibh+eps){
+//                bcall[i] = (radiusSqr <= rad+eps);
+//            }
+//        }
 
         if(y <= innerboxTop+eps){
             if(x >= -ibh-eps && x <= ibh+eps){
@@ -98,6 +104,7 @@ extern "C" {
         }
     }
 
+    // fill wall bc nodes
     int nwbc_ = 0;
     for(int i=0;i<node_num;i++) nwbc_ += (bcall[i] > 0);
 
@@ -106,7 +113,7 @@ extern "C" {
       if(bcall[i] > 0) wbc[nwbc_++] = i+BASE;
     }
 
-    // assign mesh stats
+    // assign mesh statistics
     *nnodes = node_num;
     *xyz = node_x.data();
     *nwbc = nwbc_;
@@ -364,13 +371,9 @@ void gmsh_size_read(string gmsh_filename, int &node_num, int &node_dim,
             } else {
                 double fmt_a = s_to_r8(text, length, ierror);
                 text.erase(0, length);
-                double fmt_b = s_to_r8(text, length, ierror);
-                text.erase(0, length);
-                double fmt_c = s_to_r8(text, length, ierror);
-                text.erase(0, length);
 
-                if((int) 10*fmt_a != 22){
-                    cout << "ERROR - GMSH FORMAT 2.2 ONLY: read format=" << fmt_a << endl;
+                if((int) 10*fmt_a >= 30){
+                    cout << "ERROR - GMSH FORMAT 2.X ONLY: read format=" << fmt_a << endl;
                     exit(1);
                 }
             }

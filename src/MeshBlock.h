@@ -277,6 +277,15 @@ class MeshBlock
                                                uint8_t *taggedList,
                                                uint8_t *tagList);
 
+  void markBoundaryAdaptiveMapSurfaceIntersect(char nodetype2tag,
+                                               double extents_lo[3],
+                                               double extents_hi[3],
+                                               uint8_t level_id,
+                                               uint32_t noctants,
+                                               octant_coordinates_t *octants,
+                                               uint8_t *taggedList,
+                                               uint8_t *tagList);
+
   void markBoundaryMapSurface(char nodetype2tag,
                               double extents_lo[3],
                               double extents_hi[3],
@@ -452,27 +461,27 @@ class MeshBlock
 };
 
 /* Mesh Block Complement Rank Data */
-class meshblockCompInfo {
-  public:
-    int nreq;
-    int id;
-    int nrank;
-    int masterID;   /* master rank for distributing mesh block data */
-    MPI_Comm comm;  /* communicator containing all complement ranks + master */
+//class meshblockCompInfo {
+//  public:
+//    int nreq;
+//    int id;
+//    int nrank;
+//    int masterID;   /* master rank for distributing mesh block data */
+//    MPI_Comm comm;  /* communicator containing all complement ranks + master */
 
     /* constructor */
-    meshblockCompInfo(){
-        comm = MPI_COMM_NULL;
-    };
+//    meshblockCompInfo(){
+//        comm = MPI_COMM_NULL;
+//    };
 
     /* deconstructor */
-   ~meshblockCompInfo(){
-	int sflag;
-	MPI_Finalized(&sflag);
-	if(!sflag){
-           if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
-	}
-    };
-};
+//   ~meshblockCompInfo(){
+//	int sflag;
+//	MPI_Finalized(&sflag);
+//	if(!sflag){
+//           if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+//	}
+//    };
+//};
 
 #endif /* MESHBLOCK_H */

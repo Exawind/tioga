@@ -307,8 +307,8 @@ subroutine readGrid_gmsh(g,myid)
   call c_f_pointer(ndc8,g%ndc8,    [8,g%n8])
  endif
 
-  print*,"GMSH Nodes: ",g%nv,g%nwbc,g%nobc
-  print*,"GMSH Elems: ",g%n4,g%n5,g%n6,g%n8
+  !print*,"GMSH Nodes: ",g%nv,g%nwbc,g%nobc
+  !print*,"GMSH Elems: ",g%n4,g%n5,g%n6,g%n8
   !print*,"X: ",g%x(4:6)
   !print*,"NDC8: ",g%ndc8(:,g%n8)
 
