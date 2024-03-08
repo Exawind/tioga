@@ -74,7 +74,8 @@ void tioga::exchangeDonors(void)
   //
   // communicate donors (comm1)
   //
-  pc->sendRecvPackets(sndPack,rcvPack);
+  //pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPacketsAll(sndPack,rcvPack);
   // Initialize linked lists and populate donor data from rcvPack
   for (int ib=0;ib<nblocks;ib++) {
     auto& mb = mblocks[ib];
