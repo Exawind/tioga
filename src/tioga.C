@@ -317,8 +317,9 @@ void tioga::performConnectivity(void)
   this->myTimer("tioga::exchangeDonors",1);
   //this->reduce_fringes();
   //outputStatistics();
-  MPI_Allreduce(&ihigh,&ihighGlobal,1,MPI_INT,MPI_MAX,scomm);
+  //MPI_Allreduce(&ihigh,&ihighGlobal,1,MPI_INT,MPI_MAX,scomm);
   //if (ihighGlobal) {
+  ihighGlobal=0;
   this->myTimer("tioga::getCellIblanks",0);
   for (int ib=0;ib<nblocks;ib++) {
     auto& mb = mblocks[ib];
