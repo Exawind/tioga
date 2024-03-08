@@ -301,7 +301,7 @@ void parallelComm::sendRecvPackets2(PACKET *sndPack,PACKET *rcvPack)
 
   for (int i=0; i < nrecv; i++) {
     int displ = rcv_int_displs[rcvMap[i]];
-    for(int j=0; j < rint[rvcMap[i]]; j++){
+    for(int j=0; j < rint[rcvMap[i]]; j++){
       rcvPack[i].intData[j] = all_rcv_intData[displ+j];
     }
   }
