@@ -246,6 +246,12 @@ void parallelComm::sendRecvPackets2(PACKET *sndPack,PACKET *rcvPack)
   int *all_snd_intData, *all_rcv_intData;
   all_snd_intData=(int *) malloc(sizeof(int)*all_snd_nints);
   all_rcv_intData=(int *) malloc(sizeof(int)*all_rcv_nints);
+  for (int i = 0; i < all_snd_nints; i++) {
+    all_snd_intData[i] = 0;
+  }
+  for (int i = 0; i < all_rcv_nints; i++) {
+    all_rcv_intData[i] = 0;
+  }
   std::vector<int> snd_int_displs(numprocs+1, 0);
   std::vector<int> rcv_int_displs(numprocs+1, 0);
   for (int i=1; i <= numprocs; i++) {
@@ -255,7 +261,7 @@ void parallelComm::sendRecvPackets2(PACKET *sndPack,PACKET *rcvPack)
   for (int i=0; i < nsend; i++) {
     int displ = snd_int_displs[sndMap[i]];
     for(int j=0; j < sint[sndMap[i]]; j++){
-      all_snd_intData[displ+j] = sndPack[sndMap[i]].intData[j];
+      all_snd_intData[displ+j] = sndPack[i].intData[j];
     }
   }
   MPI_Request int_request;
@@ -275,6 +281,12 @@ void parallelComm::sendRecvPackets2(PACKET *sndPack,PACKET *rcvPack)
   REAL *all_snd_realData, *all_rcv_realData;
   all_snd_realData=(REAL *) malloc(sizeof(REAL)*all_snd_nreals);
   all_rcv_realData=(REAL *) malloc(sizeof(REAL)*all_rcv_nreals);
+  for (int i = 0; i < all_snd_nreals; i++) {
+    all_snd_realData[i] = 0;
+  }
+  for (int i = 0; i < all_rcv_nreals; i++) {
+    all_rcv_realData[i] = 0;
+  }
   std::vector<int> snd_real_displs(numprocs+1, 0);
   std::vector<int> rcv_real_displs(numprocs+1, 0);
   for (int i=1; i <= numprocs; i++) {
@@ -284,7 +296,7 @@ void parallelComm::sendRecvPackets2(PACKET *sndPack,PACKET *rcvPack)
   for (int i=0; i < nsend; i++) {
     int displ = snd_real_displs[sndMap[i]];
     for(int j=0; j < sreal[sndMap[i]]; j++){
-      all_snd_realData[displ+j] = sndPack[sndMap[i]].realData[j];
+      all_snd_realData[displ+j] = sndPack[i].realData[j];
     }
   }
   MPI_Request real_request;
