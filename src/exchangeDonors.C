@@ -74,6 +74,7 @@ void tioga::exchangeDonors(void)
   //
   // communicate donors (comm1)
   //
+  MPI_Barrier(scomm);
   pc->sendRecvPackets2(sndPack,rcvPack);
   if (nsend == 0) return;
   // Initialize linked lists and populate donor data from rcvPack
