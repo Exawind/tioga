@@ -1895,8 +1895,6 @@ MeshBlock::~MeshBlock()
      if (blockcomm != MPI_COMM_NULL) MPI_Comm_free(&blockcomm);
   }
 
-  if (blockcomm != MPI_COMM_NULL) MPI_Comm_free(&blockcomm);
-
   if (m_info_device) TIOGA_FREE_DEVICE(m_info_device);
 
   // need to add code here for other objects as and
