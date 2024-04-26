@@ -169,8 +169,8 @@ jobs:
           ls ~/.cache
           ls ~/.cache/ccache
           du -hs ~/.cache/ccache
-          ls ~/.cache/ctcache
-          du -hs ~/.cache/ctcache
+          ls ~/.cache/ctcache || true
+          du -hs ~/.cache/ctcache || true
           ccache -s
       - name: Full report
         working-directory: ${{runner.workspace}}/build-clang-tidy
