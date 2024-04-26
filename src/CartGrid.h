@@ -16,21 +16,19 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #ifndef CARTGRID_H
 #define CARTGRID_H
 
 #include <cstdlib>
 
-namespace TIOGA
-{
+namespace TIOGA {
 struct AMRMeshInfo;
 }
 
-class CartGrid
-{
- private:
+class CartGrid {
+private:
   double xlosup[3];
   double *dxlvl{nullptr};
   int *lcount{nullptr};
@@ -39,9 +37,9 @@ class CartGrid
   bool own_data_ptrs{true};
   bool own_amr_mesh_info{false};
 
- public :
-  TIOGA::AMRMeshInfo* m_info{nullptr};
-  TIOGA::AMRMeshInfo* m_info_device{nullptr};
+public:
+  TIOGA::AMRMeshInfo *m_info{nullptr};
+  TIOGA::AMRMeshInfo *m_info_device{nullptr};
 
   int *global_id{nullptr};
   int *level_num{nullptr};
@@ -55,17 +53,18 @@ class CartGrid
   double *xlo{nullptr};
   double *dx{nullptr};
   int ngrids{0};
-  void (*donor_frac) (int *,double *,int *,double *) = nullptr;
+  void (*donor_frac)(int *, double *, int *, double *) = nullptr;
 
   CartGrid() = default;
   ~CartGrid();
 
-  void registerData(TIOGA::AMRMeshInfo* m_info);
-  void registerData(int nf,int *idata,double *rdata,int ngridsin);
-  void preprocess(void);     
-  void search(double *x,int *donorid,int nsearch);
-  void setcallback(void (*f1)(int *,double *,int *,double *)) 
-  {   donor_frac=f1;  }
+  void registerData(TIOGA::AMRMeshInfo *m_info);
+  void registerData(int nf, int *idata, double *rdata, int ngridsin);
+  void preprocess(void);
+  void search(double *x, int *donorid, int nsearch);
+  void setcallback(void (*f1)(int *, double *, int *, double *)) {
+    donor_frac = f1;
+  }
 
   void create_mesh_info();
 };

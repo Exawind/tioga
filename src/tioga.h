@@ -16,19 +16,19 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #ifndef TIOGA_H
 #define TIOGA_H
 
-#include <vector>
+#include "CartBlock.h"
+#include "CartGrid.h"
+#include "MeshBlock.h"
+#include "parallelComm.h"
 #include <map>
 #include <memory>
 #include <stdint.h>
-#include "MeshBlock.h"
-#include "CartGrid.h"
-#include "CartBlock.h"
-#include "parallelComm.h"
+#include <vector>
 
 /** Define a macro entry flagging the versions that are safe to use with large
  *  meshes containing element and node IDs greater than what a 4-byte signed int
@@ -51,9 +51,8 @@
 
 namespace TIOGA {
 
-class tioga
-{
- private :
+class tioga {
+private:
   int nblocks;
   int nblocksq;
   int ncart;
@@ -71,7 +70,7 @@ class tioga
   int isym;
   int ierr;
 
-  int myid,numprocs;
+  int myid, numprocs;
   int *sendCount;
   int *recvCount;
   std::vector<OBB> obblist;
@@ -85,11 +84,13 @@ class tioga
 
   //! Composite Body info
   int ncomposite; /** < number of composite bodies */
-  std::vector<CompositeBody> compositeBody; /** < list of composite body structs */
-  std::vector<std::vector<std::vector<char>>> compositeBodyMap; /** < mesh block composite-body map flag   */
+  std::vector<CompositeBody>
+      compositeBody; /** < list of composite body structs */
+  std::vector<std::vector<std::vector<char>>>
+      compositeBodyMap; /** < mesh block composite-body map flag   */
 
   //! Mesh blocks in this processor
-  std::vector<std::unique_ptr<MeshBlock> > mblocks;
+  std::vector<std::unique_ptr<MeshBlock>> mblocks;
   //! Solver assigned mesh tags for the mesh blocks
   std::vector<int> mtags;
   std::vector<int> mytag;
@@ -105,63 +106,77 @@ class tioga
   //! q-variables registered
   double **qblock;
 
-
- public:
+public:
   int ihigh;
   int ihighGlobal;
   int iamrGlobal;
-  int mexclude,nfringe;
+  int mexclude, nfringe;
   /** basic constuctor */
   tioga()
-    /*
-    : mblocks(0),
-      mtags(0)
-    */
-    {
-        mb=NULL; cg=NULL; cb=NULL;
-        holeMap=NULL; adaptiveHoleMap=NULL;
-        pc=NULL; sendCount=NULL; recvCount=NULL;
-        pc_cart = NULL;
-        meshblockComplement=NULL;
-        meshblockComposite=NULL;
-        // obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
-        isym=3;ihigh=0;nblocks=0;ncart=0;ncomposite=0;ihighGlobal=0;iamrGlobal=0;
-        mexclude=3,nfringe=1;
-        USE_ADAPTIVE_HOLEMAP=0; //Default to original hole map
-        qblock=NULL;
-        mblocks.clear();
-        mtags.clear();
-    }
+  /*
+  : mblocks(0),
+    mtags(0)
+  */
+  {
+    mb = NULL;
+    cg = NULL;
+    cb = NULL;
+    holeMap = NULL;
+    adaptiveHoleMap = NULL;
+    pc = NULL;
+    sendCount = NULL;
+    recvCount = NULL;
+    pc_cart = NULL;
+    meshblockComplement = NULL;
+    meshblockComposite = NULL;
+    // obblist=NULL;
+    // isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
+    isym = 3;
+    ihigh = 0;
+    nblocks = 0;
+    ncart = 0;
+    ncomposite = 0;
+    ihighGlobal = 0;
+    iamrGlobal = 0;
+    mexclude = 3, nfringe = 1;
+    USE_ADAPTIVE_HOLEMAP = 0; // Default to original hole map
+    qblock = NULL;
+    mblocks.clear();
+    mtags.clear();
+  }
 
   /** basic destructor */
   ~tioga();
 
   /** set communicator */
-  void setCommunicator(MPI_Comm communicator,int id_proc,int nprocs);
+  void setCommunicator(MPI_Comm communicator, int id_proc, int nprocs);
 
   void assembleComplementComms(void);
   void assembleCompositeComms(void);
   void assembleCompositeMap(void);
 
-  int  getNumCompositeBodies(){return ncomposite;}
+  int getNumCompositeBodies() { return ncomposite; }
   void setNumCompositeBodies(int ncomposite);
 
-  void registerCompositeBody(int compbodytag,int nbodytags,int *meshtags,int *dominancetags,double searchTol);
+  void registerCompositeBody(int compbodytag, int nbodytags, int *meshtags,
+                             int *dominancetags, double searchTol);
 
   /** registerGrid data */
 
-  void registerGridData(int btag,int nnodes,double *xyz,int *ibl, int nwbc,int nobc,
-                        int *wbcnode,int *obcnode,int ntypes, int *nv, int *nc, int **vconn,
-                        uint64_t* cell_gid=NULL, uint64_t* node_gid=NULL);
+  void registerGridData(int btag, int nnodes, double *xyz, int *ibl, int nwbc,
+                        int nobc, int *wbcnode, int *obcnode, int ntypes,
+                        int *nv, int *nc, int **vconn,
+                        uint64_t *cell_gid = NULL, uint64_t *node_gid = NULL);
 
-  void registerSolution(int btag,double *q);
+  void registerSolution(int btag, double *q);
 
-  void register_unstructured_solution(int btag,double *q,int nvar,int interptype);
+  void register_unstructured_solution(int btag, double *q, int nvar,
+                                      int interptype);
 
-  void register_unstructured_grid(TIOGA::MeshBlockInfo* minfo);
+  void register_unstructured_grid(TIOGA::MeshBlockInfo *minfo);
   void register_unstructured_solution();
 
-  void register_amr_grid(TIOGA::AMRMeshInfo* minfo);
+  void register_amr_grid(TIOGA::AMRMeshInfo *minfo);
   void register_amr_solution();
 
   /** Synchronize AMR patch information on all processes
@@ -174,7 +189,7 @@ class tioga
 
   void exchangeBoxes(void);
 
-  void exchangeSearchData(int at_points=0);
+  void exchangeSearchData(int at_points = 0);
 
   void exchangeDonors(void);
 
@@ -185,11 +200,11 @@ class tioga
   void performConnectivityAMR(void);
 
   /** update data */
-  void dataUpdate(int nvar,int interptype,int at_points=0) ;
+  void dataUpdate(int nvar, int interptype, int at_points = 0);
 
-  void dataUpdate_AMR() ;
+  void dataUpdate_AMR();
 
-  void dataUpdate_highorder(int nvar,double *q,int interptype) ;
+  void dataUpdate_highorder(int nvar, double *q, int interptype);
 
   /** get hole map for each mesh */
   void getHoleMap(void);
@@ -199,112 +214,99 @@ class tioga
   void outputHoleMap(void);
   void outputAdaptiveHoleMap(void);
 
-  void writeData(int nvar,int interptype);
+  void writeData(int nvar, int interptype);
 
   void getDonorCount(int btag, int *dcount, int *fcount);
 
-  void getDonorInfo(int btag, int *receptors,int *indices,double *frac,int *dcount);
+  void getDonorInfo(int btag, int *receptors, int *indices, double *frac,
+                    int *dcount);
 
-  void getReceptorInfo(std::vector<int>&);
+  void getReceptorInfo(std::vector<int> &);
 
   /** set hole map algorithm: [0] original hole map, [1] adaptive hole map */
-  void setHoleMapAlgorithm(int alg) {USE_ADAPTIVE_HOLEMAP=alg;};
-  int getHoleMapAlgorithm() {return USE_ADAPTIVE_HOLEMAP;};
+  void setHoleMapAlgorithm(int alg) { USE_ADAPTIVE_HOLEMAP = alg; };
+  int getHoleMapAlgorithm() { return USE_ADAPTIVE_HOLEMAP; };
   /** set symmetry bc */
-  void setSymmetry(int syminput) { isym=syminput;};
+  void setSymmetry(int syminput) { isym = syminput; };
   /** set resolutions for nodes and cells */
-  void setResolutions(double *nres,double *cres)
-  { auto & mb = mblocks[0]; mb->setResolutions(nres,cres);}
-
-  void setResolutions(int btag, double *nres,double *cres)
-  {
-    auto idxit = tag_iblk_map.find(btag);
-    int iblk = idxit->second;
-    auto& mb = mblocks[iblk];
+  void setResolutions(double *nres, double *cres) {
+    auto &mb = mblocks[0];
     mb->setResolutions(nres, cres);
   }
 
-  void setMexclude(int *mexclude_input)
-  {
-    mexclude=*mexclude_input;
-  }
-
-  void setNfringe(int *nfringe_input)
-  {
-    nfringe=*nfringe_input;
-  }
-
-  void set_cell_iblank(int *iblank_cell)
-  {
-   auto& mb = mblocks[0];
-   mb->set_cell_iblank(iblank_cell);
-  }
-
-  void set_uniform_hex_flag(int btag, int flag)
-  {
-      auto idxit = tag_iblk_map.find(btag);
-      int iblk = idxit->second;
-      auto& mb = mblocks[iblk];
-      mb->check_uniform_hex_flag = flag;
-  }
-
-  void set_cell_iblank(int btag, int* ib_cell)
-  {
+  void setResolutions(int btag, double *nres, double *cres) {
     auto idxit = tag_iblk_map.find(btag);
     int iblk = idxit->second;
-    auto& mb = mblocks[iblk];
+    auto &mb = mblocks[iblk];
+    mb->setResolutions(nres, cres);
+  }
+
+  void setMexclude(int *mexclude_input) { mexclude = *mexclude_input; }
+
+  void setNfringe(int *nfringe_input) { nfringe = *nfringe_input; }
+
+  void set_cell_iblank(int *iblank_cell) {
+    auto &mb = mblocks[0];
+    mb->set_cell_iblank(iblank_cell);
+  }
+
+  void set_uniform_hex_flag(int btag, int flag) {
+    auto idxit = tag_iblk_map.find(btag);
+    int iblk = idxit->second;
+    auto &mb = mblocks[iblk];
+    mb->check_uniform_hex_flag = flag;
+  }
+
+  void set_cell_iblank(int btag, int *ib_cell) {
+    auto idxit = tag_iblk_map.find(btag);
+    int iblk = idxit->second;
+    auto &mb = mblocks[iblk];
     mb->set_cell_iblank(ib_cell);
   }
 
-  void setcallback(void (*f1)(int *,int *),
-		   void (*f2)(int *,int *,double *),
-		   void (*f3)(int *,double *,int *,double *),
-		   void (*f4)(int *,double *,int *,int *,double *,double *,int *),
-		   void (*f5)(int *,int *,double *,int *,int*,double *))
-  {
-   for(int ib=0;ib<nblocks;ib++)
-   {
-    auto& mb = mblocks[ib];
-    mb->setcallback(f1,f2,f3,f4,f5);
-   }
-   ihigh=1;
+  void setcallback(void (*f1)(int *, int *), void (*f2)(int *, int *, double *),
+                   void (*f3)(int *, double *, int *, double *),
+                   void (*f4)(int *, double *, int *, int *, double *, double *,
+                              int *),
+                   void (*f5)(int *, int *, double *, int *, int *, double *)) {
+    for (int ib = 0; ib < nblocks; ib++) {
+      auto &mb = mblocks[ib];
+      mb->setcallback(f1, f2, f3, f4, f5);
+    }
+    ihigh = 1;
   }
 
-  void setp4estcallback(void (*f1)(double *,int *,int *,int *),
-			void (*f2) (int *,int *))
-  {
-   for(int ib=0;ib<nblocks;ib++)
-    {
-     auto& mb = mblocks[ib];   // TODO:this may have to based on unique tag of p4est blocks
-     mb->setp4estcallback(f1,f2);
+  void setp4estcallback(void (*f1)(double *, int *, int *, int *),
+                        void (*f2)(int *, int *)) {
+    for (int ib = 0; ib < nblocks; ib++) {
+      auto &mb = mblocks[ib]; // TODO:this may have to based on unique tag of
+                              // p4est blocks
+      mb->setp4estcallback(f1, f2);
     }
   }
 
-  void set_p4est(void)
-  {
-    for(int ib=0;ib < nblocks;ib++)
-    {
-      mytag[ib]=-mytag[ib];
-      auto& mb = mblocks[ib]; // TODO
-      mb->resolutionScale=1000.0;
+  void set_p4est(void) {
+    for (int ib = 0; ib < nblocks; ib++) {
+      mytag[ib] = -mytag[ib];
+      auto &mb = mblocks[ib]; // TODO
+      mb->resolutionScale = 1000.0;
     }
   }
 
-  void set_amr_callback(void (*f1)(int *,double *,int *,double *))
-  {
+  void set_amr_callback(void (*f1)(int *, double *, int *, double *)) {
     cg->setcallback(f1);
   }
 
-  void register_amr_global_data(int,int *,double *,int);
+  void register_amr_global_data(int, int *, double *, int);
   void set_amr_patch_count(int);
-  void register_amr_local_data(int, int ,int *, int *);
-  void register_amr_solution(int,double*,int,int);
+  void register_amr_local_data(int, int, int *, int *);
+  void register_amr_solution(int, double *, int, int);
   void exchangeAMRDonors(void);
   void checkComm(void);
   void outputStatistics(void);
-  void myTimer(char const *,int);
+  void myTimer(char const *, int);
   void reduce_fringes(void);
 };
-} // namespace
+} // namespace TIOGA
 
 #endif /* TIOGA_H */

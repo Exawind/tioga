@@ -16,28 +16,28 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
 #ifndef CODETYPES_H
 #define CODETYPES_H
 
-//#define MPICH_SKIP_MPICXX
-#include<stdint.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
-#include<vector>
-#include<algorithm>
+// #define MPICH_SKIP_MPICXX
 #include "mpi.h"
+#include <algorithm>
+#include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
 /*====================================================================*/
 /*  Floating point definition                                         */
 /*====================================================================*/
-# define REAL double
+#define REAL double
 typedef int32_t qcoord_t;
 /*====================================================================*/
 /*  Base for indexing (0 or 1) */
 /*====================================================================*/
-# define BASE 1
+#define BASE 1
 
 /*====================================================================*/
 /*  Define arithmetic constants                                       */
@@ -53,43 +53,49 @@ typedef int32_t qcoord_t;
 // #define PI                 3.1415926535897932e+00
 // #define RAD2DEG            (180.0/PI)
 // #define DEG2RAD            (PI/180.0)
-#define BIGVALUE           1.0e+15
-#define BIGINT             2147483647
-#define TOL                1.0e-10
-#define HOLEMAPSIZE        192
+#define BIGVALUE 1.0e+15
+#define BIGINT 2147483647
+#define TOL 1.0e-10
+#define HOLEMAPSIZE 192
 // #define NFRINGE            3
 // #define NVAR               6
-#define WALLNODETYPE       0
-#define OUTERNODETYPE      1
+#define WALLNODETYPE 0
+#define OUTERNODETYPE 1
 /*==================================================================*/
 /* ADAPTIVE HOLE MAP OCTANT INFO                                    */
 /*==================================================================*/
-#define INTERSECT_ALG       1 // [0] point-box inclusion only
-                              // [1] face-box intersection (water-tight)
+#define INTERSECT_ALG                                                          \
+  1 // [0] point-box inclusion only
+    // [1] face-box intersection (water-tight)
 
-#define NON_UNIQUE_NODES    1 // [0] wbc nodes are NOT listed as obc nodes
-                              // [1] wbc nodes may also be listed as obc nodes
+#define NON_UNIQUE_NODES                                                       \
+  1 // [0] wbc nodes are NOT listed as obc nodes
+    // [1] wbc nodes may also be listed as obc nodes
 
 /* Fixed Octree Constraints: Do Not Change */
-#define OCTANT_MAXLEVEL     30 // 32-bit integer
-#define OCTANT_CHILDREN     8
+#define OCTANT_MAXLEVEL 30 // 32-bit integer
+#define OCTANT_CHILDREN 8
 
 /** The length of a side of the root quadrant */
-#define OCTANT_ROOT_LEN   ((qcoord_t) 1 << OCTANT_MAXLEVEL)
+#define OCTANT_ROOT_LEN ((qcoord_t)1 << OCTANT_MAXLEVEL)
 /** The length of a octant of level l */
-#define OCTANT_LEN(l) ((qcoord_t) 1 << (OCTANT_MAXLEVEL - (l)))
+#define OCTANT_LEN(l) ((qcoord_t)1 << (OCTANT_MAXLEVEL - (l)))
 /** Conversion from integer coordinates to double coordinates */
-#define INT2DBL ((double) 1.0 / (double) OCTANT_ROOT_LEN)
+#define INT2DBL ((double)1.0 / (double)OCTANT_ROOT_LEN)
 
 #define OUTSIDE_SB 0
-#define INSIDE_SB  1
-#define WALL_SB    2
+#define INSIDE_SB 1
+#define WALL_SB 2
 /*==================================================================*/
 /* inline debugging tools                                           */
 /*==================================================================*/
-# define TRACEI(x)  printf("#tioga:\t"#x" =%d\n",x);
-# define TRACED(x)  printf("#tioga:\t"#x" =%.16e\n",x);
-# define TIOGA_FREE(a1)  {free(a1);a1=NULL;}
+#define TRACEI(x) printf("#tioga:\t" #x " =%d\n", x);
+#define TRACED(x) printf("#tioga:\t" #x " =%.16e\n", x);
+#define TIOGA_FREE(a1)                                                         \
+  {                                                                            \
+    free(a1);                                                                  \
+    a1 = NULL;                                                                 \
+  }
 // # define debug(x,y)  printf("#tioga:\t"#x"=%d,"#y"=%d\n",x,y);
 // # define stdwrite(x) if (myid==0) printf("#tioga:\t"#x"\n");
 // # define dstr(x) printf("#tioga:\t"#x"\n");
@@ -99,8 +105,8 @@ typedef int32_t qcoord_t;
 /*====================================================================*/
 // #define Sign(a1,a2) (((a2) < ZERO)? - fabs(a1): fabs(a1))
 // #define Abs(aa) (((aa) >= 0)? (aa): -(aa))
-// #define Round(aa) (int) ((fabs((aa) - floor(aa)) >= HALF)? ceil(aa): floor(aa))
-// #define swap(a,b) { a=a+b;b=a-b;a=a-b;}
+// #define Round(aa) (int) ((fabs((aa) - floor(aa)) >= HALF)? ceil(aa):
+// floor(aa)) #define swap(a,b) { a=a+b;b=a-b;a=a-b;}
 /*===================================================================*/
 /* Code specific types                                               */
 /*===================================================================*/
@@ -113,98 +119,95 @@ typedef int32_t qcoord_t;
 
 /* Mesh Block Complement/Composite Rank Data */
 class meshblockCompInfo {
-  public:
-    int nreq;
-    int id;
-    int nrank;
-    int masterID;   /* master rank for distributing mesh block data */
-    MPI_Comm comm;  /* communicator containing all complement ranks + master */
+public:
+  int nreq;
+  int id;
+  int nrank;
+  int masterID;  /* master rank for distributing mesh block data */
+  MPI_Comm comm; /* communicator containing all complement ranks + master */
 
-    /* constructor */
-    meshblockCompInfo(){
-        nreq = 0;
-        id = -1;
-        nrank = 0;
-        masterID = -1;
-        comm = MPI_COMM_NULL;
-    };
+  /* constructor */
+  meshblockCompInfo() {
+    nreq = 0;
+    id = -1;
+    nrank = 0;
+    masterID = -1;
+    comm = MPI_COMM_NULL;
+  };
 
-    /* destructor */
-   ~meshblockCompInfo(){
-        //if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
-        int sflag;
-        MPI_Finalized(&sflag);
-        if(!sflag){
-           if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+  /* destructor */
+  ~meshblockCompInfo() {
+    // if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+    int sflag;
+    MPI_Finalized(&sflag);
+    if (!sflag) {
+      if (comm != MPI_COMM_NULL)
+        MPI_Comm_free(&comm);
     };
-};
+  };
 };
 
 typedef struct {
-  double lo;  /**< lower bound */
-  double hi;  /**< upper bound */
+  double lo; /**< lower bound */
+  double hi; /**< upper bound */
 } bound_t;
 
 typedef struct {
-  bound_t x;  /**< x bounds */
-  bound_t y;  /**< y bounds */
-  bound_t z;  /**< z bounds */
+  bound_t x; /**< x bounds */
+  bound_t y; /**< y bounds */
+  bound_t z; /**< z bounds */
 } box_t;
 
 /** The 3D full octant datatype: 130 bytes per octant */
-typedef struct octant_full
-{
+typedef struct octant_full {
   qcoord_t x, y, z; /**< [12B] binary coordinates */
   uint32_t id;      /**< [4B] element id on level */
-  uint8_t filltype; /**< [1B] floodfill: [0] inside SB, [1] outside SB, [2] hole SB */
+  uint8_t filltype; /**< [1B] floodfill: [0] inside SB, [1] outside SB, [2] hole
+                       SB */
   uint8_t refined;  /**< [1B] flag if refined (i.e. is a parent) */
   struct octant_full *nhbr[6];     /**< [48B] neighbor octant list */
   struct octant_full *children[8]; /**< [64B] children octants if refined */
 } octant_full_t;
 
-typedef struct octant_coordinates
-{
-  qcoord_t x, y, z;     /**< [12B] binary coordinates */
+typedef struct octant_coordinates {
+  qcoord_t x, y, z; /**< [12B] binary coordinates */
 } octant_coordinates_t;
 
 /** 3D octant datatype: 48 bytes per octant */
-typedef struct octant
-{
+typedef struct octant {
   qcoord_t x, y, z;     /**< [12B] binary coordinates */
-  uint8_t filltype;     /**< [1B]  floodfill: [0] inside SB, [1] outside SB, [2] hole SB */
+  uint8_t filltype;     /**< [1B]  floodfill: [0] inside SB, [1] outside SB, [2]
+                           hole SB */
   uint8_t leafflag;     /**< [1B]  flag if refined (i.e. is a parent) */
   uint8_t pad[2];       /**< [2B]  padding */
   uint32_t children[8]; /**< [32B] children octant IDs */
 } octant_t;
 
-typedef struct level_octant
-{
-  uint32_t elem_count;      /**< number of octants in level */
-  uint8_t level_id;         /**< level number */
-  std::vector<octant_full_t> octants; /**< [elem_count] locally stored octants */
+typedef struct level_octant {
+  uint32_t elem_count; /**< number of octants in level */
+  uint8_t level_id;    /**< level number */
+  std::vector<octant_full_t>
+      octants; /**< [elem_count] locally stored octants */
 } level_octant_t;
 
-typedef struct level_octant_coordinate
-{
-  uint8_t level_id;     /**< level number */
-  uint32_t elem_count;  /**< number of octants in level */
+typedef struct level_octant_coordinate {
+  uint8_t level_id;                          /**< level number */
+  uint32_t elem_count;                       /**< number of octants in level */
   std::vector<octant_coordinates_t> octants; /**< [elem_count] octant list */
 } level_octant_coordinate_t;
 
-typedef struct level
-{
-  uint8_t level_id;     /**< level number */
-  uint32_t elem_count;  /**< number of octants in level */
+typedef struct level {
+  uint8_t level_id;              /**< level number */
+  uint32_t elem_count;           /**< number of octants in level */
   std::vector<octant_t> octants; /**< [elem_count] octant list */
 } level_t;
 
-typedef struct ADAPTIVE_HOLEMAP_OCTANT
-{
+typedef struct ADAPTIVE_HOLEMAP_OCTANT {
   int8_t existWall;     /**< flag to indicate map contains wall */
   double extents_lo[3]; /**< lower coordinates of tree */
   double extents_hi[3]; /**< upper coordinates of tree */
 
-  uint8_t nlevel;       /**< number of levels */
+  uint8_t nlevel; /**< number of levels */
   level_octant_t levels[OCTANT_MAXLEVEL];
 } ADAPTIVE_HOLEMAP_OCTANT;
 
@@ -214,30 +217,27 @@ typedef struct {
   double extents_hi[3]; /**< upper coordinates of tree */
   uint64_t leaf_count;  /**< total leaf octant count */
   uint64_t elem_count;  /**< total octant count */
-} ahm_meta_t ;
+} ahm_meta_t;
 
 typedef struct {
   uint8_t nlevel;       /**< number of levels in map */
   double extents_lo[3]; /**< lower coordinates of tree */
   double extents_hi[3]; /**< upper coordinates of tree */
   uint64_t elem_count;  /**< total octant count */
-} ahm_meta_minimal_t ;
+} ahm_meta_minimal_t;
 
-typedef struct ADAPTIVE_HOLEMAP_COMPOSITE
-{
-  ahm_meta_minimal_t meta;  /**< adaptive hole map meta data */
+typedef struct ADAPTIVE_HOLEMAP_COMPOSITE {
+  ahm_meta_minimal_t meta; /**< adaptive hole map meta data */
   level_octant_coordinate_t levels[OCTANT_MAXLEVEL];
 } ADAPTIVE_HOLEMAP_COMPOSITE;
 
-typedef struct ADAPTIVE_HOLEMAP
-{
-  uint8_t existWall;    /**< flag to indicate map contains wall */
-  ahm_meta_t meta;      /**< adaptive hole map meta data */
+typedef struct ADAPTIVE_HOLEMAP {
+  uint8_t existWall; /**< flag to indicate map contains wall */
+  ahm_meta_t meta;   /**< adaptive hole map meta data */
   level_t levels[OCTANT_MAXLEVEL];
 } ADAPTIVE_HOLEMAP;
 
-typedef struct HOLEMAP
-{
+typedef struct HOLEMAP {
   int existWall;
   int nx[3];
   int *samLocal;
@@ -245,8 +245,7 @@ typedef struct HOLEMAP
   double extents[6];
 } HOLEMAP;
 
-typedef struct OBB
-{
+typedef struct OBB {
   double xc[3];
   double dxc[3];
   double vec[3][3];
@@ -259,8 +258,7 @@ typedef struct OBB
   int recv_tag;
 } OBB;
 
-typedef struct DONORLIST
-{
+typedef struct DONORLIST {
   int donorData[4];
   double donorRes;
   double receptorRes;
@@ -268,16 +266,14 @@ typedef struct DONORLIST
   struct DONORLIST *next;
 } DONORLIST;
 
-typedef struct PACKET
-{
+typedef struct PACKET {
   int nints;
   int nreals;
   int *intData;
   REAL *realData;
 } PACKET;
 
-typedef struct INTERPLIST
-{
+typedef struct INTERPLIST {
   int cancel;
   int nweights;
   int receptorInfo[3];
@@ -286,8 +282,7 @@ typedef struct INTERPLIST
   double *weights;
 } INTERPLIST;
 
-typedef struct INTERPLIST2
-{
+typedef struct INTERPLIST2 {
   int cancel;
   int nweights;
   int receptorInfo[3];
@@ -296,22 +291,19 @@ typedef struct INTERPLIST2
   struct INTERPLIST2 *next;
 } INTERPLIST2;
 
-typedef struct INTEGERLIST
-{
+typedef struct INTEGERLIST {
   int inode;
   struct INTEGERLIST *next;
 } INTEGERLIST;
 
-typedef struct INTEGERLIST2
-{
-  int intDataSize,realDataSize;
+typedef struct INTEGERLIST2 {
+  int intDataSize, realDataSize;
   int *intData;
   double *realData;
   struct INTEGERLIST2 *next;
 } INTEGERLIST2;
 
-typedef struct CompositeBody
-{
+typedef struct CompositeBody {
   double searchTol;
   std::vector<int> bodyids;
   std::vector<int> dominanceflags;
