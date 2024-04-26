@@ -9,6 +9,8 @@ Checks: 'bugprone-*,
          modernize-*,
          -modernize-use-nodiscard,
          performance-*,
+         -performance-avoid-endl,
+         -performance-inefficient-string-concatenation,
          portability-*,
          readability-*,
          -readability-magic-numbers,
@@ -19,6 +21,7 @@ Checks: 'bugprone-*,
          -readability-function-cognitive-complexity'
 WarningsAsErrors: ''
 HeaderFilterRegex: '.*'
+HeaderFileExtensions: ['', "H", 'h', 'hh', 'hpp', 'hxx']
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 User:            user
