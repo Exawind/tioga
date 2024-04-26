@@ -166,14 +166,14 @@ jobs:
           cmake --build . --parallel ${{env.NPROCS}} 2>&1 | tee -a clang-tidy-full-report.txt
           cat clang-tidy-full-report.txt | grep "warning:" | grep -v "submods" | sort | uniq | \
             awk 'BEGIN{i=0}{print $0}{i++}END{print "Warnings: "i}' > clang-tidy-ci-report.txt
-      # - name: Ccache Report
-      #   run: |
-      #     ls ~/.cache
-      #     ls ~/.cache/ccache
-      #     du -hs ~/.cache/ccache
-      #     ls ~/.cache/ctcache
-      #     du -hs ~/.cache/ctcache
-      #     ccache -s
+      - name: Ccache Report
+        run: |
+          ls ~/.cache
+          ls ~/.cache/ccache
+          du -hs ~/.cache/ccache
+          ls ~/.cache/ctcache
+          du -hs ~/.cache/ctcache
+          ccache -s
       - name: Full report
         working-directory: ${{runner.workspace}}/build-clang-tidy
         run: cat clang-tidy-full-report.txt
