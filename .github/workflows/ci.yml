@@ -149,12 +149,11 @@ jobs:
         run: sudo apt-get install -y mpich libmpich-dev
       - name: Configure
         run: |
-          which mpicxx
+          export MPICH_CXX=$(which clang++)
           cmake \
           -B ${{runner.workspace}}/build-clang-tidy \
           -DCMAKE_BUILD_TYPE:STRING=Release \
-          -DCMAKE_CXX_COMPILER:STRING=clang++ \
-          -DMPI_HOME:PATH=/usr/local \
+          -DCMAKE_CXX_COMPILER:STRING=mpicxx \
           -DTIOGA_ENABLE_CLANG_TIDY:BOOL=ON \
           -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache \
           -DCLANG_TIDY_EXEC_NAME:STRING=clang-tidy-${CLANG_TIDY_VERSION} \
