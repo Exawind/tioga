@@ -149,6 +149,7 @@ jobs:
         run: sudo apt-get install -y mpich libmpich-dev
       - name: Configure
         run: |
+          which mpicxx
           cmake \
           -B ${{runner.workspace}}/build-clang-tidy \
           -DCMAKE_BUILD_TYPE:STRING=Release \
