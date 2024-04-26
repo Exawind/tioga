@@ -1,6 +1,6 @@
 # TIOGA - Topology Independent Overset Grid Assembler
 
-[![TIOGA CI](https://github.com/Exawind/tioga/actions/workflows/ci.yml/badge.svg)](https://github.com/Exawind/tioga/actions/workflows/ci.yml)
+[![TIOGA-CI](https://github.com/Exawind/tioga/actions/workflows/ci.yml/badge.svg)](https://github.com/Exawind/tioga/actions/workflows/ci.yml)
 
 TIOGA is a library for overset grid assembly on parallel distributed systems
 Copyright (C) 2015 Jay Sitaraman
