@@ -42,7 +42,7 @@
 #define TIOGA_HAS_NGP_IFACE 1
 
 /**
- * Topology Indpendent Overset Grid Assembler (TIOGA)
+ * Topology Independent Overset Grid Assembler (TIOGA)
  * Base class and dependencies
  * The methods of this class are invoked from tiogaInterface.C
  *
@@ -100,7 +100,7 @@ private:
   //! Intersect block unique ID to index lookup mapping
   std::map<int, int> intBoxMap;
 
-  //! Parallel comms to obblist indicies
+  //! Parallel comms to obblist indices
   std::vector<int> ibsPerProc;
   std::vector<std::vector<int>> ibProcMap;
   //! q-variables registered
@@ -111,7 +111,7 @@ public:
   int ihighGlobal;
   int iamrGlobal;
   int mexclude, nfringe;
-  /** basic constuctor */
+  /** basic constructor */
   tioga()
   /*
   : mblocks(0),

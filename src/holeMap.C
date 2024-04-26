@@ -34,7 +34,7 @@ using namespace TIOGA;
 /**
  * Create hole maps for all grids
  * this routine is not efficient
- * since it does mutiple global reduce ops
+ * since it does multiple global reduce ops
  * have to change it at a later date when
  * there is more time to develop code
  */

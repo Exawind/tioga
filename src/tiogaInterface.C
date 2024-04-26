@@ -227,7 +227,7 @@ extern "C" {
        }
       else
       {
-        printf("Data udpate between high-order near-body and AMR cartesian Not implemented yet\n");
+        printf("Data update between high-order near-body and AMR cartesian Not implemented yet\n");
       }
     }
   }

@@ -132,7 +132,7 @@ void CartGrid::registerData(int nfin,int *idata,double *rdata,int ngridsin)
 
 //
 // Bare bone preprocessor now
-// willl add more support data structures
+// will add more support data structures
 // to promote efficient search once the concept
 // works
 //

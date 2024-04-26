@@ -317,7 +317,7 @@ void MeshBlock::getInterpolatedSolutionAMR(int *nints,int *nreals,int **intData,
      for(i=0;i<(*nreals);i++) tmpreal[i]=(*realData)[i];
      //
      TIOGA_FREE((*intData));
-     TIOGA_FREE((*realData)); // didnt free this before ??
+     TIOGA_FREE((*realData)); // didn't free this before ??
      //
    }
    (*nints)+=interpCount;
