@@ -111,32 +111,37 @@ void parallelComm::sendRecvPacketsAll(PACKET *sndPack, PACKET *rcvPack)
     if (rcvPack[i].nints > 0) {
       rcvPack[i].intData=(int *) malloc(sizeof(int)*rcvPack[i].nints);
     }
-    if (rcvPack[i].nreals > 0) {
-      rcvPack[i].realData=(REAL *) malloc(sizeof(REAL)*rcvPack[i].nreals);
-    }
   }
 
-  MPI_Wait(&real_request, MPI_STATUS_IGNORE);
   for (int i=0; i < numprocs; i++) {
     int displ = rcv_int_displs[i];
     for(int j=0; j < rint[i]; j++){
       rcvPack[i].intData[j] = all_rcv_intData[displ+j];
     }
   }
-  for (int i=0; i < numprocs; i++) {
+
+  TIOGA_FREE(all_snd_intData);
+  TIOGA_FREE(all_rcv_intData);
+  TIOGA_FREE(sint);
+  TIOGA_FREE(rint);
+ 
+  MPI_Wait(&real_request, MPI_STATUS_IGNORE);
+  for(i=0;i<numprocs;i++){
+    if (rcvPack[i].nreals > 0) {
+      rcvPack[i].realData=(REAL *) malloc(sizeof(REAL)*rcvPack[i].nreals);
+    }
+  }
+
+ for (int i=0; i < numprocs; i++) {
     int displ = rcv_real_displs[i];
     for(int j=0; j < rreal[i]; j++){
       rcvPack[i].realData[j] = all_rcv_realData[displ+j];
     }
   }
 
-  TIOGA_FREE(all_snd_intData);
-  TIOGA_FREE(all_rcv_intData);
   TIOGA_FREE(all_snd_realData);
   TIOGA_FREE(all_rcv_realData);
-  TIOGA_FREE(sint);
   TIOGA_FREE(sreal);
-  TIOGA_FREE(rint);
   TIOGA_FREE(rreal);
 }
 
