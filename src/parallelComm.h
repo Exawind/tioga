@@ -58,6 +58,8 @@ public:
 
   void sendRecvPacketsAll(PACKET *sndPack, PACKET *rcvPack);
 
+  void sendRecvPackets2(PACKET *sndPack, PACKET *rcvPack);
+
   void sendRecvPackets(PACKET *sndPack, PACKET *rcvPack);
 
   void sendRecvPacketsCheck(PACKET *sndPack, PACKET *rcvPack);

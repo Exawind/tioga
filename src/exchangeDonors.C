@@ -35,7 +35,6 @@ void tioga::exchangeDonors(void)
   // and receiving
   //
   pc->getMap(&nsend,&nrecv,&sndMap,&rcvMap);
-  if (nsend == 0) return;
   //
   // create packets to send and receive
   // and initialize them to zero
@@ -74,7 +73,8 @@ void tioga::exchangeDonors(void)
   //
   // communicate donors (comm1)
   //
-  pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPackets2(sndPack,rcvPack);
+  if (nsend == 0) return;
   // Initialize linked lists and populate donor data from rcvPack
   for (int ib=0;ib<nblocks;ib++) {
     auto& mb = mblocks[ib];
