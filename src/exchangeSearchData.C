@@ -113,7 +113,7 @@ void tioga::exchangeSearchData(int at_points)
         sndPack[k].realData[m++] = real_data[ii][j];
     }
   }
-  pc->sendRecvPackets(sndPack, rcvPack);
+  pc->sendRecvPackets2(sndPack, rcvPack);
 
   // Reset MeshBlock data structures
   for (int ib=0;ib<nblocks;ib++) {

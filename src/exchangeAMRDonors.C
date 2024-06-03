@@ -342,7 +342,7 @@ void tioga::checkComm(void)
       sndPack[i].intData[1]=1;
     }
   //
-  pc_cart->sendRecvPackets(sndPack,rcvPack);
+  pc_cart->sendRecvPackets2(sndPack,rcvPack);
   pc_cart->clearPackets(sndPack,rcvPack);
   TIOGA_FREE(sndMap);
   TIOGA_FREE(rcvMap);

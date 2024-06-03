@@ -240,7 +240,7 @@ void tioga::exchangeBoxes(void)
     //           << std::setw(3) << key_recv << " "
     //           << std::setw(3) << key_send << std::endl;
   }
-  pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPackets2(sndPack,rcvPack);
 
   for (int k=0; k<nrecv; k++) {
     int m=0;
