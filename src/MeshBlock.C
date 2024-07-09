@@ -652,8 +652,10 @@ void MeshBlock::writeGridFile(int bid)
   int ba;
   int nvert;
 
-  snprintf(intstring,7,"%d",100000+bid);
-  snprintf(fname,14,"part%s.dat",&(intstring[1]));
+  //snprintf(intstring,7,"%d",100000+bid);
+  //snprintf(fname,14,"part%s.dat",&(intstring[1]));
+  snprintf(intstring,sizeof(intstring),"%d",100000+bid);
+  snprintf(fname,sizeof(fname),"part%s.dat",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\"\n");
@@ -736,8 +738,10 @@ void MeshBlock::writeCellFile(int bid)
   int ba;
   int nvert;
 
-  snprintf(intstring,7,"%d",100000+bid);
-  snprintf(fname,14,"cell%s.dat",&(intstring[1]));
+  //snprintf(intstring,7,"%d",100000+bid);
+  //snprintf(fname,14,"cell%s.dat",&(intstring[1]));
+  snprintf(intstring,sizeof(intstring),"%d",100000+bid);
+  snprintf(fname,sizeof(fname),"cell%s.dat",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"IBLANK_CELL\" ");
@@ -835,14 +839,17 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
       ibl=iblank;
     }
   //
-  snprintf(intstring,7,"%d",100000+bid);
-  snprintf(fname,14,"flow%s.tec",&(intstring[1]));
+  //snprintf(intstring,7,"%d",100000+bid);
+  //snprintf(fname,14,"flow%s.tec",&(intstring[1]));
+  snprintf(intstring,sizeof(intstring),"%d",100000+bid);
+  snprintf(fname,sizeof(fname),14,"flow%s.tec",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"BTAG\"");
   for(i=0;i<nvar;i++)
     {
-      snprintf(qstr,3,"Q%d",i);
+      //snprintf(qstr,3,"Q%d",i);
+      snprintf(qstr,sizeof(qstr),"Q%d",i);
       fprintf(fp,",\"%s\"",qstr);
     }
   fprintf(fp,"\n");
@@ -1085,7 +1092,8 @@ void MeshBlock::writeBCnodes(char nodetype2tag,int bodyid){
   MPI_Reduce(&nbc,&allnbc,1,MPI_INT,MPI_SUM,0,blockcomm);
 
   static int step = 0;
-    snprintf(filename,21,"bcpoints.body%d.%d.tec",bodyid,step);
+    //snprintf(filename,21,"bcpoints.body%d.%d.tec",bodyid,step);
+    snprintf(filename,sizeof(filename),"bcpoints.body%d.%d.tec",bodyid,step);
     step++;
 
     if(blockcomm_id == 0){
@@ -1783,8 +1791,10 @@ void MeshBlock::writeOBB(int bid)
   char fname[80];
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
-  snprintf(intstring,7,"%d",100000+bid);
-  snprintf(fname,13,"box%s.dat",&(intstring[1]));
+  //snprintf(intstring,7,"%d",100000+bid);
+  //snprintf(fname,13,"box%s.dat",&(intstring[1]));
+  snprintf(intstring,sizeof(intstring),"%d",100000+bid);
+  snprintf(fname,sizeof(fname),"box%s.dat",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -2096,8 +2106,10 @@ void MeshBlock::checkOrphans(void)
     char intstring[12];
     char fname[80];
     printf("myid/meshtag/norphan/nnodes/nobc=%d %d %d %d %d\n",myid,meshtag,norphan,nnodes,nobc);
-    snprintf(intstring,7,"%d",100000+myid);
-    snprintf(fname,16,"orphan%s.dat",&(intstring[1]));
+    //snprintf(intstring,7,"%d",100000+myid);
+    //snprintf(fname,16,"orphan%s.dat",&(intstring[1]));
+    snprintf(intstring,sizeof(intstring),"%d",100000+myid);
+    snprintf(fname,sizeof(fname),"orphan%s.dat",&(intstring[1]));
     FILE *fp=fopen(fname,"w");
     for (int i=0;i<nnodes;i++)
     {

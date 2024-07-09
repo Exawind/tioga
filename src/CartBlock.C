@@ -701,8 +701,10 @@ void CartBlock::writeCellFile(int bid)
   ibmax=-30000000;
   nnodes=(dims[1]+1)*(dims[0]+1)*(dims[2]+1);
   ncells=dims[0]*dims[1]*dims[2];
-  snprintf(intstring,7,"%d",100000+myid);
-  snprintf(fname,19,"cart_cell%s.dat",&(intstring[1]));
+  //snprintf(intstring,7,"%d",100000+myid);
+  //snprintf(fname,19,"cart_cell%s.dat",&(intstring[1]));
+  snprintf(intstring,sizeof(intstring),"%d",100000+myid);
+  snprintf(fname,sizeof(fname),"cart_cell%s.dat",&(intstring[1]));
   if (bid==0) 
     {
       fp=fopen(fname,"w");

@@ -790,8 +790,10 @@ void tioga::outputHoleMap(void)
   for(i=0;i<nmesh;i++)
     if (holeMap[i].existWall)
        {
-	 snprintf(intstring,7,"%d",100000+i+100*myid);
-	 snprintf(fname,17,"holeMap%s.dat",&(intstring[1]));
+	 //snprintf(intstring,7,"%d",100000+i+100*myid);
+	 //snprintf(fname,17,"holeMap%s.dat",&(intstring[1]));
+	 snprintf(intstring,sizeof(intstring),"%d",100000+i+100*myid);
+	 snprintf(fname,sizeof(fname),"holeMap%s.dat",&(intstring[1]));
 	 fp=fopen(fname,"w");
 	 fprintf(fp,"TITLE =\"Tioga output\"\n");
 	 fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\"\n");
