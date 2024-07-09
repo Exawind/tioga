@@ -19,6 +19,7 @@
 #include "codetypes.h"
 #include "tioga_utils.h"
 #include "kaiser.h"
+#include <stdio.h>
 
 /***
  ** find oriented bounding box for a given set of points
@@ -480,8 +481,8 @@ void writebbox(OBB *obb,int bid)
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"qbox%s.dat",&(intstring[1]));
+  snprintf(intstring,7,"%d",100000+bid);
+  snprintf(fname,14,"qbox%s.dat",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -524,8 +525,8 @@ void writebboxdiv(OBB *obb,int bid)
   for(j=0;j<3;j++) { mapdims[j]=12; mapdx[j]=2*obb->dxc[j]/mapdims[j]; mdx[j]=0.5*mapdx[j];mx0[j]=0;}
   ncells=mapdims[2]*mapdims[1]*mapdims[0];
   npts=ncells*8;
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"dbox%s.dat",&(intstring[1]));
+  snprintf(intstring,7,"%d",100000+bid);
+  snprintf(fname,14,"dbox%s.dat",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -563,8 +564,8 @@ void writePoints(double *x,int nsearch,int bid)
   char fname[80];
   int i;
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"points%s.dat",&(intstring[1]));
+  snprintf(intstring,7,"%d",100000+bid);
+  snprintf(fname,16,"points%s.dat",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");

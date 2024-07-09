@@ -855,7 +855,7 @@ void tioga::dataUpdate(int nvar,int interptype, int at_points)
        if (itmp[ib][i]==0 && iorphanPrint) {
         if (fp==NULL)
           {
-            sprintf(ofname,"orphan%d.%d.dat",myid,ib);
+            snprintf(ofname,14,"orphan%d.%d.dat",myid,ib);
             fp=fopen(ofname,"w");
           }
         mb->outputOrphan(fp,i);
