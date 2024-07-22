@@ -16,6 +16,9 @@
 /* You should have received a copy of the GNU Lesser General Public */
 /* License along with this library; if not, write to the Free Software */
 /* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
+#include <cstring>
+#include <string>
+#include <sstream>
 #include "codetypes.h"
 #include "tioga_utils.h"
 #include "kaiser.h"
@@ -475,13 +478,19 @@ void transform2OBB(double xv[3],double xc[3],double vec[3][3],double xd[3])
 void writebbox(OBB *obb,int bid)
 {
   FILE *fp;
-  char intstring[12];
   char fname[80];
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"qbox%s.dat",&(intstring[1]));
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"qbox"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -518,14 +527,22 @@ void writebboxdiv(OBB *obb,int bid)
   int i,j,k,l,m,n;
   int iorder[8]={1, 2, 4, 3, 5, 6, 8, 7};
   FILE *fp;
-  char intstring[12];
   char fname[80];
 
   for(j=0;j<3;j++) { mapdims[j]=12; mapdx[j]=2*obb->dxc[j]/mapdims[j]; mdx[j]=0.5*mapdx[j];mx0[j]=0;}
   ncells=mapdims[2]*mapdims[1]*mapdims[0];
   npts=ncells*8;
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"dbox%s.dat",&(intstring[1]));
+
+
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"dbox"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -559,12 +576,18 @@ void writebboxdiv(OBB *obb,int bid)
 void writePoints(double *x,int nsearch,int bid)
 {
   FILE *fp;
-  char intstring[12];
   char fname[80];
   int i;
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"points%s.dat",&(intstring[1]));
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"points"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
