@@ -22,6 +22,9 @@
 #include <assert.h>
 #include <vector>
 #include <iostream>
+#include <cstring>
+#include <string>
+#include <sstream>
 
 using namespace TIOGA;
 /**
@@ -855,7 +858,10 @@ void tioga::dataUpdate(int nvar,int interptype, int at_points)
        if (itmp[ib][i]==0 && iorphanPrint) {
         if (fp==NULL)
           {
-            sprintf(ofname,"orphan%d.%d.dat",myid,ib);
+            std::ostringstream ss;
+            ss<<"orphan"<<myid<<"."<<ib<<".dat";
+            std::string buf_str=ss.str();;
+            std::strcpy(ofname,buf_str.c_str());
             fp=fopen(ofname,"w");
           }
         mb->outputOrphan(fp,i);
