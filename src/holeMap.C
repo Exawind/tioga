@@ -23,6 +23,8 @@
 #include <vector>
 #include <array>
 #include <cstring>
+#include <string>
+#include <sstream>
 
 /* header files */
 #include "codetypes.h"
@@ -55,7 +57,6 @@ void tioga::getHoleMap(void)
   int bufferSize;
   FILE *fp;
   char fname[80];
-  char intstring[12];
  //
  // get the local bounding box
  //
@@ -783,14 +784,20 @@ void tioga::outputHoleMap(void)
   int ii,jj,kk,m;
   FILE *fp;
   double ds[3];
-  char intstring[12];
   char fname[80];
 
   for(i=0;i<nmesh;i++)
     if (holeMap[i].existWall)
        {
-	 sprintf(intstring,"%d",100000+i+100*myid);
-	 sprintf(fname,"holeMap%s.dat",&(intstring[1]));
+         std::ostringstream ss;
+         std::ostringstream snum;
+         std::string strnum;
+         snum <<100000+i+100*myid;
+         strnum=snum.str();
+         ss<<"holeMap"<<strnum.substr(1,5)<<".dat";
+         std::string buf_str=ss.str();;
+         std::strcpy(fname,buf_str.c_str());
+
 	 fp=fopen(fname,"w");
 	 fprintf(fp,"TITLE =\"Tioga output\"\n");
 	 fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\"\n");
@@ -945,7 +952,10 @@ void tioga::outputAdaptiveHoleMap(void){
         ds[1] = meta.extents_hi[1] - meta.extents_lo[1];
         ds[2] = meta.extents_hi[2] - meta.extents_lo[2];
 
-        sprintf(filename,"AHM.body%d.%d.tec",m,ahm_step++);
+        std::ostringstream ss;
+        ss<<"AHM.body"<<m<<"."<<ahm_step<<".tec";
+        std::string buf_str=ss.str();;
+        std::strcpy(filename,buf_str.c_str());
         writePointsHeaderVolume(filename);
 
         file = fopen(filename, "a");
