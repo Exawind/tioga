@@ -17,7 +17,10 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#include <cstring>
 #include <stdexcept>
+#include <string>
+#include <sstream>
 #include "TiogaMeshInfo.h"
 #include "codetypes.h"
 #include "CartBlock.h"
@@ -686,7 +689,6 @@ void CartBlock::writeCellFile(int bid)
   int ibmin,ibmax;
   char fname[80];
   char qstr[2];
-  char intstring[12];
   char hash,c;
   int i,n,j,k,ibindex;
   int bodytag;
@@ -700,8 +702,16 @@ void CartBlock::writeCellFile(int bid)
   ibmax=-30000000;
   nnodes=(dims[1]+1)*(dims[0]+1)*(dims[2]+1);
   ncells=dims[0]*dims[1]*dims[2];
-  sprintf(intstring,"%d",100000+myid);
-  sprintf(fname,"cart_cell%s.dat",&(intstring[1]));
+
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+myid;
+  strnum=snum.str();
+  ss<<"cart_cell"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   if (bid==0) 
     {
       fp=fopen(fname,"w");
