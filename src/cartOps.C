@@ -21,6 +21,9 @@
 #include "MeshBlock.h"
 #include "tioga_math.h"
 #include <assert.h>
+#include <cstring>
+#include <string>
+#include <sstream>
 #define ROW 0
 #define COLUMN 1
 
@@ -162,8 +165,15 @@ void MeshBlock::writeOBB2(OBB * obc, int bid)
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"cbox%s.dat",&(intstring[1]));
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"cbox"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
