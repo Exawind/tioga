@@ -19,6 +19,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstring>
 #include <stdexcept>
+#include <string>
+#include <sstream>
 #include "codetypes.h"
 #include "MeshBlock.h"
 #include "tioga.h"
@@ -643,7 +645,6 @@ void MeshBlock::tagBoundaryFaces(void){
 void MeshBlock::writeGridFile(int bid)
 {
   char fname[80];
-  char intstring[12];
   char hash,c;
   int i,n,j;
   int bodytag;
@@ -651,8 +652,15 @@ void MeshBlock::writeGridFile(int bid)
   int ba;
   int nvert;
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"part%s.dat",&(intstring[1]));
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"part"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\"\n");
@@ -727,7 +735,6 @@ void MeshBlock::writeCellFile(int bid)
 {
   char fname[80];
   char qstr[3];
-  char intstring[12];
   char hash,c;
   int i,n,j;
   int bodytag;
@@ -735,8 +742,15 @@ void MeshBlock::writeCellFile(int bid)
   int ba;
   int nvert;
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"cell%s.dat",&(intstring[1]));
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"cell"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"IBLANK_CELL\" ");
@@ -813,7 +827,6 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
 {
   char fname[80];
   char qstr[12];
-  char intstring[12];
   char hash,c;
   int i,n,j;
   int bodytag;
@@ -834,15 +847,28 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
       ibl=iblank;
     }
   //
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"flow%s.tec",&(intstring[1]));
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"flow"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"BTAG\"");
+  ss.str("");
+  buf_str.clear();
+  strnum.clear();
   for(i=0;i<nvar;i++)
     {
-      sprintf(qstr,"Q%d",i);
+      ss<<"Q"<<i;
+      buf_str=ss.str();
+      std::strcpy(qstr,buf_str.c_str());
       fprintf(fp,",\"%s\"",qstr);
+      ss.str("");     
     }
   fprintf(fp,"\n");
   fprintf(fp,"ZONE T=\"VOL_MIXED\",N=%d E=%d ET=BRICK, F=FEPOINT\n",nnodes,
@@ -1084,7 +1110,10 @@ void MeshBlock::writeBCnodes(char nodetype2tag,int bodyid){
   MPI_Reduce(&nbc,&allnbc,1,MPI_INT,MPI_SUM,0,blockcomm);
 
   static int step = 0;
-    sprintf(filename,"bcpoints.body%d.%d.tec",bodyid,step);
+    std::ostringstream ss;
+    ss<<"bcpoints.body"<<bodyid<<"."<<step<<".tec";
+    std::string buf_str=ss.str();;
+    std::strcpy(filename,buf_str.c_str());
     step++;
 
     if(blockcomm_id == 0){
@@ -1778,13 +1807,19 @@ void MeshBlock::getQueryPoints2(OBB *obc,
 void MeshBlock::writeOBB(int bid)
 {
   FILE *fp;
-  char intstring[12];
   char fname[80];
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
 
-  sprintf(intstring,"%d",100000+bid);
-  sprintf(fname,"box%s.dat",&(intstring[1]));
+  std::ostringstream ss;
+  std::ostringstream snum;
+  std::string strnum;
+  snum <<100000+bid;
+  strnum=snum.str();
+  ss<<"box"<<strnum.substr(1,5)<<".dat";
+  std::string buf_str=ss.str();;
+  std::strcpy(fname,buf_str.c_str());
+
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Box file\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -2093,11 +2128,16 @@ void MeshBlock::checkOrphans(void)
     }
   //fclose(fp);
   if (norphan > 0) {
-    char intstring[12];
     char fname[80];
     printf("myid/meshtag/norphan/nnodes/nobc=%d %d %d %d %d\n",myid,meshtag,norphan,nnodes,nobc);
-    sprintf(intstring,"%d",100000+myid);
-    sprintf(fname,"orphan%s.dat",&(intstring[1]));
+    std::ostringstream ss;
+    std::ostringstream snum;
+    std::string strnum;
+    snum <<100000+myid;
+    strnum=snum.str();
+    ss<<"orphan"<<strnum.substr(1,5)<<".dat";
+    std::string buf_str=ss.str();;
+    std::strcpy(fname,buf_str.c_str());
     FILE *fp=fopen(fname,"w");
     for (int i=0;i<nnodes;i++)
     {
