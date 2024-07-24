@@ -9,10 +9,9 @@ void print_gpu_info()
     std::cout << "BEGIN TEST print_gpu_info" << std::endl;
 #ifdef TIOGA_HAS_GPU
 #if defined(CUDA_VERSION)
-    std::cout << "CUDA configuration: "
-              << "CUDA_VERSION: " << CUDA_VERSION
-              << " " << CUDA_VERSION / 1000 << " "
-              << (CUDA_VERSION % 1000) / 10 << std::endl;
+    std::cout << "CUDA configuration: " << "CUDA_VERSION: " << CUDA_VERSION
+              << " " << CUDA_VERSION / 1000 << " " << (CUDA_VERSION % 1000) / 10
+              << std::endl;
 #endif
     int ndevices;
     gpu::gpuDeviceProp_t dev;
@@ -25,10 +24,8 @@ void print_gpu_info()
     TIOGA_GPU_CALL_CHECK(GetDeviceProperties(&dev, rankDevice));
     char busid[512];
     TIOGA_GPU_CALL_CHECK(DeviceGetPCIBusId(busid, 512, rankDevice));
-    std::cout << "[" << rankDevice << "] "
-              << dev.name << " CC: " << dev.major << "." << dev.minor
-              << " ID: " << busid
-              << " GM: "
+    std::cout << "[" << rankDevice << "] " << dev.name << " CC: " << dev.major
+              << "." << dev.minor << " ID: " << busid << " GM: "
               << (static_cast<double>(dev.totalGlobalMem) / (1 << 30)) << "GB"
               << " ShMem/Blk: " << (dev.sharedMemPerBlock / (1 << 10)) << "KB"
               << std::endl;
@@ -46,7 +43,8 @@ void test_gpu_send_recv()
     std::cout << "BEGIN TEST gpu_send_recv" << std::endl;
     std::vector<int> hvec(10, 10);
 
-    int* dptr = gpu::push_to_device<int>(hvec.data(), hvec.size() * sizeof(int));
+    int* dptr =
+        gpu::push_to_device<int>(hvec.data(), hvec.size() * sizeof(int));
 
     if (dptr == nullptr) {
         std::cerr << "FAIL TEST gpu_send_recv" << std::endl;
@@ -59,7 +57,7 @@ void test_gpu_send_recv()
 
     int max_val = std::numeric_limits<int>::lowest();
     int min_val = std::numeric_limits<int>::max();
-    for (int i=0; i < 10; ++i) {
+    for (int i = 0; i < 10; ++i) {
         max_val = std::max(hvec[i], max_val);
         min_val = std::min(hvec[i], min_val);
     }
@@ -68,16 +66,14 @@ void test_gpu_send_recv()
 
     TIOGA_FREE_DEVICE(dptr);
 
-    if (dptr != nullptr)
-        std::cout << "ERROR deallocating memory" << std::endl;
+    if (dptr != nullptr) std::cout << "ERROR deallocating memory" << std::endl;
     std::cout << "END TEST gpu_send_recv" << std::endl << std::endl;
 }
 
 #ifdef TIOGA_HAS_GPU
 TIOGA_GPU_GLOBAL void vec_add(double* out, double* a, double* b, int n)
 {
-    for (int i=0; i < n; ++i)
-        out[i] = a[i] + b[i];
+    for (int i = 0; i < n; ++i) out[i] = a[i] + b[i];
 }
 
 void test_cuda_vec_add()
@@ -96,10 +92,10 @@ void test_cuda_vec_add()
 
     constexpr double csum_exact = 30.0 * N;
     double sum = 0.0;
-    for (int i=0; i < N; ++i)
-        sum += cvec[i];
+    for (int i = 0; i < N; ++i) sum += cvec[i];
 
-    std::cout << "Expected = " << csum_exact << "; actual = " << sum << std::endl;
+    std::cout << "Expected = " << csum_exact << "; actual = " << sum
+              << std::endl;
 
     TIOGA_FREE_DEVICE(da);
     TIOGA_FREE_DEVICE(db);

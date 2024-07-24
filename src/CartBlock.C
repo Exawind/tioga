@@ -16,7 +16,7 @@
 //
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 #include <stdexcept>
 #include "TiogaMeshInfo.h"
 #include "codetypes.h"
@@ -29,740 +29,715 @@
 
 void CartBlock::registerData(int lid, TIOGA::AMRMeshInfo* minfo)
 {
-  local_id = lid;
-  global_id = minfo->global_idmap.hptr[lid];
-  ibl_cell = minfo->iblank_cell.hptr[lid];
-  ibl_node = minfo->iblank_node.hptr[lid];
+    local_id = lid;
+    global_id = minfo->global_idmap.hptr[lid];
+    ibl_cell = minfo->iblank_cell.hptr[lid];
+    ibl_node = minfo->iblank_node.hptr[lid];
 
-  registerSolution(lid, minfo);
+    registerSolution(lid, minfo);
 }
 
 void CartBlock::registerSolution(int lid, TIOGA::AMRMeshInfo* minfo)
 {
-  nvar_cell = minfo->nvar_cell;
-  nvar_node = minfo->nvar_node;
-  qcell = minfo->qcell.hptr[lid];
-  qnode = minfo->qnode.hptr[lid];
+    nvar_cell = minfo->nvar_cell;
+    nvar_node = minfo->nvar_node;
+    qcell = minfo->qcell.hptr[lid];
+    qnode = minfo->qnode.hptr[lid];
 }
 
-void CartBlock::getInterpolatedData(int *nints,int *nreals,int **intData,
-				    double **realData)
+void CartBlock::getInterpolatedData(
+    int* nints, int* nreals, int** intData, double** realData)
 {
-  int i,n;
-  double *qq;
-  int *tmpint;
-  double *tmpreal;
-  int icount,dcount;
-  int nintold,nrealold;
-  int interpCount=0;
-  double weight;
-  listptr=interpList;
-  while(listptr!=NULL)
-    {
-      interpCount++;
-      listptr=listptr->next;
+    int i, n;
+    double* qq;
+    int* tmpint;
+    double* tmpreal;
+    int icount, dcount;
+    int nintold, nrealold;
+    int interpCount = 0;
+    double weight;
+    listptr = interpList;
+    while (listptr != NULL) {
+        interpCount++;
+        listptr = listptr->next;
     }
-  if (interpCount > 0) 
-    {
-      nintold=(*nints);
-      nrealold=(*nreals);
-      if (nintold > 0) {
-       tmpint=(int *)malloc(sizeof(int)*3*(*nints));
-       tmpreal=(double *)malloc(sizeof(double)*(*nreals));
-       for(i=0;i<(*nints)*3;i++) tmpint[i]=(*intData)[i];
-       for(i=0;i<(*nreals);i++) tmpreal[i]=(*realData)[i];
-       //
-       TIOGA_FREE((*intData));
-       TIOGA_FREE((*realData)); // didn't free this before ??
-       //  
-      }
-      (*nints)+=interpCount;
-      (*nreals)+=(interpCount*(nvar_cell+nvar_node));
-      (*intData)=(int *)malloc(sizeof(int)*3*(*nints));
-      (*realData)=(double *)malloc(sizeof(double)*(*nreals));
-      if (nintold > 0) {
-       for(i=0;i<nintold*3;i++) (*intData)[i]=tmpint[i];
-       for(i=0;i<nrealold;i++) (*realData)[i]=tmpreal[i];      
-       TIOGA_FREE(tmpint);
-       TIOGA_FREE(tmpreal);
-      }
-      listptr=interpList;
-      icount=3*nintold;
-      dcount=nrealold;
-      qq=(double *)malloc(sizeof(double)*(nvar_cell+nvar_node));
-      while(listptr!=NULL)
-      {
-        (*intData)[icount++]=listptr->receptorInfo[0];
-        (*intData)[icount++]=-1-listptr->receptorInfo[2];
-        (*intData)[icount++]=listptr->receptorInfo[1];
-
-        for(n=0;n<(nvar_cell+nvar_node);n++) qq[n]=0; // zero out solution
-
-        for(i=0;i<listptr->nweights;i++)
-        {
-          int cell_index = cart_utils::get_cell_index(dims[0],dims[1],nf,
-            listptr->inode[3*i],listptr->inode[3*i+1],listptr->inode[3*i+2]);
-          for(n=0;n<nvar_cell;n++)
-          {
-            weight=listptr->weights[i];
-            qq[n]+=qcell[cell_index+ncell_nf*n]*weight;
-          }
-
-          int ind_offset = 3*(listptr->nweights+i);
-          int node_index = cart_utils::get_node_index(dims[0],dims[1],nf,
-            listptr->inode[ind_offset],listptr->inode[ind_offset+1],listptr->inode[ind_offset+2]);
-          for(n=0;n<nvar_node;n++)
-          {
-            weight=listptr->weights[listptr->nweights+i];
-            qq[nvar_cell+n]+=qnode[node_index+nnode_nf*n]*weight;
-          }
+    if (interpCount > 0) {
+        nintold = (*nints);
+        nrealold = (*nreals);
+        if (nintold > 0) {
+            tmpint = (int*)malloc(sizeof(int) * 3 * (*nints));
+            tmpreal = (double*)malloc(sizeof(double) * (*nreals));
+            for (i = 0; i < (*nints) * 3; i++) tmpint[i] = (*intData)[i];
+            for (i = 0; i < (*nreals); i++) tmpreal[i] = (*realData)[i];
+            //
+            TIOGA_FREE((*intData));
+            TIOGA_FREE((*realData)); // didn't free this before ??
+                                     //
         }
+        (*nints) += interpCount;
+        (*nreals) += (interpCount * (nvar_cell + nvar_node));
+        (*intData) = (int*)malloc(sizeof(int) * 3 * (*nints));
+        (*realData) = (double*)malloc(sizeof(double) * (*nreals));
+        if (nintold > 0) {
+            for (i = 0; i < nintold * 3; i++) (*intData)[i] = tmpint[i];
+            for (i = 0; i < nrealold; i++) (*realData)[i] = tmpreal[i];
+            TIOGA_FREE(tmpint);
+            TIOGA_FREE(tmpreal);
+        }
+        listptr = interpList;
+        icount = 3 * nintold;
+        dcount = nrealold;
+        qq = (double*)malloc(sizeof(double) * (nvar_cell + nvar_node));
+        while (listptr != NULL) {
+            (*intData)[icount++] = listptr->receptorInfo[0];
+            (*intData)[icount++] = -1 - listptr->receptorInfo[2];
+            (*intData)[icount++] = listptr->receptorInfo[1];
 
-        for(n=0;n<(nvar_cell+nvar_node);n++) (*realData)[dcount++]=qq[n]; // update solution
+            for (n = 0; n < (nvar_cell + nvar_node); n++)
+                qq[n] = 0; // zero out solution
 
-        listptr=listptr->next;
-      }
-      TIOGA_FREE(qq);
+            for (i = 0; i < listptr->nweights; i++) {
+                int cell_index = cart_utils::get_cell_index(
+                    dims[0], dims[1], nf, listptr->inode[3 * i],
+                    listptr->inode[3 * i + 1], listptr->inode[3 * i + 2]);
+                for (n = 0; n < nvar_cell; n++) {
+                    weight = listptr->weights[i];
+                    qq[n] += qcell[cell_index + ncell_nf * n] * weight;
+                }
+
+                int ind_offset = 3 * (listptr->nweights + i);
+                int node_index = cart_utils::get_node_index(
+                    dims[0], dims[1], nf, listptr->inode[ind_offset],
+                    listptr->inode[ind_offset + 1],
+                    listptr->inode[ind_offset + 2]);
+                for (n = 0; n < nvar_node; n++) {
+                    weight = listptr->weights[listptr->nweights + i];
+                    qq[nvar_cell + n] +=
+                        qnode[node_index + nnode_nf * n] * weight;
+                }
+            }
+
+            for (n = 0; n < (nvar_cell + nvar_node); n++)
+                (*realData)[dcount++] = qq[n]; // update solution
+
+            listptr = listptr->next;
+        }
+        TIOGA_FREE(qq);
     }
 }
 
-
-void CartBlock::update(double *qval,int index)
+void CartBlock::update(double* qval, int index)
 {
-  if(index >= ncell_nf) {
-    if(nvar_node == 0) return;
-    for(int i=0;i<nvar_node;i++)
-      qnode[index-ncell_nf+nnode_nf*i]=qval[nvar_cell+i];
-  }
-  else {
-    if(nvar_cell == 0) return;
-    for(int i=0;i<nvar_cell;i++)
-      qcell[index+ncell_nf*i]=qval[i];
-  }
+    if (index >= ncell_nf) {
+        if (nvar_node == 0) return;
+        for (int i = 0; i < nvar_node; i++)
+            qnode[index - ncell_nf + nnode_nf * i] = qval[nvar_cell + i];
+    } else {
+        if (nvar_cell == 0) return;
+        for (int i = 0; i < nvar_cell; i++)
+            qcell[index + ncell_nf * i] = qval[i];
+    }
 }
 
-  
-void CartBlock::preprocess(CartGrid *cg)
-  {
+void CartBlock::preprocess(CartGrid* cg)
+{
     int nfrac;
-    for(int n=0;n<3;n++) xlo[n]=cg->xlo[3*global_id+n];
-    for(int n=0;n<3;n++) dx[n]=cg->dx[3*global_id+n];
-    dims[0]=cg->ihi[3*global_id]  -cg->ilo[3*global_id  ]+1;
-    dims[1]=cg->ihi[3*global_id+1]-cg->ilo[3*global_id+1]+1;
-    dims[2]=cg->ihi[3*global_id+2]-cg->ilo[3*global_id+2]+1;
-    nf=cg->nf;
-    myid=cg->myid;
-    donor_frac=cg->donor_frac;
-    ncell=dims[0]*dims[1]*dims[2];
-    ncell_nf=(dims[0]+2*nf)*(dims[1]+2*nf)*(dims[2]+2*nf);
-    nnode=(dims[0]+1)*(dims[1]+1)*(dims[2]+1);
-    nnode_nf=(dims[0]+1+2*nf)*(dims[1]+1+2*nf)*(dims[2]+1+2*nf);
-  };
+    for (int n = 0; n < 3; n++) xlo[n] = cg->xlo[3 * global_id + n];
+    for (int n = 0; n < 3; n++) dx[n] = cg->dx[3 * global_id + n];
+    dims[0] = cg->ihi[3 * global_id] - cg->ilo[3 * global_id] + 1;
+    dims[1] = cg->ihi[3 * global_id + 1] - cg->ilo[3 * global_id + 1] + 1;
+    dims[2] = cg->ihi[3 * global_id + 2] - cg->ilo[3 * global_id + 2] + 1;
+    nf = cg->nf;
+    myid = cg->myid;
+    donor_frac = cg->donor_frac;
+    ncell = dims[0] * dims[1] * dims[2];
+    ncell_nf = (dims[0] + 2 * nf) * (dims[1] + 2 * nf) * (dims[2] + 2 * nf);
+    nnode = (dims[0] + 1) * (dims[1] + 1) * (dims[2] + 1);
+    nnode_nf = (dims[0] + 1 + 2 * nf) * (dims[1] + 1 + 2 * nf) *
+               (dims[2] + 1 + 2 * nf);
+};
 
 void CartBlock::initializeLists(void)
 {
- donorList=(DONORLIST **)malloc(sizeof(DONORLIST *)*(ncell+nnode));
- for(int i=0;i<(ncell+nnode);i++) donorList[i]=NULL;
+    donorList = (DONORLIST**)malloc(sizeof(DONORLIST*) * (ncell + nnode));
+    for (int i = 0; i < (ncell + nnode); i++) donorList[i] = NULL;
 }
 
 void CartBlock::clearLists(void)
 {
-  int i;
-  if (donorList) {
-  for(i=0;i<ncell+nnode;i++) { deallocateLinkList(donorList[i]); donorList[i]=NULL;}
-  TIOGA_FREE(donorList);
-  }
-  deallocateLinkList4(interpList);
-  interpList=NULL;
-}
-
-
-void CartBlock::insertInInterpList(int procid,int remoteid,int remoteblockid,double *xtmp)
-{
-  int i,n;
-  int ix[3];
-  double *rst;
-  rst=(double *)malloc(sizeof(double)*3);
-  if (interpList==NULL) 
-    {
-      interpList=(INTERPLIST2 *)malloc(sizeof(INTERPLIST2));
-      listptr=interpList;
-    }
-  else
-    {
-      listptr->next=(INTERPLIST2 *)malloc(sizeof(INTERPLIST2));
-      listptr=listptr->next;
-    }
-  listptr->next=NULL;
-  listptr->inode=NULL;
-  listptr->weights=NULL;
-  listptr->receptorInfo[0]=procid;
-  listptr->receptorInfo[1]=remoteid;
-  listptr->receptorInfo[2]=remoteblockid;
-  for(n=0;n<3;n++)
-    {
-      ix[n]=(xtmp[n]-xlo[n])/dx[n];
-      rst[n]=(xtmp[n]-xlo[n]-ix[n]*dx[n])/dx[n];
-      if (ix[n]==dims[n])
-       {
-        if (fabs(rst[n]) < TOL)
-         {
-         ix[n]--;
-          rst[n]=(xtmp[n]-xlo[n]-ix[n]*dx[n])/dx[n];
-         }
-       }
-       if (!(ix[n] >=0 && ix[n] < dims[n])) {
-        TRACEI(procid);
-        TRACEI(global_id);
-        TRACEI(local_id);
-        TRACEI(remoteid);
-        TRACEI(myid);
-        TRACED(xtmp[0]);
-        TRACED(xtmp[1]);
-        TRACED(xtmp[2]);
-        TRACED(xlo[0]);
-        TRACED(xlo[1]);
-        TRACED(xlo[2]);
-        TRACED(dx[0]);
-        TRACED(dx[1]);
-        TRACED(dx[2]);
-        TRACEI(ix[n]);
-        TRACEI(n);
-        TRACEI(dims[n]);
-        printf("--------------------------\n");
-       }
-     assert((ix[n] >=0 && ix[n] < dims[n]));
-    }
-  if (donor_frac == nullptr) {
-    listptr->nweights=8;
-    listptr->weights=(double *)malloc(sizeof(double)*(listptr->nweights*2));
-    listptr->inode=(int *)malloc(sizeof(int)*(listptr->nweights*2*3));
-
-    cart_interp::linear_interpolation(nf,ix,dims,rst,&(listptr->nweights),
-      listptr->inode,listptr->weights,false);
-
-    int ind_offset = 3*listptr->nweights;
-    cart_interp::linear_interpolation(nf,ix,dims,rst,&(listptr->nweights),
-      &(listptr->inode[ind_offset]),&(listptr->weights[listptr->nweights]),true);
-  }
-  TIOGA_FREE(rst);
-}
-  
-void CartBlock::insertInDonorList(int senderid,int index,int meshtagdonor,int remoteid,int remoteblockid, double cellRes)
-{
-  DONORLIST *temp1;
-  int i,j,k,x_stride,xy_stride;
-  int pointid;
-  temp1=(DONORLIST *)malloc(sizeof(DONORLIST));
-
-  // Get point-id accounting for nf
-  if(index < ncell_nf){
-    x_stride = (dims[0]+2*nf);
-    xy_stride = x_stride*(dims[1]+2*nf);
-    k = index / xy_stride;
-    index %= xy_stride;
-    j = index / x_stride;
-    index %= x_stride;
-    i = index;
-    pointid=(k-nf)*(dims[0]*dims[1])+(j-nf)*dims[0]+(i-nf);
-  }
-  else{
-    index = index-ncell_nf;
-    x_stride = (dims[0]+1+2*nf);
-    xy_stride = x_stride*(dims[1]+1+2*nf);
-    k = index / xy_stride;
-    index %= xy_stride;
-    j = index / x_stride;
-    index %= x_stride;
-    i = index;
-    pointid=(k-nf)*(dims[0]+1)*(dims[1]+1)+(j-nf)*(dims[0]+1)+(i-nf)+ncell;
-  }
-
-  if (!(pointid >= 0 && pointid < ncell+nnode)) {
-    TRACEI(index);
-    TRACEI(nf);
-    TRACEI(dims[0]);
-    TRACEI(dims[1]);
-    TRACEI(dims[2]);
-    TRACEI(pointid);
-  }
-  assert((pointid >= 0 && pointid < ncell+nnode));
-    
-  temp1->donorData[0]=senderid;
-  temp1->donorData[1]=meshtagdonor;
-  temp1->donorData[2]=remoteid;
-  temp1->donorData[3]=remoteblockid;
-  temp1->donorRes=cellRes;
-  temp1->cancel=0;
-  insertInList(&(donorList[pointid]),temp1);
-}
-
-void CartBlock::processDonors(HOLEMAP *holemap, int nmesh)
-{
-  processIblank(holemap, nmesh, false); // for cell receptors
-  processIblank(holemap, nmesh, true); // for node receptors
-}
-
-void CartBlock::processDonors(ADAPTIVE_HOLEMAP *holemap, int nmesh)
-{
-  processIblank(holemap, nmesh, false); // for cell receptors
-  processIblank(holemap, nmesh, true); // for node receptors
-}
-
-void CartBlock::processIblank(HOLEMAP *holemap, int nmesh, bool isNodal)
-{
-  //FILE*fp;
-  char fname[80];
-  char qstr[2];
-  char intstring[7];
-  int ni,nj,nk,ibcheck;
-  //sprintf(intstring,"%d",100000+myid);
-  //sprintf(fname,"fringes_%s.dat",&(intstring[1]));
-  //if (local_id==0)
-  //  {
-  //    fp=fopen(fname,"w");
-  //  }
-  //else
-  //  {
-  //    fp=fopen(fname,"a");
-  //  }
-
-  DONORLIST *temp;
-  int* iflag=(int *)malloc(sizeof(int)*nmesh);
-  double* xtmp=(double *)malloc(sizeof(double)*3);
-
-  // set variables based on isNodal flag
-  int idof = isNodal ? (ncell-1) : -1;
-  int* iblank = isNodal ? ibl_node : ibl_cell;
-  int nX = isNodal ? (dims[0]+1) : dims[0];
-  int nY = isNodal ? (dims[1]+1) : dims[1];
-  int nZ = isNodal ? (dims[2]+1) : dims[2];
-
-  //
-  // first mark hole points
-  //
-  for(int k=0;k<nZ;k++)
-    for(int j=0;j<nY;j++)
-      for(int i=0;i<nX;i++)
-      {
-        idof++;
-
-        if(isNodal) {
-          xtmp[0] = xlo[0] + i*dx[0];
-          xtmp[1] = xlo[1] + j*dx[1];
-          xtmp[2] = xlo[2] + k*dx[2];
+    int i;
+    if (donorList) {
+        for (i = 0; i < ncell + nnode; i++) {
+            deallocateLinkList(donorList[i]);
+            donorList[i] = NULL;
         }
-        else {
-          xtmp[0] = xlo[0] + (i+0.5)*dx[0];
-          xtmp[1] = xlo[1] + (j+0.5)*dx[1];
-          xtmp[2] = xlo[2] + (k+0.5)*dx[2];
-        }
+        TIOGA_FREE(donorList);
+    }
+    deallocateLinkList4(interpList);
+    interpList = NULL;
+}
 
-        if (donorList[idof]==NULL)
-        {
-          for(int h=0;h<nmesh;h++)
-            if (holemap[h].existWall)
-            {
-              if (checkHoleMap(xtmp,holemap[h].nx,holemap[h].sam,holemap[h].extents))
-              {
-                int ibindex = isNodal ?
-                    cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
-                    cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
-                iblank[ibindex]=0;
-                break;
-              }
+void CartBlock::insertInInterpList(
+    int procid, int remoteid, int remoteblockid, double* xtmp)
+{
+    int i, n;
+    int ix[3];
+    double* rst;
+    rst = (double*)malloc(sizeof(double) * 3);
+    if (interpList == NULL) {
+        interpList = (INTERPLIST2*)malloc(sizeof(INTERPLIST2));
+        listptr = interpList;
+    } else {
+        listptr->next = (INTERPLIST2*)malloc(sizeof(INTERPLIST2));
+        listptr = listptr->next;
+    }
+    listptr->next = NULL;
+    listptr->inode = NULL;
+    listptr->weights = NULL;
+    listptr->receptorInfo[0] = procid;
+    listptr->receptorInfo[1] = remoteid;
+    listptr->receptorInfo[2] = remoteblockid;
+    for (n = 0; n < 3; n++) {
+        ix[n] = (xtmp[n] - xlo[n]) / dx[n];
+        rst[n] = (xtmp[n] - xlo[n] - ix[n] * dx[n]) / dx[n];
+        if (ix[n] == dims[n]) {
+            if (fabs(rst[n]) < TOL) {
+                ix[n]--;
+                rst[n] = (xtmp[n] - xlo[n] - ix[n] * dx[n]) / dx[n];
             }
         }
-        else
-        {
-          temp=donorList[idof];
-          for(int h=0;h<nmesh;h++) iflag[h]=0;
-          while(temp!=NULL)
-          {
-            int meshtagdonor=temp->donorData[1]-BASE;
-            iflag[meshtagdonor]=1;
-            temp=temp->next;
-          }
-          for(int h=0;h<nmesh;h++)
-          {
-            if (holemap[h].existWall)
-            {
-              if (!iflag[h])
-                if (checkHoleMap(xtmp,holemap[h].nx,holemap[h].sam,holemap[h].extents))
-                {
-                  int ibindex = isNodal ?
-                      cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
-                      cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
-                  iblank[ibindex]=0;
-                  break;
+        if (!(ix[n] >= 0 && ix[n] < dims[n])) {
+            TRACEI(procid);
+            TRACEI(global_id);
+            TRACEI(local_id);
+            TRACEI(remoteid);
+            TRACEI(myid);
+            TRACED(xtmp[0]);
+            TRACED(xtmp[1]);
+            TRACED(xtmp[2]);
+            TRACED(xlo[0]);
+            TRACED(xlo[1]);
+            TRACED(xlo[2]);
+            TRACED(dx[0]);
+            TRACED(dx[1]);
+            TRACED(dx[2]);
+            TRACEI(ix[n]);
+            TRACEI(n);
+            TRACEI(dims[n]);
+            printf("--------------------------\n");
+        }
+        assert((ix[n] >= 0 && ix[n] < dims[n]));
+    }
+    if (donor_frac == nullptr) {
+        listptr->nweights = 8;
+        listptr->weights =
+            (double*)malloc(sizeof(double) * (listptr->nweights * 2));
+        listptr->inode =
+            (int*)malloc(sizeof(int) * (listptr->nweights * 2 * 3));
+
+        cart_interp::linear_interpolation(
+            nf, ix, dims, rst, &(listptr->nweights), listptr->inode,
+            listptr->weights, false);
+
+        int ind_offset = 3 * listptr->nweights;
+        cart_interp::linear_interpolation(
+            nf, ix, dims, rst, &(listptr->nweights),
+            &(listptr->inode[ind_offset]),
+            &(listptr->weights[listptr->nweights]), true);
+    }
+    TIOGA_FREE(rst);
+}
+
+void CartBlock::insertInDonorList(
+    int senderid,
+    int index,
+    int meshtagdonor,
+    int remoteid,
+    int remoteblockid,
+    double cellRes)
+{
+    DONORLIST* temp1;
+    int i, j, k, x_stride, xy_stride;
+    int pointid;
+    temp1 = (DONORLIST*)malloc(sizeof(DONORLIST));
+
+    // Get point-id accounting for nf
+    if (index < ncell_nf) {
+        x_stride = (dims[0] + 2 * nf);
+        xy_stride = x_stride * (dims[1] + 2 * nf);
+        k = index / xy_stride;
+        index %= xy_stride;
+        j = index / x_stride;
+        index %= x_stride;
+        i = index;
+        pointid =
+            (k - nf) * (dims[0] * dims[1]) + (j - nf) * dims[0] + (i - nf);
+    } else {
+        index = index - ncell_nf;
+        x_stride = (dims[0] + 1 + 2 * nf);
+        xy_stride = x_stride * (dims[1] + 1 + 2 * nf);
+        k = index / xy_stride;
+        index %= xy_stride;
+        j = index / x_stride;
+        index %= x_stride;
+        i = index;
+        pointid = (k - nf) * (dims[0] + 1) * (dims[1] + 1) +
+                  (j - nf) * (dims[0] + 1) + (i - nf) + ncell;
+    }
+
+    if (!(pointid >= 0 && pointid < ncell + nnode)) {
+        TRACEI(index);
+        TRACEI(nf);
+        TRACEI(dims[0]);
+        TRACEI(dims[1]);
+        TRACEI(dims[2]);
+        TRACEI(pointid);
+    }
+    assert((pointid >= 0 && pointid < ncell + nnode));
+
+    temp1->donorData[0] = senderid;
+    temp1->donorData[1] = meshtagdonor;
+    temp1->donorData[2] = remoteid;
+    temp1->donorData[3] = remoteblockid;
+    temp1->donorRes = cellRes;
+    temp1->cancel = 0;
+    insertInList(&(donorList[pointid]), temp1);
+}
+
+void CartBlock::processDonors(HOLEMAP* holemap, int nmesh)
+{
+    processIblank(holemap, nmesh, false); // for cell receptors
+    processIblank(holemap, nmesh, true);  // for node receptors
+}
+
+void CartBlock::processDonors(ADAPTIVE_HOLEMAP* holemap, int nmesh)
+{
+    processIblank(holemap, nmesh, false); // for cell receptors
+    processIblank(holemap, nmesh, true);  // for node receptors
+}
+
+void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
+{
+    // FILE*fp;
+    char fname[80];
+    char qstr[2];
+    char intstring[7];
+    int ni, nj, nk, ibcheck;
+    // sprintf(intstring,"%d",100000+myid);
+    // sprintf(fname,"fringes_%s.dat",&(intstring[1]));
+    // if (local_id==0)
+    //   {
+    //     fp=fopen(fname,"w");
+    //   }
+    // else
+    //   {
+    //     fp=fopen(fname,"a");
+    //   }
+
+    DONORLIST* temp;
+    int* iflag = (int*)malloc(sizeof(int) * nmesh);
+    double* xtmp = (double*)malloc(sizeof(double) * 3);
+
+    // set variables based on isNodal flag
+    int idof = isNodal ? (ncell - 1) : -1;
+    int* iblank = isNodal ? ibl_node : ibl_cell;
+    int nX = isNodal ? (dims[0] + 1) : dims[0];
+    int nY = isNodal ? (dims[1] + 1) : dims[1];
+    int nZ = isNodal ? (dims[2] + 1) : dims[2];
+
+    //
+    // first mark hole points
+    //
+    for (int k = 0; k < nZ; k++)
+        for (int j = 0; j < nY; j++)
+            for (int i = 0; i < nX; i++) {
+                idof++;
+
+                if (isNodal) {
+                    xtmp[0] = xlo[0] + i * dx[0];
+                    xtmp[1] = xlo[1] + j * dx[1];
+                    xtmp[2] = xlo[2] + k * dx[2];
+                } else {
+                    xtmp[0] = xlo[0] + (i + 0.5) * dx[0];
+                    xtmp[1] = xlo[1] + (j + 0.5) * dx[1];
+                    xtmp[2] = xlo[2] + (k + 0.5) * dx[2];
+                }
+
+                if (donorList[idof] == NULL) {
+                    for (int h = 0; h < nmesh; h++)
+                        if (holemap[h].existWall) {
+                            if (checkHoleMap(
+                                    xtmp, holemap[h].nx, holemap[h].sam,
+                                    holemap[h].extents)) {
+                                int ibindex =
+                                    isNodal
+                                        ? cart_utils::get_node_index(
+                                              dims[0], dims[1], nf, i, j, k)
+                                        : cart_utils::get_cell_index(
+                                              dims[0], dims[1], nf, i, j, k);
+                                iblank[ibindex] = 0;
+                                break;
+                            }
+                        }
+                } else {
+                    temp = donorList[idof];
+                    for (int h = 0; h < nmesh; h++) iflag[h] = 0;
+                    while (temp != NULL) {
+                        int meshtagdonor = temp->donorData[1] - BASE;
+                        iflag[meshtagdonor] = 1;
+                        temp = temp->next;
+                    }
+                    for (int h = 0; h < nmesh; h++) {
+                        if (holemap[h].existWall) {
+                            if (!iflag[h])
+                                if (checkHoleMap(
+                                        xtmp, holemap[h].nx, holemap[h].sam,
+                                        holemap[h].extents)) {
+                                    int ibindex =
+                                        isNodal
+                                            ? cart_utils::get_node_index(
+                                                  dims[0], dims[1], nf, i, j, k)
+                                            : cart_utils::get_cell_index(
+                                                  dims[0], dims[1], nf, i, j,
+                                                  k);
+                                    iblank[ibindex] = 0;
+                                    break;
+                                }
+                        }
+                    }
                 }
             }
-          }
-        }
-      }
 
-  //
-  // mark fringe points
-  //
-  idof = isNodal ? (ncell-1) : -1;
-  for(int k=0;k<nZ;k++)
-    for(int j=0;j<nY;j++)
-      for(int i=0;i<nX;i++)
-      {
-        idof++;
-        int ibindex = isNodal ?
-            cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
-            cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
+    //
+    // mark fringe points
+    //
+    idof = isNodal ? (ncell - 1) : -1;
+    for (int k = 0; k < nZ; k++)
+        for (int j = 0; j < nY; j++)
+            for (int i = 0; i < nX; i++) {
+                idof++;
+                int ibindex = isNodal ? cart_utils::get_node_index(
+                                            dims[0], dims[1], nf, i, j, k)
+                                      : cart_utils::get_cell_index(
+                                            dims[0], dims[1], nf, i, j, k);
 
-        if (iblank[ibindex]==0)
-        {
-          if (donorList[idof]!=NULL)
-          {
-            temp=donorList[idof];
-            while(temp!=NULL)
-            {
-              temp->cancel=1;
-              temp=temp->next;
-            }
-          }
-        }
-        else
-        {
-          if ((temp=donorList[idof])!=NULL)
-          {    
-             // simplify logic here: the first one on the list is the
-             // best donor anyway, accept it if its not a mandatory
-             // receptor on the donor side
-             if (temp->donorRes < BIGVALUE) 
-              {
-                iblank[ibindex]=-1;
-                temp=temp->next;
-              }
-             // cancel other donors if some exist
-             while(temp!=NULL)
-              {  
-                temp->cancel=1;
-                temp=temp->next;
-              }
-           } 
-        } 
-      }
-      
-
-  /* FIXME: this piece of code needs to be modified to account for isNodal
-  for(k=0;k<dims[2];k++)
-    for(j=0;j<dims[1];j++)
-      for(i=0;i<dims[0];i++)
-      {
-        ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
-        if (ibl_cell[ibindex]==1)
-        {
-          ibcheck=1;
-          for(nk=-1;nk<2;nk++)
-            for(nj=-1;nj<2;nj++)
-              for(ni=-1;ni<2;ni++)
-              {
-                ibindex=(k+nf+nk)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf+nj)*(dims[0]+2*nf)+i+nf+ni;
-                if ((ibindex < 0) || (ibindex >= dims[0]*dims[1]*dims[2])) continue;
-                ibcheck=ibcheck && (ibl_cell[ibindex]!=0);
-              }
-          if (!ibcheck)
-          {
-            printf("fixing orphan: myid/globalid/localid/(i,j,k)=%d %d %d %d %d %d \n",
-              myid,global_id,local_id,i,j,k);
-            ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
-            ibl_cell[ibindex]=0;
-          }
-        }
-      }
-  */
-
-  if (iflag) TIOGA_FREE(iflag);
-  if (xtmp)  TIOGA_FREE(xtmp);
-  // fclose(fp);
-}
-
-void CartBlock::processIblank(ADAPTIVE_HOLEMAP *holemap, int nmesh, bool isNodal)
-{
-  //FILE*fp;
-  char fname[80];
-  char qstr[2];
-  char intstring[7];
-  int ni,nj,nk,ibcheck;
-
-  DONORLIST *temp;
-  int* iflag=(int *)malloc(sizeof(int)*nmesh);
-  double* xtmp=(double *)malloc(sizeof(double)*3);
-
-  // set variables based on isNodal flag
-  int idof = isNodal ? (ncell-1) : -1;
-  int* iblank = isNodal ? ibl_node : ibl_cell;
-  int nX = isNodal ? (dims[0]+1) : dims[0];
-  int nY = isNodal ? (dims[1]+1) : dims[1];
-  int nZ = isNodal ? (dims[2]+1) : dims[2];
-
-  //
-  // first mark hole points
-  //
-  for(int k=0;k<nZ;k++)
-    for(int j=0;j<nY;j++)
-      for(int i=0;i<nX;i++)
-      {
-        idof++;
-
-        if(isNodal) {
-          xtmp[0] = xlo[0] + i*dx[0];
-          xtmp[1] = xlo[1] + j*dx[1];
-          xtmp[2] = xlo[2] + k*dx[2];
-        }
-        else {
-          xtmp[0] = xlo[0] + (i+0.5)*dx[0];
-          xtmp[1] = xlo[1] + (j+0.5)*dx[1];
-          xtmp[2] = xlo[2] + (k+0.5)*dx[2];
-        }
-
-        if (donorList[idof]==NULL)
-        {
-          for(int h=0;h<nmesh;h++)
-            if (holemap[h].existWall)
-            {
-	      int SB_val = checkAdaptiveHoleMap(&xtmp[0],&holemap[h]);
-              if (SB_val != OUTSIDE_SB)
-              {
-                int ibindex = isNodal ?
-                    cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
-                    cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
-                iblank[ibindex]=0;
-                break;
-              }
-            }
-        }
-        else
-        {
-          temp=donorList[idof];
-          for(int h=0;h<nmesh;h++) iflag[h]=0;
-          while(temp!=NULL)
-          {
-            int meshtagdonor=temp->donorData[1]-BASE;
-            iflag[meshtagdonor]=1;
-            temp=temp->next;
-          }
-          for(int h=0;h<nmesh;h++)
-          {
-            if (holemap[h].existWall)
-            {
-              if (!iflag[h]){
-	        int SB_val = checkAdaptiveHoleMap(&xtmp[0],&holemap[h]);
-                if (SB_val != OUTSIDE_SB)
-                {
-                  int ibindex = isNodal ?
-                      cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
-                      cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
-                  iblank[ibindex]=0;
-                  break;
+                if (iblank[ibindex] == 0) {
+                    if (donorList[idof] != NULL) {
+                        temp = donorList[idof];
+                        while (temp != NULL) {
+                            temp->cancel = 1;
+                            temp = temp->next;
+                        }
+                    }
+                } else {
+                    if ((temp = donorList[idof]) != NULL) {
+                        // simplify logic here: the first one on the list is the
+                        // best donor anyway, accept it if its not a mandatory
+                        // receptor on the donor side
+                        if (temp->donorRes < BIGVALUE) {
+                            iblank[ibindex] = -1;
+                            temp = temp->next;
+                        }
+                        // cancel other donors if some exist
+                        while (temp != NULL) {
+                            temp->cancel = 1;
+                            temp = temp->next;
+                        }
+                    }
                 }
-		}
             }
-          }
-        }
-      }
 
-  //
-  // mark fringe points
-  //
-  idof = isNodal ? (ncell-1) : -1;
-  for(int k=0;k<nZ;k++)
-    for(int j=0;j<nY;j++)
-      for(int i=0;i<nX;i++)
-      {
-        idof++;
-        int ibindex = isNodal ?
-            cart_utils::get_node_index(dims[0],dims[1],nf,i,j,k) :
-            cart_utils::get_cell_index(dims[0],dims[1],nf,i,j,k);
-
-        if (iblank[ibindex]==0)
+    /* FIXME: this piece of code needs to be modified to account for isNodal
+    for(k=0;k<dims[2];k++)
+      for(j=0;j<dims[1];j++)
+        for(i=0;i<dims[0];i++)
         {
-          if (donorList[idof]!=NULL)
+          ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
+          if (ibl_cell[ibindex]==1)
           {
-            temp=donorList[idof];
-            while(temp!=NULL)
+            ibcheck=1;
+            for(nk=-1;nk<2;nk++)
+              for(nj=-1;nj<2;nj++)
+                for(ni=-1;ni<2;ni++)
+                {
+                  ibindex=(k+nf+nk)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf+nj)*(dims[0]+2*nf)+i+nf+ni;
+                  if ((ibindex < 0) || (ibindex >= dims[0]*dims[1]*dims[2]))
+    continue; ibcheck=ibcheck && (ibl_cell[ibindex]!=0);
+                }
+            if (!ibcheck)
             {
-              temp->cancel=1;
-              temp=temp->next;
+              printf("fixing orphan: myid/globalid/localid/(i,j,k)=%d %d %d %d
+    %d %d \n", myid,global_id,local_id,i,j,k);
+              ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
+              ibl_cell[ibindex]=0;
             }
           }
         }
-        else
-        {
-          if ((temp=donorList[idof])!=NULL)
-          {    
-             // simplify logic here: the first one on the list is the
-             // best donor anyway, accept it if its not a mandatory
-             // receptor on the donor side
-             if (temp->donorRes < BIGVALUE) 
-              {
-                iblank[ibindex]=-1;
-                temp=temp->next;
-              }
-             // cancel other donors if some exist
-             while(temp!=NULL)
-              {  
-                temp->cancel=1;
-                temp=temp->next;
-              }
-           } 
-        } 
-      }
-      
+    */
 
-  /* FIXME: this piece of code needs to be modified to account for isNodal
-  for(k=0;k<dims[2];k++)
-    for(j=0;j<dims[1];j++)
-      for(i=0;i<dims[0];i++)
-      {
-        ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
-        if (ibl_cell[ibindex]==1)
+    if (iflag) TIOGA_FREE(iflag);
+    if (xtmp) TIOGA_FREE(xtmp);
+    // fclose(fp);
+}
+
+void CartBlock::processIblank(
+    ADAPTIVE_HOLEMAP* holemap, int nmesh, bool isNodal)
+{
+    // FILE*fp;
+    char fname[80];
+    char qstr[2];
+    char intstring[7];
+    int ni, nj, nk, ibcheck;
+
+    DONORLIST* temp;
+    int* iflag = (int*)malloc(sizeof(int) * nmesh);
+    double* xtmp = (double*)malloc(sizeof(double) * 3);
+
+    // set variables based on isNodal flag
+    int idof = isNodal ? (ncell - 1) : -1;
+    int* iblank = isNodal ? ibl_node : ibl_cell;
+    int nX = isNodal ? (dims[0] + 1) : dims[0];
+    int nY = isNodal ? (dims[1] + 1) : dims[1];
+    int nZ = isNodal ? (dims[2] + 1) : dims[2];
+
+    //
+    // first mark hole points
+    //
+    for (int k = 0; k < nZ; k++)
+        for (int j = 0; j < nY; j++)
+            for (int i = 0; i < nX; i++) {
+                idof++;
+
+                if (isNodal) {
+                    xtmp[0] = xlo[0] + i * dx[0];
+                    xtmp[1] = xlo[1] + j * dx[1];
+                    xtmp[2] = xlo[2] + k * dx[2];
+                } else {
+                    xtmp[0] = xlo[0] + (i + 0.5) * dx[0];
+                    xtmp[1] = xlo[1] + (j + 0.5) * dx[1];
+                    xtmp[2] = xlo[2] + (k + 0.5) * dx[2];
+                }
+
+                if (donorList[idof] == NULL) {
+                    for (int h = 0; h < nmesh; h++)
+                        if (holemap[h].existWall) {
+                            int SB_val =
+                                checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
+                            if (SB_val != OUTSIDE_SB) {
+                                int ibindex =
+                                    isNodal
+                                        ? cart_utils::get_node_index(
+                                              dims[0], dims[1], nf, i, j, k)
+                                        : cart_utils::get_cell_index(
+                                              dims[0], dims[1], nf, i, j, k);
+                                iblank[ibindex] = 0;
+                                break;
+                            }
+                        }
+                } else {
+                    temp = donorList[idof];
+                    for (int h = 0; h < nmesh; h++) iflag[h] = 0;
+                    while (temp != NULL) {
+                        int meshtagdonor = temp->donorData[1] - BASE;
+                        iflag[meshtagdonor] = 1;
+                        temp = temp->next;
+                    }
+                    for (int h = 0; h < nmesh; h++) {
+                        if (holemap[h].existWall) {
+                            if (!iflag[h]) {
+                                int SB_val =
+                                    checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
+                                if (SB_val != OUTSIDE_SB) {
+                                    int ibindex =
+                                        isNodal
+                                            ? cart_utils::get_node_index(
+                                                  dims[0], dims[1], nf, i, j, k)
+                                            : cart_utils::get_cell_index(
+                                                  dims[0], dims[1], nf, i, j,
+                                                  k);
+                                    iblank[ibindex] = 0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+    //
+    // mark fringe points
+    //
+    idof = isNodal ? (ncell - 1) : -1;
+    for (int k = 0; k < nZ; k++)
+        for (int j = 0; j < nY; j++)
+            for (int i = 0; i < nX; i++) {
+                idof++;
+                int ibindex = isNodal ? cart_utils::get_node_index(
+                                            dims[0], dims[1], nf, i, j, k)
+                                      : cart_utils::get_cell_index(
+                                            dims[0], dims[1], nf, i, j, k);
+
+                if (iblank[ibindex] == 0) {
+                    if (donorList[idof] != NULL) {
+                        temp = donorList[idof];
+                        while (temp != NULL) {
+                            temp->cancel = 1;
+                            temp = temp->next;
+                        }
+                    }
+                } else {
+                    if ((temp = donorList[idof]) != NULL) {
+                        // simplify logic here: the first one on the list is the
+                        // best donor anyway, accept it if its not a mandatory
+                        // receptor on the donor side
+                        if (temp->donorRes < BIGVALUE) {
+                            iblank[ibindex] = -1;
+                            temp = temp->next;
+                        }
+                        // cancel other donors if some exist
+                        while (temp != NULL) {
+                            temp->cancel = 1;
+                            temp = temp->next;
+                        }
+                    }
+                }
+            }
+
+    /* FIXME: this piece of code needs to be modified to account for isNodal
+    for(k=0;k<dims[2];k++)
+      for(j=0;j<dims[1];j++)
+        for(i=0;i<dims[0];i++)
         {
-          ibcheck=1;
-          for(nk=-1;nk<2;nk++)
-            for(nj=-1;nj<2;nj++)
-              for(ni=-1;ni<2;ni++)
-              {
-                ibindex=(k+nf+nk)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf+nj)*(dims[0]+2*nf)+i+nf+ni;
-                if ((ibindex < 0) || (ibindex >= dims[0]*dims[1]*dims[2])) continue;
-                ibcheck=ibcheck && (ibl_cell[ibindex]!=0);
-              }
-          if (!ibcheck)
+          ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
+          if (ibl_cell[ibindex]==1)
           {
-            printf("fixing orphan: myid/globalid/localid/(i,j,k)=%d %d %d %d %d %d \n",
-              myid,global_id,local_id,i,j,k);
-            ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
-            ibl_cell[ibindex]=0;
+            ibcheck=1;
+            for(nk=-1;nk<2;nk++)
+              for(nj=-1;nj<2;nj++)
+                for(ni=-1;ni<2;ni++)
+                {
+                  ibindex=(k+nf+nk)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf+nj)*(dims[0]+2*nf)+i+nf+ni;
+                  if ((ibindex < 0) || (ibindex >= dims[0]*dims[1]*dims[2]))
+    continue; ibcheck=ibcheck && (ibl_cell[ibindex]!=0);
+                }
+            if (!ibcheck)
+            {
+              printf("fixing orphan: myid/globalid/localid/(i,j,k)=%d %d %d %d
+    %d %d \n", myid,global_id,local_id,i,j,k);
+              ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+(j+nf)*(dims[0]+2*nf)+i+nf;
+              ibl_cell[ibindex]=0;
+            }
           }
         }
-      }
-  */
+    */
 
-  if (iflag) TIOGA_FREE(iflag);
-  if (xtmp)  TIOGA_FREE(xtmp);
-  // fclose(fp);
+    if (iflag) TIOGA_FREE(iflag);
+    if (xtmp) TIOGA_FREE(xtmp);
+    // fclose(fp);
 }
 
-void CartBlock::getCancellationData(int *cancelledData, int *ncancel)
+void CartBlock::getCancellationData(int* cancelledData, int* ncancel)
 {
-  int i,j,k,m,isNodal;
-  int idof;
-  DONORLIST *temp;
-  idof=-1;
-  m=0;
-  *ncancel=0;
-  for(isNodal=0;isNodal<2;isNodal++)
-   for(k=0;k<dims[2]+isNodal;k++)
-    for(j=0;j<dims[1]+isNodal;j++)
-      for(i=0;i<dims[0]+isNodal;i++)
-	  {
-	    idof++;
-	    if (donorList[idof]!=NULL)
-	      {
-		temp=donorList[idof];
-		while(temp!=NULL)
-		  {
-		    if (temp->cancel==1) {
-		      (*ncancel)++;
-		      cancelledData[m++]=temp->donorData[0];
-		      cancelledData[m++]=1;
-		      cancelledData[m++]=temp->donorData[2];
-		      cancelledData[m++]=temp->donorData[3];
-		    }
-	            temp=temp->next;
-		  }
-	      }
-	  }
+    int i, j, k, m, isNodal;
+    int idof;
+    DONORLIST* temp;
+    idof = -1;
+    m = 0;
+    *ncancel = 0;
+    for (isNodal = 0; isNodal < 2; isNodal++)
+        for (k = 0; k < dims[2] + isNodal; k++)
+            for (j = 0; j < dims[1] + isNodal; j++)
+                for (i = 0; i < dims[0] + isNodal; i++) {
+                    idof++;
+                    if (donorList[idof] != NULL) {
+                        temp = donorList[idof];
+                        while (temp != NULL) {
+                            if (temp->cancel == 1) {
+                                (*ncancel)++;
+                                cancelledData[m++] = temp->donorData[0];
+                                cancelledData[m++] = 1;
+                                cancelledData[m++] = temp->donorData[2];
+                                cancelledData[m++] = temp->donorData[3];
+                            }
+                            temp = temp->next;
+                        }
+                    }
+                }
 }
-
 
 void CartBlock::writeCellFile(int bid)
 {
-  int ibmin,ibmax;
-  char fname[80];
-  char qstr[2];
-  char intstring[12];
-  char hash,c;
-  int i,n,j,k,ibindex;
-  int bodytag;
-  FILE *fp;
-  int ba,id;
-  int nvert;
-  int nnodes,ncells;
-  int dd1,dd2;
-  
-  ibmin=30000000;
-  ibmax=-30000000;
-  nnodes=(dims[1]+1)*(dims[0]+1)*(dims[2]+1);
-  ncells=dims[0]*dims[1]*dims[2];
-  sprintf(intstring,"%d",100000+myid);
-  sprintf(fname,"cart_cell%s.dat",&(intstring[1]));
-  if (bid==0) 
-    {
-      fp=fopen(fname,"w");
-    }
-  else
-    {
-      fp=fopen(fname,"a");
-    }
-  if (bid==0) {
-  fprintf(fp,"TITLE =\"Tioga output\"\n");
-  fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK_CELL\" ");
-  fprintf(fp,"\n");
-  }
-  fprintf(fp,"ZONE T=\"VOL_MIXED\",N=%d E=%d ET=BRICK, F=FEBLOCK\n",nnodes,
-	  ncells);
-  fprintf(fp,"VARLOCATION =  (1=NODAL, 2=NODAL, 3=NODAL, 4=CELLCENTERED)\n");
+    int ibmin, ibmax;
+    char fname[80];
+    char qstr[2];
+    char intstring[12];
+    char hash, c;
+    int i, n, j, k, ibindex;
+    int bodytag;
+    FILE* fp;
+    int ba, id;
+    int nvert;
+    int nnodes, ncells;
+    int dd1, dd2;
 
-  for(k=0;k<dims[2]+1;k++)
-    for(j=0;j<dims[1]+1;j++)
-      for(i=0;i<dims[0]+1;i++)
-	fprintf(fp,"%lf\n",xlo[0]+dx[0]*i);
-  for(k=0;k<dims[2]+1;k++)
-    for(j=0;j<dims[1]+1;j++)
-      for(i=0;i<dims[0]+1;i++)
-	fprintf(fp,"%lf\n",xlo[1]+dx[1]*j);
-  for(k=0;k<dims[2]+1;k++)
-    for(j=0;j<dims[1]+1;j++)
-      for(i=0;i<dims[0]+1;i++)
-	fprintf(fp,"%lf\n",xlo[2]+dx[2]*k);
-		
-  for(k=0;k<dims[2];k++)
-    for(j=0;j<dims[1];j++)
-      for(i=0;i<dims[0];i++)
-	{
-	  ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+
-	    (j+nf)*(dims[0]+2*nf)+(i+nf);
-          ibmin=std::min(ibmin,ibl_cell[ibindex]);
-          ibmax=std::max(ibmax,ibl_cell[ibindex]);
-	  fprintf(fp,"%d\n", ibl_cell[ibindex]);
-	}
+    ibmin = 30000000;
+    ibmax = -30000000;
+    nnodes = (dims[1] + 1) * (dims[0] + 1) * (dims[2] + 1);
+    ncells = dims[0] * dims[1] * dims[2];
+    sprintf(intstring, "%d", 100000 + myid);
+    sprintf(fname, "cart_cell%s.dat", &(intstring[1]));
+    if (bid == 0) {
+        fp = fopen(fname, "w");
+    } else {
+        fp = fopen(fname, "a");
+    }
+    if (bid == 0) {
+        fprintf(fp, "TITLE =\"Tioga output\"\n");
+        fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK_CELL\" ");
+        fprintf(fp, "\n");
+    }
+    fprintf(
+        fp, "ZONE T=\"VOL_MIXED\",N=%d E=%d ET=BRICK, F=FEBLOCK\n", nnodes,
+        ncells);
+    fprintf(fp, "VARLOCATION =  (1=NODAL, 2=NODAL, 3=NODAL, 4=CELLCENTERED)\n");
 
-  //printf("proc %d , block %d, ibmin/ibmax=%d %d\n",myid,bid,ibmin,ibmax);
-  id=0;
-  dd1=(dims[0]+1);
-  dd2=dd1*(dims[1]+1);
-  for(k=0;k<dims[2];k++)
-    for(j=0;j<dims[1];j++)
-      for(i=0;i<dims[0];i++)
-        {
-	  id=k*dd2+j*dd1+i+1;
-          fprintf(fp,"%d %d %d %d %d %d %d %d\n",
-		 id,
-		 id+1,
-		 id+1+dd1,
-		 id+dd1,
-		 id+dd2,
-		 id+1+dd2,
-		 id+1+dd1+dd2,
-		 id+dd1+dd2);
-	}
-                                               
-  fclose(fp);
-  return;
+    for (k = 0; k < dims[2] + 1; k++)
+        for (j = 0; j < dims[1] + 1; j++)
+            for (i = 0; i < dims[0] + 1; i++)
+                fprintf(fp, "%lf\n", xlo[0] + dx[0] * i);
+    for (k = 0; k < dims[2] + 1; k++)
+        for (j = 0; j < dims[1] + 1; j++)
+            for (i = 0; i < dims[0] + 1; i++)
+                fprintf(fp, "%lf\n", xlo[1] + dx[1] * j);
+    for (k = 0; k < dims[2] + 1; k++)
+        for (j = 0; j < dims[1] + 1; j++)
+            for (i = 0; i < dims[0] + 1; i++)
+                fprintf(fp, "%lf\n", xlo[2] + dx[2] * k);
+
+    for (k = 0; k < dims[2]; k++)
+        for (j = 0; j < dims[1]; j++)
+            for (i = 0; i < dims[0]; i++) {
+                ibindex = (k + nf) * (dims[1] + 2 * nf) * (dims[0] + 2 * nf) +
+                          (j + nf) * (dims[0] + 2 * nf) + (i + nf);
+                ibmin = std::min(ibmin, ibl_cell[ibindex]);
+                ibmax = std::max(ibmax, ibl_cell[ibindex]);
+                fprintf(fp, "%d\n", ibl_cell[ibindex]);
+            }
+
+    // printf("proc %d , block %d, ibmin/ibmax=%d %d\n",myid,bid,ibmin,ibmax);
+    id = 0;
+    dd1 = (dims[0] + 1);
+    dd2 = dd1 * (dims[1] + 1);
+    for (k = 0; k < dims[2]; k++)
+        for (j = 0; j < dims[1]; j++)
+            for (i = 0; i < dims[0]; i++) {
+                id = k * dd2 + j * dd1 + i + 1;
+                fprintf(
+                    fp, "%d %d %d %d %d %d %d %d\n", id, id + 1, id + 1 + dd1,
+                    id + dd1, id + dd2, id + 1 + dd2, id + 1 + dd1 + dd2,
+                    id + dd1 + dd2);
+            }
+
+    fclose(fp);
+    return;
 }

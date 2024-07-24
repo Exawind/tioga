@@ -14,15 +14,16 @@ namespace gpu {
 
 #if defined(TIOGA_HAS_GPU)
 #define TIOGA_GPU_CHECK_ERROR(call)                                            \
-  {                                                                            \
-    TIOGA::gpu::gpuError_t gpu_ierr = (call);                                  \
-    if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                                  \
-      std::string errStr(std::string("TIOGA GPU error: ") + __FILE__ + ":" +   \
-                         std::to_string(__LINE__) + ": " +                     \
-                         TIOGA::gpu::gpuGetErrorString(gpu_ierr));             \
-      throw std::runtime_error(errStr);                                        \
-    }                                                                          \
-  }
+    {                                                                          \
+        TIOGA::gpu::gpuError_t gpu_ierr = (call);                              \
+        if (TIOGA::gpu::gpuSuccess != gpu_ierr) {                              \
+            std::string errStr(                                                \
+                std::string("TIOGA GPU error: ") + __FILE__ + ":" +            \
+                std::to_string(__LINE__) + ": " +                              \
+                TIOGA::gpu::gpuGetErrorString(gpu_ierr));                      \
+            throw std::runtime_error(errStr);                                  \
+        }                                                                      \
+    }
 #else
 #define TIOGA_GPU_CHECK_ERROR(call) (call)
 #endif

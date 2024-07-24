@@ -28,15 +28,16 @@
 #include "tioga.h"
 using namespace TIOGA;
 #define MAXBLOCKS 100
-tioga *tg;
+tioga* tg;
 /*
 ** pointer storage for connectivity arrays that
 ** comes from external solver
 */
-typedef struct inpdata {
-  int **vconn;
-  int *nc;
-  int *nv;
+typedef struct inpdata
+{
+    int** vconn;
+    int* nc;
+    int* nv;
 } inpdata;
 inpdata idata[MAXBLOCKS];
 

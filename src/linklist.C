@@ -16,91 +16,80 @@
 
 /* You should have received a copy of the GNU Lesser General Public */
 /* License along with this library; if not, write to the Free Software */
-/* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
+/* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ */
 #include "codetypes.h"
 #include "linklist.h"
 
-void deallocateLinkList(DONORLIST *temp)
+void deallocateLinkList(DONORLIST* temp)
 {
-  while (temp != NULL) {
-      DONORLIST* next = temp->next;
-      TIOGA_FREE(temp);
-      temp = next;
-  }
-}
-
-void deallocateLinkList2(INTEGERLIST *temp)
-{
-  while (temp != NULL) {
-      INTEGERLIST* next = temp->next;
-      TIOGA_FREE(temp);
-      temp = next;
-  }
-}
-
-void deallocateLinkList3(INTEGERLIST2 *temp)
-{
-  while (temp != NULL) {
-      INTEGERLIST2* tnext = temp->next;
-      if (temp->intData) TIOGA_FREE(temp->intData);
-      if (temp->realData) TIOGA_FREE(temp->realData);
-      TIOGA_FREE(temp);
-      temp = tnext;
-  }
-}
-
-void deallocateLinkList4(INTERPLIST2 *temp)
-{
-  while (temp != NULL) {
-      INTERPLIST2* tnext = temp->next;
-      if (temp->inode) TIOGA_FREE(temp->inode);
-      if (temp->weights) TIOGA_FREE(temp->weights);
-      TIOGA_FREE(temp);
-      temp = tnext;
-  }
-}
-
-void insertInList(DONORLIST **donorList,DONORLIST *temp1)
-{
-  DONORLIST *temp;
-  DONORLIST *ptemp;
-  int inserted;  
-  temp=*donorList;
-  inserted=0;
-  ptemp=NULL;
-  while(temp!=NULL && !inserted)
-    {
-      if (fabs(temp->donorRes) > temp1->donorRes) 
-	{
-	  temp1->next=temp;
-	  if (ptemp!=NULL) 
-	    {
-	      ptemp->next=temp1;
-	    }
-	  else
-	    {
-	      *donorList=temp1;
-	    }	  
-	  inserted=1;
-	}
-      else
-	{
-	  ptemp=temp;
-	  temp=temp->next;
-	}
-    }
-  if (!inserted) 
-    {
-     if (*donorList) 
-      {
-       temp1->next=NULL;
-       ptemp->next=temp1;
-      }
-     else
-       {
-        temp1->next=NULL;
-        *donorList=temp1;
-       }
+    while (temp != NULL) {
+        DONORLIST* next = temp->next;
+        TIOGA_FREE(temp);
+        temp = next;
     }
 }
 
+void deallocateLinkList2(INTEGERLIST* temp)
+{
+    while (temp != NULL) {
+        INTEGERLIST* next = temp->next;
+        TIOGA_FREE(temp);
+        temp = next;
+    }
+}
+
+void deallocateLinkList3(INTEGERLIST2* temp)
+{
+    while (temp != NULL) {
+        INTEGERLIST2* tnext = temp->next;
+        if (temp->intData) TIOGA_FREE(temp->intData);
+        if (temp->realData) TIOGA_FREE(temp->realData);
+        TIOGA_FREE(temp);
+        temp = tnext;
+    }
+}
+
+void deallocateLinkList4(INTERPLIST2* temp)
+{
+    while (temp != NULL) {
+        INTERPLIST2* tnext = temp->next;
+        if (temp->inode) TIOGA_FREE(temp->inode);
+        if (temp->weights) TIOGA_FREE(temp->weights);
+        TIOGA_FREE(temp);
+        temp = tnext;
+    }
+}
+
+void insertInList(DONORLIST** donorList, DONORLIST* temp1)
+{
+    DONORLIST* temp;
+    DONORLIST* ptemp;
+    int inserted;
+    temp = *donorList;
+    inserted = 0;
+    ptemp = NULL;
+    while (temp != NULL && !inserted) {
+        if (fabs(temp->donorRes) > temp1->donorRes) {
+            temp1->next = temp;
+            if (ptemp != NULL) {
+                ptemp->next = temp1;
+            } else {
+                *donorList = temp1;
+            }
+            inserted = 1;
+        } else {
+            ptemp = temp;
+            temp = temp->next;
+        }
+    }
+    if (!inserted) {
+        if (*donorList) {
+            temp1->next = NULL;
+            ptemp->next = temp1;
+        } else {
+            temp1->next = NULL;
+            *donorList = temp1;
+        }
+    }
+}
