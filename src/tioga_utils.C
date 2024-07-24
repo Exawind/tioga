@@ -445,8 +445,8 @@ void writebbox(OBB* obb, int bid)
     int l, k, j, m, il, ik, ij;
     REAL xx[3];
 
-    sprintf(intstring, "%d", 100000 + bid);
-    sprintf(fname, "qbox%s.dat", &(intstring[1]));
+    snprintf(intstring, sizeof(intstring), "%d", 100000 + bid);
+    snprintf(fname, sizeof(fname), "qbox%s.dat", &(intstring[1]));
     fp = fopen(fname, "w");
     fprintf(fp, "TITLE =\"Box file\"\n");
     fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -490,8 +490,8 @@ void writebboxdiv(OBB* obb, int bid)
     }
     ncells = mapdims[2] * mapdims[1] * mapdims[0];
     npts = ncells * 8;
-    sprintf(intstring, "%d", 100000 + bid);
-    sprintf(fname, "dbox%s.dat", &(intstring[1]));
+    snprintf(intstring, sizeof(intstring), "%d", 100000 + bid);
+    snprintf(fname, sizeof(fname), "dbox%s.dat", &(intstring[1]));
     fp = fopen(fname, "w");
     fprintf(fp, "TITLE =\"Box file\"\n");
     fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\"\n");
@@ -528,8 +528,8 @@ void writePoints(double* x, int nsearch, int bid)
     char fname[80];
     int i;
 
-    sprintf(intstring, "%d", 100000 + bid);
-    sprintf(fname, "points%s.dat", &(intstring[1]));
+    snprintf(intstring, sizeof(intstring), "%d", 100000 + bid);
+    snprintf(fname, sizeof(fname), "points%s.dat", &(intstring[1]));
     fp = fopen(fname, "w");
     fprintf(fp, "TITLE =\"Box file\"\n");
     fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\"\n");
