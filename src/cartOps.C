@@ -142,8 +142,8 @@ void MeshBlock::writeOBB2(OBB* obc, int bid)
     int l, k, j, m, il, ik, ij;
     REAL xx[3];
 
-    sprintf(intstring, "%d", 100000 + bid);
-    sprintf(fname, "cbox%s.dat", &(intstring[1]));
+    snprintf(intstring, sizeof(intstring), "%d", 100000 + bid);
+    snprintf(fname, sizeof(fname), "cbox%s.dat", &(intstring[1]));
     fp = fopen(fname, "w");
     fprintf(fp, "TITLE =\"Box file\"\n");
     fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\"\n");
