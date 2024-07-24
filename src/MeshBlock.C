@@ -2014,7 +2014,8 @@ void MeshBlock::create_hex_cell_map(void)
     //
     if (uindx) TIOGA_FREE(uindx);
     uindx = (int*)malloc(sizeof(int) * idims[0] * idims[1] * idims[2]);
-    for (int i = 0; i < idims[0] * idims[1] * idims[2]; uindx[i++] = -1);
+    for (int i = 0; i < idims[0] * idims[1] * idims[2]; uindx[i++] = -1)
+        ;
     //
     for (int i = 0; i < nc[0]; i++) {
         double xc[3];

@@ -9,9 +9,9 @@ void print_gpu_info()
     std::cout << "BEGIN TEST print_gpu_info" << std::endl;
 #ifdef TIOGA_HAS_GPU
 #if defined(CUDA_VERSION)
-    std::cout << "CUDA configuration: " << "CUDA_VERSION: " << CUDA_VERSION
-              << " " << CUDA_VERSION / 1000 << " " << (CUDA_VERSION % 1000) / 10
-              << std::endl;
+    std::cout << "CUDA configuration: "
+              << "CUDA_VERSION: " << CUDA_VERSION << " " << CUDA_VERSION / 1000
+              << " " << (CUDA_VERSION % 1000) / 10 << std::endl;
 #endif
     int ndevices;
     gpu::gpuDeviceProp_t dev;

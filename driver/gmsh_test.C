@@ -55,7 +55,8 @@ void test()
     cout << " \n Node data read from file \"" << gmsh_filename << "\"\n\n";
     cout << "  Number of nodes = " << node_num << "\n";
     cout << "  Spatial dimension = " << dim << "\n";
-    cout << "  Number of elements: " << "\n";
+    cout << "  Number of elements: "
+         << "\n";
     for (int i = 1; i < TYPE_NUM_MAX; i++) {
         printf("    %s %d\n", TYPE_NAME[i], elem_counts[i]);
     }
