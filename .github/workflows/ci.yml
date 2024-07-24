@@ -19,12 +19,12 @@ jobs:
     - name: Clone
       uses: actions/checkout@v4
     - name: Check formatting
-      uses: DoozyX/clang-format-lint-action@v0.16.2
+      uses: DoozyX/clang-format-lint-action@v0.17
       with:
-        source: './src'
+        source: './driver ./src'
         exclude: '.'
-        extensions: 'h,cpp'
-        clangFormatVersion: 16
+        extensions: 'h,H,cpp,C'
+        clangFormatVersion: 17
   CPU:
     needs: Formatting
     runs-on: ${{matrix.os}}
