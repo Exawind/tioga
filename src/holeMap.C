@@ -803,8 +803,10 @@ void tioga::getAdaptiveHoleMap(void)
                     "Mesh Body %d: Levels %d, "
                     "total octants %lu, total leafs %lu\n",
                     i, adaptiveHoleMap[i].meta.nlevel,
-                    adaptiveHoleMap[i].meta.elem_count,
-                    adaptiveHoleMap[i].meta.leaf_count);
+                    static_cast<unsigned long>(
+                        adaptiveHoleMap[i].meta.elem_count),
+                    static_cast<unsigned long>(
+                        adaptiveHoleMap[i].meta.leaf_count));
                 fflush(stdout);
             }
         }
