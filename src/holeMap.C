@@ -834,8 +834,8 @@ void tioga::outputHoleMap(void)
 
     for (i = 0; i < nmesh; i++)
         if (holeMap[i].existWall) {
-            sprintf(intstring, "%d", 100000 + i + 100 * myid);
-            sprintf(fname, "holeMap%s.dat", &(intstring[1]));
+            snprintf(intstring, sizeof(intstring), "%d", 100000 + i + 100 * myid);
+            snprintf(fname, sizeof(fname), "holeMap%s.dat", &(intstring[1]));
             fp = fopen(fname, "w");
             fprintf(fp, "TITLE =\"Tioga output\"\n");
             fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\"\n");
@@ -1009,7 +1009,7 @@ void tioga::outputAdaptiveHoleMap(void)
                 ds[1] = meta.extents_hi[1] - meta.extents_lo[1];
                 ds[2] = meta.extents_hi[2] - meta.extents_lo[2];
 
-                sprintf(filename, "AHM.body%d.%d.tec", m, ahm_step++);
+                snprintf(filename, sizeof(filename), "AHM.body%d.%d.tec", m, ahm_step++);
                 writePointsHeaderVolume(filename);
 
                 file = fopen(filename, "a");
