@@ -992,7 +992,6 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
     //  for(i=0;i<nobc;i++)
     //    fprintf(fp,"%d\n",obcnode[i]);
     fclose(fp);
-    return;
 }
 
 void MeshBlock::getWallBounds(int* mtag, int* existWall, double wbox[6])
