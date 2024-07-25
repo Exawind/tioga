@@ -36,7 +36,7 @@ void buildADTrecursion(
     int nav)
 {
 
-    int nd = ndim / 2;
+    int const nd = ndim / 2;
     double coordmid;
     int i, j;
     int dimcut;

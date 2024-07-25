@@ -432,7 +432,7 @@ void MeshBlock::search_uniform_hex()
                             idx[k]--;
                         }
                     }
-                    int dtest = uindx
+                    int const dtest = uindx
                         [idx[2] * idims[1] * idims[0] + idx[1] * idims[0] +
                          idx[0]];
                     dID[1] = (dtest > -1)

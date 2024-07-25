@@ -56,9 +56,9 @@ struct Node
     {
         size_t operator()(const Node& node) const
         {
-            size_t xHash = std::hash<int>()(int(node.x));
-            size_t yHash = std::hash<int>()(int(node.y)) << 1;
-            size_t zHash = std::hash<int>()(int(node.z)) << 2;
+            size_t const xHash = std::hash<int>()(int(node.x));
+            size_t const yHash = std::hash<int>()(int(node.y)) << 1;
+            size_t const zHash = std::hash<int>()(int(node.z)) << 2;
             return xHash ^ yHash ^ zHash;
         }
     };

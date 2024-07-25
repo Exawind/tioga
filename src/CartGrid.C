@@ -269,8 +269,8 @@ void CartGrid::create_mesh_info()
     create_view(m_info->xlo, xlo, ngrids * 3);
     create_view(m_info->dx, dx, ngrids * 3);
 
-    int iproc = myid;
-    int nplocal = std::accumulate(
+    int const iproc = myid;
+    int const nplocal = std::accumulate(
         proc_id, proc_id + ngrids, 0,
         [iproc](int x, int y) -> int { return x + ((iproc == y) ? 1 : 0); });
 

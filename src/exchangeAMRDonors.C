@@ -280,7 +280,7 @@ void tioga::exchangeAMRDonors()
             for (j = 0; j < rcvPack[i].nints / 3; j++) {
                 ctype = rcvPack[i].intData[m++];
                 id = rcvPack[i].intData[m++];
-                int ib = rcvPack[i].intData[m++];
+                int const ib = rcvPack[i].intData[m++];
                 if (ctype == 0) {
                     mblocks[ib]->donorIdCart[id] = -1;
                 } else {

@@ -61,11 +61,11 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
     nsearch = 0;
     //
     for (int c = 0; c < cg->ngrids; c++) {
-        int cell_count = (cg->dims[3 * c] + 2 * cg->nf) *
-                         (cg->dims[3 * c + 1] + 2 * cg->nf) *
-                         (cg->dims[3 * c + 2] + 2 * cg->nf);
+        int const cell_count = (cg->dims[3 * c] + 2 * cg->nf) *
+                               (cg->dims[3 * c + 1] + 2 * cg->nf) *
+                               (cg->dims[3 * c + 2] + 2 * cg->nf);
 
-        int vol = cg->dx[3 * c] * cg->dx[3 * c + 1] * cg->dx[3 * c + 2];
+        int const vol = cg->dx[3 * c] * cg->dx[3 * c + 1] * cg->dx[3 * c + 2];
 
         for (int n = 0; n < 3; n++) {
             obcart->dxc[n] = cg->dx[3 * c + n] * (cg->dims[3 * c + n]) * 0.5;
@@ -115,7 +115,7 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
             nsend++;
         }
     }
-    int nrecv = nsend;
+    int const nrecv = nsend;
     int* sndMap = (int*)malloc(sizeof(int) * nsend);
     int* rcvMap = (int*)malloc(sizeof(int) * nrecv);
     int m = 0;

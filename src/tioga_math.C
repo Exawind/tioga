@@ -30,7 +30,7 @@ void solvec(double** a, double* b, int* iflag, int n)
     double fact;
     double temp;
     double sum;
-    double eps = 1e-8;
+    double const eps = 1e-8;
 
     for (i = 0; i < n; i++) {
         if (fabs(a[i][i]) < eps) {

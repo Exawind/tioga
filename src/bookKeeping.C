@@ -76,7 +76,7 @@ void MeshBlock::getMBDonorPktSizes(
 {
     for (int i = 0; i < nsearch; i++) {
         if (donorId[i] > -1) {
-            int ii = isearch[3 * i];
+            int const ii = isearch[3 * i];
             nints[ii] += 4;
             nreals[ii] += 2;
         }
@@ -93,7 +93,7 @@ void MeshBlock::getMBDonorPackets(
             continue;
         }
 
-        int k = isearch[3 * i];
+        int const k = isearch[3 * i];
         int& ix = ixOffset[k];
         int& rx = rxOffset[k];
 
@@ -405,7 +405,8 @@ void MeshBlock::processDonors(
 
             for (j = 0; j < nmesh; j++) {
                 if (j != (meshtag - BASE) && (holemap[j].existWall != 0u)) {
-                    int SB_val = checkAdaptiveHoleMap(&x[3 * i], &holemap[j]);
+                    int const SB_val =
+                        checkAdaptiveHoleMap(&x[3 * i], &holemap[j]);
                     if (SB_val != OUTSIDE_SB) {
                         iblank[i] = 0;
                         break;
@@ -442,7 +443,7 @@ void MeshBlock::processDonors(
                     if (iflag[j] == 0) {
                         // body{j} does NOT have candidate so check if point is
                         // INSIDE SB
-                        int SB_val =
+                        int const SB_val =
                             checkAdaptiveHoleMap(&x[3 * i], &holemap[j]);
                         if (SB_val != OUTSIDE_SB) {
                             iblank[i] = 0;

@@ -94,7 +94,7 @@ void tioga_registergrid_data_(
 {
     va_list arguments;
     int i;
-    int iblk = 0;
+    int const iblk = 0;
     va_start(arguments, ntypes);
 
     if (idata[iblk].nv != nullptr) TIOGA_FREE(idata[iblk].nv);
@@ -128,7 +128,7 @@ void tioga_registergrid_data_mb_(
 {
     va_list arguments;
     int i;
-    int iblk = *bid - BASE;
+    int const iblk = *bid - BASE;
 
     va_start(arguments, ntypes);
 
@@ -244,7 +244,7 @@ void tioga_dataupdate_mb_(int* nvar, char* itype)
 void tioga_dataupdate_(double* q, int* nvar, char* itype)
 {
     int interptype;
-    int bid = 0;
+    int const bid = 0;
     tg->registerSolution(bid, q);
     tioga_dataupdate_mb_(nvar, itype);
 }

@@ -304,7 +304,7 @@ void MeshBlock::tagBoundary()
             }
             idx[j] = xd[j] / mapdx[j];
         }
-        int indx =
+        int const indx =
             idx[2] * mapdims[1] * mapdims[0] + idx[1] * mapdims[0] + idx[0];
         iptr[i] = icft[indx + 1];
         icft[indx + 1] = i;
@@ -1162,9 +1162,9 @@ void MeshBlock::writeBCnodes(char nodetype2tag, int bodyid)
         i3 = 3 * ii;
 
         // boundary point coordinates
-        double xc = x[i3 + 0];
-        double yc = x[i3 + 1];
-        double zc = x[i3 + 2];
+        double const xc = x[i3 + 0];
+        double const yc = x[i3 + 1];
+        double const zc = x[i3 + 2];
 
         fprintf(fp, "%f %f %f\n", xc, yc, zc);
     }
@@ -1200,7 +1200,7 @@ void MeshBlock::markBoundaryAdaptiveMap(
         OCTANT_LEN(level->level_id); // integer length of octant
 
     // set node type data
-    int nbc = (nodetype2tag == WALLNODETYPE) ? nwbc : nobc;
+    int const nbc = (nodetype2tag == WALLNODETYPE) ? nwbc : nobc;
     int* bcnode = (nodetype2tag == WALLNODETYPE) ? wbcnode : obcnode;
 
     // octree physical lengths
@@ -1238,7 +1238,7 @@ void MeshBlock::markBoundaryAdaptiveMap(
                 continue;
             }
 
-            octant_full_t& oct = level->octants[j];
+            octant_full_t const& oct = level->octants[j];
 
             /* check intersection */
             // x octant bounds
@@ -1288,7 +1288,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
         OCTANT_LEN(level->level_id); // integer length of octant
 
     // set node type data
-    int nbcface = (nodetype2tag == WALLNODETYPE) ? nwbcface : nobcface;
+    int const nbcface = (nodetype2tag == WALLNODETYPE) ? nwbcface : nobcface;
     std::vector<int>& bcfacenode =
         (nodetype2tag == WALLNODETYPE) ? wbcfacenode : obcfacenode;
     std::vector<box_t>& bcfacebox =
@@ -1323,7 +1323,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
         }
 
         // get octant since it hasn't been tagged
-        octant_full_t& oct = level->octants[j];
+        octant_full_t const& oct = level->octants[j];
 
         // octant bounds: x
         xlo[0] = extents_lo[0] + ds[0] * oct.x;
@@ -1346,7 +1346,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
         for (i = 0; i < nbcface; i++) {
 
             // box of face
-            box_t& box1 = bcfacebox[i];
+            box_t const& box1 = bcfacebox[i];
 
             // test bounds of octant
             if ((overlapping1D(box1.x, box2.x) != 0) &&
@@ -1406,7 +1406,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     const qcoord_t levelh = OCTANT_LEN(level_id); // integer length of octant
 
     // set node type data
-    int nbcface = (nodetype2tag == WALLNODETYPE) ? nwbcface : nobcface;
+    int const nbcface = (nodetype2tag == WALLNODETYPE) ? nwbcface : nobcface;
     std::vector<int>& bcfacenode =
         (nodetype2tag == WALLNODETYPE) ? wbcfacenode : obcfacenode;
     std::vector<box_t>& bcfacebox =
@@ -1441,7 +1441,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
         }
 
         // get octant since it hasn't been tagged
-        octant_coordinates_t& oct = octants[j];
+        octant_coordinates_t const& oct = octants[j];
 
         // octant bounds: x
         xlo[0] = extents_lo[0] + ds[0] * oct.x;
@@ -1464,7 +1464,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
         for (i = 0; i < nbcface; i++) {
 
             // box of face
-            box_t& box1 = bcfacebox[i];
+            box_t const& box1 = bcfacebox[i];
 
             // test bounds of octant
             if ((overlapping1D(box1.x, box2.x) != 0) &&
@@ -1870,7 +1870,7 @@ void MeshBlock::getQueryPoints2(
 //  MPI_Abort(MPI_COMM_WORLD,ierr);
 //
 #ifdef TIOGA_HAS_NODEGID
-    int nintsPerNode = 3;
+    int const nintsPerNode = 3;
 #else
     int nintsPerNode = 1;
 #endif
@@ -2055,7 +2055,7 @@ void MeshBlock::check_for_uniform_hex()
         return;
     }
     for (int n = 0; n < ntypes; n++) {
-        int nvert = nv[n];
+        int const nvert = nv[n];
         if (nvert == 8) {
             hex_present = 1;
             for (int i = 0; i < nc[n]; i++) {
@@ -2065,7 +2065,7 @@ void MeshBlock::check_for_uniform_hex()
                         return; // degenerated hex are not uniform
                     }
                     vold = vconn[n][nvert * i + m];
-                    int i3 = 3 * (vconn[n][nvert * i + m] - BASE);
+                    int const i3 = 3 * (vconn[n][nvert * i + m] - BASE);
                     for (int k = 0; k < 3; k++) {
                         xv[m][k] = x[i3 + k];
                     }
@@ -2160,7 +2160,7 @@ void MeshBlock::check_for_uniform_hex()
         xmin[0] = xmin[1] = xmin[2] = BIGVALUE;
         //
         for (int i = 0; i < nnodes; i++) {
-            int i3 = 3 * i;
+            int const i3 = 3 * i;
             for (int j = 0; j < 3; j++) {
                 xd[j] = 0;
             }
@@ -2223,8 +2223,8 @@ void MeshBlock::create_hex_cell_map()
         double xd[3];
         int idx[3];
         for (int j = 0; j < 3; j++) {
-            int lnode = vconn[0][8 * i] - BASE;
-            int tnode = vconn[0][8 * i + 6] - BASE;
+            int const lnode = vconn[0][8 * i] - BASE;
+            int const tnode = vconn[0][8 * i + 6] - BASE;
             xc[j] = 0.5 * (x[3 * lnode + j] + x[3 * tnode + j]);
         }
         for (int j = 0; j < 3; j++) {

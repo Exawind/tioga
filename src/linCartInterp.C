@@ -28,9 +28,9 @@ void compute_1d_bases(
     std::vector<double>& phi_y,
     std::vector<double>& phi_z)
 {
-    double zeta = ref_coord[0];
-    double mu = ref_coord[1];
-    double eta = ref_coord[2];
+    double const zeta = ref_coord[0];
+    double const mu = ref_coord[1];
+    double const eta = ref_coord[2];
 
     phi_x[0] = (1 - zeta) / 2;
     phi_x[1] = (1 + zeta) / 2;

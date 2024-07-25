@@ -384,7 +384,7 @@ int obbIntersectCheck(
     int i1, i2, j1, j2;
     double r, r0, r1;
     double d1, d2;
-    double eps = 1e-12;
+    double const eps = 1e-12;
     double D[3];
     double c[3][3];
     //
@@ -534,7 +534,7 @@ void writebboxdiv(OBB* obb, int bid)
     int ncells, npts;
     double xv[8][3], xc[3], xd[3];
     int i, j, k, l, m, n;
-    int iorder[8] = {1, 2, 4, 3, 5, 6, 8, 7};
+    int const iorder[8] = {1, 2, 4, 3, 5, 6, 8, 7};
     FILE* fp;
     char intstring[12];
     char fname[80];
@@ -609,12 +609,12 @@ void writePoints(double* x, int nsearch, int bid)
  */
 void uniquenodes(double* x, int* meshtag, double* rtag, int* itag, int* nn)
 {
-    int NSUB = 101;
+    int const NSUB = 101;
     int i, j, k, m, ij, i3, jj, kk, ll, p1, p2, indx, jmax, kmax, lmax, nsblks,
         jkmax;
     double xmax[3], xmin[3], ds, dsi, dsx, dsxi, dsy, dsyi, dsz, dszi;
     int *cft, *numpts, *ilist;
-    int nnodes = *nn;
+    int const nnodes = *nn;
 
     for (j = 0; j < 3; j++) {
         xmax[j] = -1E15;
@@ -732,7 +732,7 @@ void uniqNodesTree(
     int ndim,
     int nav)
 {
-    int nd = ndim;
+    int const nd = ndim;
     double coordmid;
     int i, j, ibox;
     int p1, p2;
@@ -837,7 +837,7 @@ void uniqNodesTree(
 void uniquenodes_octree(
     double* x, int* meshtag, double* rtag, int* itag, int* nn)
 {
-    int nelem = *nn;
+    int const nelem = *nn;
     int* elementsAvailable;
     int i;
 
@@ -894,12 +894,12 @@ uint8_t octant_filltype(octant_full_t* c, const qcoord_t inc)
      */
     // returns (OUTSIDE_SB) if touching an octant boundary, (INSIDE_SB)
     // otherwise
-    uint8_t type = (((c->x == 0) || (c->y == 0) || (c->z == 0) ||
-                     ((c->x + inc) == OCTANT_ROOT_LEN) ||
-                     ((c->y + inc) == OCTANT_ROOT_LEN) ||
-                     ((c->z + inc) == OCTANT_ROOT_LEN)))
-                       ? OUTSIDE_SB
-                       : INSIDE_SB;
+    uint8_t const type = (((c->x == 0) || (c->y == 0) || (c->z == 0) ||
+                           ((c->x + inc) == OCTANT_ROOT_LEN) ||
+                           ((c->y + inc) == OCTANT_ROOT_LEN) ||
+                           ((c->z + inc) == OCTANT_ROOT_LEN)))
+                             ? OUTSIDE_SB
+                             : INSIDE_SB;
     return type;
 }
 
@@ -1175,7 +1175,7 @@ void floodfill_octant(octant_full_t* o)
 /* recursive search in all directions */
 void floodfill_level(level_octant_t* level)
 {
-    int nneig = 6;
+    int const nneig = 6;
     int j, n;
 
     for (j = 0; j < level->elem_count; j++) {

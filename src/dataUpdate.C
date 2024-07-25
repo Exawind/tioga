@@ -147,7 +147,7 @@ void MeshBlock::getDonorCount(int* dcount, int* fcount)
 void MeshBlock::getDonorInfo(int* receptors, int* indices, double* frac)
 {
     int i, j, k, m;
-    int dcount = 0;
+    int const dcount = 0;
 
     j = 0;
     k = 0;
@@ -178,7 +178,7 @@ void MeshBlock::getReceptorInfo(int* receptors)
         receptors[k++] = interpList[i].receptorInfo[1];
         receptors[k++] = interpList[i].receptorInfo[2];
 
-        int donID = interpList[i].inode[interpList[i].nweights];
+        int const donID = interpList[i].inode[interpList[i].nweights];
 
         // Copy the contents of uint64_t (8 bytes) into 2 4-byte locations in
         // the array

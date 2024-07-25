@@ -228,7 +228,7 @@ void tioga::getAdaptiveHoleMap()
     maxtagLocal = -BIGINT;
     for (mbi = 0; mbi < nblocks; mbi++) {
         auto& mb = mblocks[mbi];
-        int mbtag = mb->getMeshTag();
+        int const mbtag = mb->getMeshTag();
         maxtagLocal = (maxtagLocal < mbtag) ? mbtag : maxtagLocal;
     }
     MPI_Allreduce(&maxtagLocal, &maxtag, 1, MPI_INT, MPI_MAX, scomm);
@@ -427,7 +427,7 @@ void tioga::getAdaptiveHoleMap()
                         nrefine++;
                     }
                 }
-                int nchildren = OCTANT_CHILDREN * nrefine;
+                int const nchildren = OCTANT_CHILDREN * nrefine;
 
                 // allocate and fill next level
                 level_id++;
@@ -448,7 +448,7 @@ void tioga::getAdaptiveHoleMap()
                 nrefine = 0;
                 for (i = 0; i < lvl->elem_count; i++) {
                     if (refineFlag[i] != 0) {
-                        uint32_t newidx = OCTANT_CHILDREN * nrefine;
+                        uint32_t const newidx = OCTANT_CHILDREN * nrefine;
 
                         // set Morton code and filltype for new octants
                         octant_children(
@@ -470,7 +470,7 @@ void tioga::getAdaptiveHoleMap()
                 nrefine = 0;
                 for (i = 0; i < lvl->elem_count; i++) {
                     if (refineFlag[i] != 0) {
-                        int newidx = OCTANT_CHILDREN * nrefine;
+                        int const newidx = OCTANT_CHILDREN * nrefine;
 
                         // set neighbors for new octants
                         octant_children_neighbors(
@@ -538,24 +538,24 @@ void tioga::getAdaptiveHoleMap()
         /* ======================================================== */
         for (int cb = 0; cb < ncomposite; cb++) {
             CompositeBody& Composite = compositeBody[cb];
-            int nbodies = Composite.bodyids.size();
+            int const nbodies = Composite.bodyids.size();
 
             for (i = 0; i < nbodies; i++) {
-                int bodyi = Composite.bodyids[i] - BASE;
+                int const bodyi = Composite.bodyids[i] - BASE;
                 ADAPTIVE_HOLEMAP_OCTANT& AHMOLocal = AHMO[bodyi];
 
                 // check if this rank contains this body
                 char rankContainsBody = 0;
                 for (mbi = 0; mbi < nblocks; mbi++) {
                     auto& mb = mblocks[mbi];
-                    int meshtag = mb->getMeshTag();
+                    int const meshtag = mb->getMeshTag();
                     if (meshtag - BASE == bodyi) {
                         rankContainsBody = 1;
                         break;
                     }
                 }
 
-                meshblockCompInfo& MBC = meshblockComposite[bodyi];
+                meshblockCompInfo const& MBC = meshblockComposite[bodyi];
                 ADAPTIVE_HOLEMAP_COMPOSITE& AHMC =
                     adaptiveHoleMapCOMPOSITE[bodyi];
                 ahm_meta_minimal_t& meta = AHMC.meta;
@@ -720,7 +720,7 @@ void tioga::getAdaptiveHoleMap()
         for (mbi = 0; mbi < nblocks; mbi++) {
             ADAPTIVE_HOLEMAP_OCTANT& AHMOLocal = AHMO[mbi];
             auto& mb = mblocks[mbi];
-            int meshtag = mb->getMeshTag();
+            int const meshtag = mb->getMeshTag();
 
             ADAPTIVE_HOLEMAP& AHMLocal = adaptiveHoleMap[meshtag - BASE];
             ahm_meta_t& meta = AHMLocal.meta;
@@ -785,7 +785,7 @@ void tioga::getAdaptiveHoleMap()
 
         meta.elem_count = 0;
         if (AHME.existWall != 0u) {
-            meshblockCompInfo& MBC = meshblockComplement[i];
+            meshblockCompInfo const& MBC = meshblockComplement[i];
 
             // complement + master ranks only involved
             if (MBC.comm != MPI_COMM_NULL) {
@@ -1066,7 +1066,7 @@ void tioga::outputAdaptiveHoleMap()
     if (myid == 0) {
         for (m = 0; m < nmesh; m++) {
             if (adaptiveHoleMap[m].existWall != 0u) {
-                ahm_meta_t& meta = adaptiveHoleMap[m].meta;
+                ahm_meta_t const& meta = adaptiveHoleMap[m].meta;
 
                 ds[0] = meta.extents_hi[0] - meta.extents_lo[0];
                 ds[1] = meta.extents_hi[1] - meta.extents_lo[1];

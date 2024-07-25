@@ -90,12 +90,12 @@ void tioga::exchangeDonors()
         int m = 0;
         int l = 0;
         for (int i = 0; i < rcvPack[k].nints / 4; i++) {
-            int meshtag = rcvPack[k].intData[m++];
-            int pointid = rcvPack[k].intData[m++];
-            int remoteid = rcvPack[k].intData[m++];
-            int ib = rcvPack[k].intData[m++];
-            double donorRes = rcvPack[k].realData[l++];
-            double receptorRes = rcvPack[k].realData[l++];
+            int const meshtag = rcvPack[k].intData[m++];
+            int const pointid = rcvPack[k].intData[m++];
+            int const remoteid = rcvPack[k].intData[m++];
+            int const ib = rcvPack[k].intData[m++];
+            double const donorRes = rcvPack[k].realData[l++];
+            double const receptorRes = rcvPack[k].realData[l++];
             auto& mb = mblocks[ib];
             mb->insertAndSort(
                 pointid, k, meshtag, remoteid, donorRes, receptorRes);
@@ -139,7 +139,7 @@ void tioga::exchangeDonors()
 
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].nints += 2;
             sndPack[k].nreals++;
         }
@@ -153,7 +153,7 @@ void tioga::exchangeDonors()
 
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 1];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 2];
             sndPack[k].realData[rxOffset[k]++] = receptorResolution[n][i];
@@ -170,7 +170,7 @@ void tioga::exchangeDonors()
         int m = 0;
         for (int j = 0; j < rcvPack[k].nints / 2; j++) {
             m++; // skip over point id
-            int ib = tag_iblk_map[rcvPack[k].intData[m++]];
+            int const ib = tag_iblk_map[rcvPack[k].intData[m++]];
             ninterp[ib]++;
         }
     }
@@ -185,9 +185,9 @@ void tioga::exchangeDonors()
         int l = 0;
         int m = 0;
         for (int j = 0; j < rcvPack[k].nints / 2; j++) {
-            int recid = rcvPack[k].intData[m++];
-            int ib = tag_iblk_map[rcvPack[k].intData[m++]];
-            double receptorRes = rcvPack[k].realData[l++];
+            int const recid = rcvPack[k].intData[m++];
+            int const ib = tag_iblk_map[rcvPack[k].intData[m++]];
+            double const receptorRes = rcvPack[k].realData[l++];
             mblocks[ib]->findInterpData(&(ninterp[ib]), recid, receptorRes);
         }
     }
@@ -213,7 +213,7 @@ void tioga::exchangeDonors()
 
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].nints += 2;
         }
     }
@@ -223,7 +223,7 @@ void tioga::exchangeDonors()
 
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 1];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 2];
         }
@@ -236,8 +236,8 @@ void tioga::exchangeDonors()
     for (int k = 0; k < nrecv; k++) {
         int m = 0;
         for (int j = 0; j < rcvPack[k].nints / 2; j++) {
-            int recid = rcvPack[k].intData[m++];
-            int ib = tag_iblk_map[rcvPack[k].intData[m++]];
+            int const recid = rcvPack[k].intData[m++];
+            int const ib = tag_iblk_map[rcvPack[k].intData[m++]];
             mblocks[ib]->cancelDonor(recid);
         }
     }
@@ -264,7 +264,7 @@ void tioga::exchangeDonors()
     std::fill(ixOffset.begin(), ixOffset.end(), 0);
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].nints += 2;
         }
     }
@@ -273,7 +273,7 @@ void tioga::exchangeDonors()
     }
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 1];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 2];
         }
@@ -291,8 +291,8 @@ void tioga::exchangeDonors()
     for (int k = 0; k < nrecv; k++) {
         int m = 0;
         for (int j = 0; j < rcvPack[k].nints / 2; j++) {
-            int pointid = rcvPack[k].intData[m++];
-            int ib = rcvPack[k].intData[m++];
+            int const pointid = rcvPack[k].intData[m++];
+            int const ib = rcvPack[k].intData[m++];
             mblocks[ib]->setIblanks(pointid);
         }
     }

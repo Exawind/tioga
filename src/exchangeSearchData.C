@@ -60,14 +60,14 @@ void tioga::exchangeSearchData(int at_points)
 
     // Process each intersection pair and determine the total data that needs to
     // be sent
-    int nobb = obblist.size();
+    int const nobb = obblist.size();
     std::vector<int> nintsSend(nobb);
     std::vector<int> nrealsSend(nobb);
     int** int_data = (int**)malloc(sizeof(int*) * nobb);
     double** real_data = (double**)malloc(sizeof(double*) * nobb);
 
     for (int ii = 0; ii < nobb; ii++) {
-        int ib = obblist[ii].iblk_local;
+        int const ib = obblist[ii].iblk_local;
         auto& mb = mblocks[ib];
         if (at_points == 0) {
             mb->getQueryPoints2(
@@ -86,7 +86,7 @@ void tioga::exchangeSearchData(int at_points)
         sndPack[k].nreals = 0;
 
         for (int i = 0; i < ibsPerProc[k]; i++) {
-            int ii = ibProcMap[k][i];
+            int const ii = ibProcMap[k][i];
 
             sndPack[k].nints += nintsSend[ii];
             sndPack[k].nreals += nrealsSend[ii];
@@ -99,7 +99,7 @@ void tioga::exchangeSearchData(int at_points)
         int m = 0;
 
         for (int i = 0; i < ibsPerProc[k]; i++) {
-            int ii = ibProcMap[k][i];
+            int const ii = ibProcMap[k][i];
 
             sndPack[k].intData[n++] = obblist[ii].send_tag;
             sndPack[k].intData[n++] = nintsSend[ii];
@@ -153,7 +153,7 @@ void tioga::exchangeSearchData(int at_points)
     }
 
 #ifdef TIOGA_HAS_NODEGID
-    int nintsPerNode = 3;
+    int const nintsPerNode = 3;
 #else
     int nintsPerNode = 1;
 #endif
@@ -166,9 +166,9 @@ void tioga::exchangeSearchData(int at_points)
         int m = 0;
 
         for (int i = 0; i < ibsPerProc[k]; i++) {
-            int key = rcvPack[k].intData[m++];
-            int ii = intBoxMap[key];
-            int ib = obblist[ii].iblk_local;
+            int const key = rcvPack[k].intData[m++];
+            int const ii = intBoxMap[key];
+            int const ib = obblist[ii].iblk_local;
             auto& mb = mblocks[ib];
 
             nintsRecv[ii] = rcvPack[k].intData[m++];
@@ -217,9 +217,9 @@ void tioga::exchangeSearchData(int at_points)
         int m = 0;
 
         for (int i = 0; i < ibsPerProc[k]; i++) {
-            int key = rcvPack[k].intData[m++];
-            int ii = intBoxMap[key];
-            int ib = obblist[ii].iblk_local;
+            int const key = rcvPack[k].intData[m++];
+            int const ii = intBoxMap[key];
+            int const ib = obblist[ii].iblk_local;
             auto& mb = mblocks[ib];
 
             int ioff = icOffset[ib];

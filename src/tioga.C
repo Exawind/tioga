@@ -106,12 +106,12 @@ void tioga::assembleCompositeMap()
         /* ================================= */
         for (int mbi = 0; mbi < nblocks; mbi++) {
             auto& mb = mblocks[mbi];
-            int mbtag = mb->getMeshTag() - BASE;
+            int const mbtag = mb->getMeshTag() - BASE;
 
             for (int cb = 0; cb < ncomposite; cb++) {
                 CompositeBody& Composite = compositeBody[cb];
 
-                int nbodies = Composite.bodyids.size();
+                int const nbodies = Composite.bodyids.size();
                 for (i = 0; i < nbodies; i++) {
                     bodyi = Composite.bodyids[i] - BASE;
                     if (bodyi == mbtag) {
@@ -129,7 +129,7 @@ void tioga::assembleCompositeMap()
         int maxtagLocal = -BIGINT;
         for (int mbi = 0; mbi < nblocks; mbi++) {
             auto& mb = mblocks[mbi];
-            int mbtag = mb->getMeshTag();
+            int const mbtag = mb->getMeshTag();
 
             maxtagLocal = (maxtagLocal < mbtag) ? mbtag : maxtagLocal;
         }
@@ -149,7 +149,7 @@ void tioga::assembleCompositeMap()
                 compositeBodyMap[cb][i].resize(maxtag, 0); // fill 0
             }
 
-            int nbodies = Composite.bodyids.size();
+            int const nbodies = Composite.bodyids.size();
             for (i = 0; i < nbodies; i++) {
                 bodyi = Composite.bodyids[i] - BASE;
                 for (j = i + 1; j < nbodies; j++) {
@@ -191,7 +191,7 @@ void tioga::assembleCompositeComms()
     maxtagLocal = -BIGINT;
     for (int mbi = 0; mbi < nblocks; mbi++) {
         auto& mb = mblocks[mbi];
-        int mbtag = mb->getMeshTag();
+        int const mbtag = mb->getMeshTag();
 
         maxtagLocal = (maxtagLocal < mbtag) ? mbtag : maxtagLocal;
     }
@@ -208,10 +208,10 @@ void tioga::assembleCompositeComms()
     /* ========================================= */
     for (int cb = 0; cb < ncomposite; cb++) {
         CompositeBody& Composite = compositeBody[cb];
-        int nbodies = Composite.bodyids.size();
+        int const nbodies = Composite.bodyids.size();
 
         for (int i = 0; i < nbodies; i++) {
-            int bodyi = Composite.bodyids[i] - BASE;
+            int const bodyi = Composite.bodyids[i] - BASE;
             meshblockCompInfo& MBC = meshblockComposite[bodyi];
 
             // 1. set composite master rank ID (use complement info)
@@ -223,11 +223,11 @@ void tioga::assembleCompositeComms()
             // 2. find if other ranks with mesh blocks in same composite body
             char foundFlag = 0;
             for (int j = 0; j < nbodies && foundFlag == 0; j++) {
-                int bodyj = Composite.bodyids[j] - BASE;
+                int const bodyj = Composite.bodyids[j] - BASE;
 
                 for (int mbi = 0; mbi < nblocks; mbi++) {
                     auto& mb = mblocks[mbi];
-                    int mbtag = mb->getMeshTag();
+                    int const mbtag = mb->getMeshTag();
                     if (bodyj == mbtag - BASE) {
                         foundFlag = 1;
                         break;
@@ -305,7 +305,7 @@ void tioga::assembleComplementComms()
     maxtagLocal = -BIGINT;
     for (int mbi = 0; mbi < nblocks; mbi++) {
         auto& mb = mblocks[mbi];
-        int mbtag = mb->getMeshTag();
+        int const mbtag = mb->getMeshTag();
 
         maxtagLocal = (maxtagLocal < mbtag) ? mbtag : maxtagLocal;
 
@@ -496,7 +496,7 @@ void tioga::register_unstructured_grid(TIOGA::MeshBlockInfo* minfo)
 void tioga::registerSolution(int btag, double* q)
 {
     auto idxit = tag_iblk_map.find(btag);
-    int iblk = idxit->second;
+    int const iblk = idxit->second;
     qblock[iblk] = q;
 }
 
@@ -504,7 +504,7 @@ void tioga::register_unstructured_solution(
     int btag, double* q, int nvar, int interptype)
 {
     auto idxit = tag_iblk_map.find(btag);
-    int iblk = idxit->second;
+    int const iblk = idxit->second;
     qblock[iblk] = q;
     mblocks[iblk]->num_var() = nvar;
     mblocks[iblk]->set_interptype(interptype);
@@ -783,7 +783,7 @@ void tioga::dataUpdate_AMR()
         for (i = 0; i < rcvPack[k].nints / 2; i++) {
             bid = rcvPack[k].intData[2 * i];
             if (bid < 0) {
-                int inode = rcvPack[k].intData[2 * i + 1];
+                int const inode = rcvPack[k].intData[2 * i + 1];
                 mblocks[-(bid + 1)]->updateSolnData(
                     inode, &rcvPack[k].realData[m], qblock[-(bid + 1)]);
             } else {
@@ -870,7 +870,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
         // populate the packets
         //
         for (int i = 0; i < nints[ib]; i++) {
-            int k = integerRecords[ib][3 * i];
+            int const k = integerRecords[ib][3 * i];
             sndPack[k].nints += 2;
             sndPack[k].nreals += nvar;
         }
@@ -886,7 +886,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     for (int ib = 0; ib < nblocks; ib++) {
         int m = 0;
         for (int i = 0; i < nints[ib]; i++) {
-            int k = integerRecords[ib][3 * i];
+            int const k = integerRecords[ib][3 * i];
             sndPack[k].intData[icount[k]++] = integerRecords[ib][3 * i + 1];
             sndPack[k].intData[icount[k]++] = integerRecords[ib][3 * i + 2];
             for (int j = 0; j < nvar; j++) {
@@ -918,8 +918,8 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
         int l = 0;
         int m = 0;
         for (int i = 0; i < rcvPack[k].nints / 2; i++) {
-            int pointid = rcvPack[k].intData[l++];
-            int ib = rcvPack[k].intData[l++];
+            int const pointid = rcvPack[k].intData[l++];
+            int const ib = rcvPack[k].intData[l++];
             auto& mb = mblocks[ib];
             if (at_points == 0) {
                 double* q = qblock[ib];
@@ -1028,7 +1028,7 @@ void tioga::getDonorCount(int btag, int* dcount, int* fcount)
     }
 
     auto idxit = tag_iblk_map.find(btag);
-    int iblk = idxit->second;
+    int const iblk = idxit->second;
     auto& mb = mblocks[iblk];
     mb->getDonorCount(dcount, fcount);
 }
@@ -1046,7 +1046,7 @@ void tioga::getDonorInfo(
     }
 
     auto idxit = tag_iblk_map.find(btag);
-    int iblk = idxit->second;
+    int const iblk = idxit->second;
     auto& mb = mblocks[iblk];
     mb->getDonorInfo(receptors, indices, frac);
     //
@@ -1110,7 +1110,7 @@ void tioga::getReceptorInfo(std::vector<int>& receptors)
 
         std::vector<int>& fringeData = fringeSend[ib];
         for (int i = 0; i < (5 * dcount[ib]); i += 5) {
-            int k = fringeData[i];
+            int const k = fringeData[i];
             sndPack[k].nints += 4;
         }
     }
@@ -1125,7 +1125,7 @@ void tioga::getReceptorInfo(std::vector<int>& receptors)
         std::vector<int>& fringeData = fringeSend[ib];
 
         for (size_t i = 0; i < fringeData.size(); i += 5) {
-            int k = fringeData[i];
+            int const k = fringeData[i];
             sndPack[k].intData[ix[k]++] = fringeData[i + 1]; // nodeID
             sndPack[k].intData[ix[k]++] =
                 fringeData[i + 2]; // local block index at receiver
@@ -1331,7 +1331,7 @@ void tioga::reduce_fringes()
     //
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].nints += 2;
         }
     }
@@ -1342,7 +1342,7 @@ void tioga::reduce_fringes()
     //
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 1];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 2];
         }
@@ -1355,8 +1355,8 @@ void tioga::reduce_fringes()
     for (int k = 0; k < nrecv; k++) {
         int m = 0;
         for (int j = 0; j < rcvPack[k].nints / 2; j++) {
-            int recid = rcvPack[k].intData[m++];
-            int ib = tag_iblk_map[rcvPack[k].intData[m++]];
+            int const recid = rcvPack[k].intData[m++];
+            int const ib = tag_iblk_map[rcvPack[k].intData[m++]];
             mblocks[ib]->cancelDonor(recid);
         }
     }
@@ -1382,7 +1382,7 @@ void tioga::reduce_fringes()
     std::fill(ixOffset.begin(), ixOffset.end(), 0);
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].nints += 2;
         }
     }
@@ -1391,7 +1391,7 @@ void tioga::reduce_fringes()
     }
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][3 * i];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 1];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 2];
         }
@@ -1409,8 +1409,8 @@ void tioga::reduce_fringes()
     for (int k = 0; k < nrecv; k++) {
         int m = 0;
         for (int j = 0; j < rcvPack[k].nints / 2; j++) {
-            int pointid = rcvPack[k].intData[m++];
-            int ib = rcvPack[k].intData[m++];
+            int const pointid = rcvPack[k].intData[m++];
+            int const ib = rcvPack[k].intData[m++];
             mblocks[ib]->setIblanks(pointid);
         }
     }
@@ -1484,9 +1484,9 @@ void tioga::preprocess_amr_data(int root)
     if (root == myid) {
         const auto* ainfo = cg->m_info;
         for (int pp = 0; pp < ngrids_global; ++pp) {
-            int i3 = pp * 3;
-            int i6 = pp * 6;
-            int iloc = nint_per_grid * pp;
+            int const i3 = pp * 3;
+            int const i6 = pp * 6;
+            int const iloc = nint_per_grid * pp;
 
             idata[iloc] = pp;
             idata[iloc + 1] = ainfo->level.hptr[pp];
@@ -1519,7 +1519,7 @@ void tioga::preprocess_amr_data(int root)
     // These MPI ranks don't have AMR mesh, but require patch information for
     // performing searches. So create appropriate data here.
     {
-        int nghost = idata.back();
+        int const nghost = idata.back();
         cg = new CartGrid[1];
         cg->myid = myid;
 

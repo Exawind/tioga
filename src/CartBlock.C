@@ -110,7 +110,7 @@ void CartBlock::getInterpolatedData(
             }
 
             for (i = 0; i < listptr->nweights; i++) {
-                int cell_index = cart_utils::get_cell_index(
+                int const cell_index = cart_utils::get_cell_index(
                     dims[0], dims[1], nf, listptr->inode[3 * i],
                     listptr->inode[3 * i + 1], listptr->inode[3 * i + 2]);
                 for (n = 0; n < nvar_cell; n++) {
@@ -118,8 +118,8 @@ void CartBlock::getInterpolatedData(
                     qq[n] += qcell[cell_index + ncell_nf * n] * weight;
                 }
 
-                int ind_offset = 3 * (listptr->nweights + i);
-                int node_index = cart_utils::get_node_index(
+                int const ind_offset = 3 * (listptr->nweights + i);
+                int const node_index = cart_utils::get_node_index(
                     dims[0], dims[1], nf, listptr->inode[ind_offset],
                     listptr->inode[ind_offset + 1],
                     listptr->inode[ind_offset + 2]);
@@ -265,7 +265,7 @@ void CartBlock::insertInInterpList(
             nf, ix, dims, rst, &(listptr->nweights), listptr->inode,
             listptr->weights, false);
 
-        int ind_offset = 3 * listptr->nweights;
+        int const ind_offset = 3 * listptr->nweights;
         cart_interp::linear_interpolation(
             nf, ix, dims, rst, &(listptr->nweights),
             &(listptr->inode[ind_offset]),
@@ -367,9 +367,9 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
     // set variables based on isNodal flag
     int idof = isNodal ? (ncell - 1) : -1;
     int* iblank = isNodal ? ibl_node : ibl_cell;
-    int nX = isNodal ? (dims[0] + 1) : dims[0];
-    int nY = isNodal ? (dims[1] + 1) : dims[1];
-    int nZ = isNodal ? (dims[2] + 1) : dims[2];
+    int const nX = isNodal ? (dims[0] + 1) : dims[0];
+    int const nY = isNodal ? (dims[1] + 1) : dims[1];
+    int const nZ = isNodal ? (dims[2] + 1) : dims[2];
 
     //
     // first mark hole points
@@ -395,7 +395,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                             if (checkHoleMap(
                                     xtmp, holemap[h].nx, holemap[h].sam,
                                     holemap[h].extents) != 0) {
-                                int ibindex =
+                                int const ibindex =
                                     isNodal
                                         ? cart_utils::get_node_index(
                                               dims[0], dims[1], nf, i, j, k)
@@ -412,7 +412,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                         iflag[h] = 0;
                     }
                     while (temp != nullptr) {
-                        int meshtagdonor = temp->donorData[1] - BASE;
+                        int const meshtagdonor = temp->donorData[1] - BASE;
                         iflag[meshtagdonor] = 1;
                         temp = temp->next;
                     }
@@ -422,7 +422,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                                 if (checkHoleMap(
                                         xtmp, holemap[h].nx, holemap[h].sam,
                                         holemap[h].extents) != 0) {
-                                    int ibindex =
+                                    int const ibindex =
                                         isNodal
                                             ? cart_utils::get_node_index(
                                                   dims[0], dims[1], nf, i, j, k)
@@ -448,10 +448,11 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
         for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
                 idof++;
-                int ibindex = isNodal ? cart_utils::get_node_index(
-                                            dims[0], dims[1], nf, i, j, k)
-                                      : cart_utils::get_cell_index(
-                                            dims[0], dims[1], nf, i, j, k);
+                int const ibindex = isNodal
+                                        ? cart_utils::get_node_index(
+                                              dims[0], dims[1], nf, i, j, k)
+                                        : cart_utils::get_cell_index(
+                                              dims[0], dims[1], nf, i, j, k);
 
                 if (iblank[ibindex] == 0) {
                     if (donorList[idof] != nullptr) {
@@ -530,9 +531,9 @@ void CartBlock::processIblank(
     // set variables based on isNodal flag
     int idof = isNodal ? (ncell - 1) : -1;
     int* iblank = isNodal ? ibl_node : ibl_cell;
-    int nX = isNodal ? (dims[0] + 1) : dims[0];
-    int nY = isNodal ? (dims[1] + 1) : dims[1];
-    int nZ = isNodal ? (dims[2] + 1) : dims[2];
+    int const nX = isNodal ? (dims[0] + 1) : dims[0];
+    int const nY = isNodal ? (dims[1] + 1) : dims[1];
+    int const nZ = isNodal ? (dims[2] + 1) : dims[2];
 
     //
     // first mark hole points
@@ -555,10 +556,10 @@ void CartBlock::processIblank(
                 if (donorList[idof] == nullptr) {
                     for (int h = 0; h < nmesh; h++) {
                         if (holemap[h].existWall != 0u) {
-                            int SB_val =
+                            int const SB_val =
                                 checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
                             if (SB_val != OUTSIDE_SB) {
-                                int ibindex =
+                                int const ibindex =
                                     isNodal
                                         ? cart_utils::get_node_index(
                                               dims[0], dims[1], nf, i, j, k)
@@ -575,17 +576,17 @@ void CartBlock::processIblank(
                         iflag[h] = 0;
                     }
                     while (temp != nullptr) {
-                        int meshtagdonor = temp->donorData[1] - BASE;
+                        int const meshtagdonor = temp->donorData[1] - BASE;
                         iflag[meshtagdonor] = 1;
                         temp = temp->next;
                     }
                     for (int h = 0; h < nmesh; h++) {
                         if (holemap[h].existWall != 0u) {
                             if (iflag[h] == 0) {
-                                int SB_val =
+                                int const SB_val =
                                     checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
                                 if (SB_val != OUTSIDE_SB) {
-                                    int ibindex =
+                                    int const ibindex =
                                         isNodal
                                             ? cart_utils::get_node_index(
                                                   dims[0], dims[1], nf, i, j, k)
@@ -611,10 +612,11 @@ void CartBlock::processIblank(
         for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
                 idof++;
-                int ibindex = isNodal ? cart_utils::get_node_index(
-                                            dims[0], dims[1], nf, i, j, k)
-                                      : cart_utils::get_cell_index(
-                                            dims[0], dims[1], nf, i, j, k);
+                int const ibindex = isNodal
+                                        ? cart_utils::get_node_index(
+                                              dims[0], dims[1], nf, i, j, k)
+                                        : cart_utils::get_cell_index(
+                                              dims[0], dims[1], nf, i, j, k);
 
                 if (iblank[ibindex] == 0) {
                     if (donorList[idof] != nullptr) {

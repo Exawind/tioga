@@ -254,7 +254,7 @@ public:
     void setResolutions(int btag, double* nres, double* cres)
     {
         auto idxit = tag_iblk_map.find(btag);
-        int iblk = idxit->second;
+        int const iblk = idxit->second;
         auto& mb = mblocks[iblk];
         mb->setResolutions(nres, cres);
     }
@@ -272,7 +272,7 @@ public:
     void set_uniform_hex_flag(int btag, int flag)
     {
         auto idxit = tag_iblk_map.find(btag);
-        int iblk = idxit->second;
+        int const iblk = idxit->second;
         auto& mb = mblocks[iblk];
         mb->check_uniform_hex_flag = flag;
     }
@@ -280,7 +280,7 @@ public:
     void set_cell_iblank(int btag, int* ib_cell)
     {
         auto idxit = tag_iblk_map.find(btag);
-        int iblk = idxit->second;
+        int const iblk = idxit->second;
         auto& mb = mblocks[iblk];
         mb->set_cell_iblank(ib_cell);
     }

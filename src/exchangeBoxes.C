@@ -47,7 +47,8 @@ void tioga::exchangeBoxes()
     MPI_Allgather(&nblocks, 1, MPI_INT, nbPerProc.data(), 1, MPI_INT, scomm);
 
     // Total number mesh chunks across all procs
-    int ntotalblks = std::accumulate(nbPerProc.begin(), nbPerProc.end(), 0);
+    int const ntotalblks =
+        std::accumulate(nbPerProc.begin(), nbPerProc.end(), 0);
 
     std::vector<int> alltags(
         ntotalblks); // Mesh tags for all blocks across all procs
@@ -71,12 +72,12 @@ void tioga::exchangeBoxes()
     int maxtag = -1;
     // for (auto itag: alltags)
     for (int i = 0; i < ntotalblks; i++) {
-        int itag = abs(alltags[i]);
+        int const itag = abs(alltags[i]);
         if (maxtag < itag) {
             maxtag = itag;
         }
     }
-    int mxtgsqr = maxtag * maxtag;
+    int const mxtgsqr = maxtag * maxtag;
 
     displs[0] = 0;
     for (int i = 1; i <= numprocs; i++) {
@@ -107,7 +108,7 @@ void tioga::exchangeBoxes()
         obSizePerProc.data(), displs.data(), MPI_DOUBLE, scomm);
 
     // Determine total number of OBBs received
-    int nobb = ntotalblks;
+    int const nobb = ntotalblks;
 
     // Store all received OBBs in a temporary list
     std::vector<OBB> obbRecv(nobb);
@@ -151,7 +152,7 @@ void tioga::exchangeBoxes()
     for (int ob = 0; ob < nobb; ob++) {
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
-            int meshtag = mb->getMeshTag();
+            int const meshtag = mb->getMeshTag();
             if (abs(obbID[ob]) == meshtag) {
                 continue;
             }
@@ -177,7 +178,7 @@ void tioga::exchangeBoxes()
             }
         }
     }
-    int new_send = std::count(sendFlag.begin(), sendFlag.end(), true);
+    int const new_send = std::count(sendFlag.begin(), sendFlag.end(), true);
     assert(new_send <= nsend);
     // Populate send and recv maps
     std::map<int, int> invMap;
@@ -227,17 +228,18 @@ void tioga::exchangeBoxes()
     std::vector<int> idxOffset(nsend, 0);
     for (size_t i = 0; i < intersectIDs.size(); i++) {
         auto ids = intersectIDs[i];
-        int ib = ids.first;  // Block ID of the local mesh block
-        int ob = ids.second; // Index of the intersected block in OBB list
-        int k = invMap[obbProc[ob]]; // Index in sndMap for this proc ID
-        auto& mb = mblocks[ib];      // Mesh block data object
-        int ip = obbProc[ob];
+        int const ib = ids.first;  // Block ID of the local mesh block
+        int const ob = ids.second; // Index of the intersected block in OBB list
+        int const k = invMap[obbProc[ob]]; // Index in sndMap for this proc ID
+        auto& mb = mblocks[ib];            // Mesh block data object
+        int const ip = obbProc[ob];
 
-        int ioff = idxOffset[k]; // Index to fill in sndPack
-        int roff = idxOffset[k] * 6;
+        int const ioff = idxOffset[k]; // Index to fill in sndPack
+        int const roff = idxOffset[k] * 6;
 
-        int key_recv = mxtgsqr * ip + maxtag * (mtags[ib] - 1) + obbID[ob] - 1;
-        int key_send =
+        int const key_recv =
+            mxtgsqr * ip + maxtag * (mtags[ib] - 1) + obbID[ob] - 1;
+        int const key_send =
             mxtgsqr * myid + maxtag * (obbID[ob] - 1) + (mtags[ib] - 1);
         intBoxMap[key_recv] = i;
         ibProcMap[k][ioff] = i;
@@ -272,8 +274,8 @@ void tioga::exchangeBoxes()
         int m = 0;
 
         for (int n = 0; n < rcvPack[k].nints; n += 3) {
-            int key = rcvPack[k].intData[n];
-            int ii = intBoxMap[key];
+            int const key = rcvPack[k].intData[n];
+            int const ii = intBoxMap[key];
             obblist[ii].iblk_remote = rcvPack[k].intData[n + 1];
             obblist[ii].tag_remote = rcvPack[k].intData[n + 2];
 
