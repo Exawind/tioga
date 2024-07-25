@@ -70,7 +70,7 @@ void MeshBlock::setData(
     for (i = 0; i < ntypes; i++) ncells += nc[i];
 
 #ifdef TIOGA_HAS_NODEGID
-    if (nodeGID == NULL)
+    if (nodeGID == nullptr)
         throw std::runtime_error("#tioga: global IDs for nodes not provided");
 #endif
 }
@@ -198,7 +198,7 @@ void MeshBlock::tagBoundary(void)
     // userSpecifiedCellRes=NULL;
 
     //
-    if (userSpecifiedNodeRes == NULL && userSpecifiedCellRes == NULL) {
+    if (userSpecifiedNodeRes == nullptr && userSpecifiedCellRes == nullptr) {
         for (i = 0; i < nnodes; i++) nodeRes[i] = 0.0;
 
         if (!dominanceFlag) {
@@ -510,7 +510,7 @@ void MeshBlock::tagBoundaryFaces(void)
 
     // if duplicate found, set duplicate array pointer
     const char* duplicateCheck =
-        (flagduplicate) ? iflagduplicates.data() : NULL;
+        (flagduplicate) ? iflagduplicates.data() : nullptr;
 
     /* ======================================================== */
     /* 2. COMPUTE LOCAL BOUNDING BOX (after adjusting iflagwbc) */
@@ -556,7 +556,7 @@ void MeshBlock::tagBoundaryFaces(void)
 
                     if (flagwbc &&
                         checkFaceBoundaryNodes(
-                            inode, iflagwbc.data(), nfacevert, faceNodes, NULL))
+                            inode, iflagwbc.data(), nfacevert, faceNodes, nullptr))
                         nwbcface++;
                     if (flagobc && checkFaceBoundaryNodes(
                                        inode, iflagobc.data(), nfacevert,
@@ -601,7 +601,7 @@ void MeshBlock::tagBoundaryFaces(void)
                     // check wall boundary condition face
                     if (flagwbc && checkFaceBoundaryNodes(
                                        inode, iflagwbc.data(), nfacevert,
-                                       faceNodes, NULL)) {
+                                       faceNodes, nullptr)) {
                         for (d = 0; d < 3; d++)
                             wbcfacenode[4 * nwbcface + d] =
                                 inode[faceNodes[d] - BASE];

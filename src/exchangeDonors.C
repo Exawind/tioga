@@ -198,7 +198,7 @@ void tioga::exchangeDonors(void)
     for (int i = 0; i < nblocks; i++) {
         if (donorRecords[i]) {
             TIOGA_FREE(donorRecords[i]);
-            donorRecords[i] = NULL;
+            donorRecords[i] = nullptr;
         }
         nrecords[i] = 0;
         mblocks[i]->getCancellationData(&(nrecords[i]), &(donorRecords[i]));
@@ -249,7 +249,7 @@ void tioga::exchangeDonors(void)
     for (int i = 0; i < nblocks; i++) {
         if (donorRecords[i]) {
             TIOGA_FREE(donorRecords[i]);
-            donorRecords[i] = NULL;
+            donorRecords[i] = nullptr;
         }
         nrecords[i] = 0;
         mblocks[i]->getInterpData(&(nrecords[i]), &(donorRecords[i]));

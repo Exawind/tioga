@@ -57,7 +57,7 @@ void CartBlock::getInterpolatedData(
     int interpCount = 0;
     double weight;
     listptr = interpList;
-    while (listptr != NULL) {
+    while (listptr != nullptr) {
         interpCount++;
         listptr = listptr->next;
     }
@@ -88,7 +88,7 @@ void CartBlock::getInterpolatedData(
         icount = 3 * nintold;
         dcount = nrealold;
         qq = (double*)malloc(sizeof(double) * (nvar_cell + nvar_node));
-        while (listptr != NULL) {
+        while (listptr != nullptr) {
             (*intData)[icount++] = listptr->receptorInfo[0];
             (*intData)[icount++] = -1 - listptr->receptorInfo[2];
             (*intData)[icount++] = listptr->receptorInfo[1];
@@ -160,7 +160,7 @@ void CartBlock::preprocess(CartGrid* cg)
 void CartBlock::initializeLists(void)
 {
     donorList = (DONORLIST**)malloc(sizeof(DONORLIST*) * (ncell + nnode));
-    for (int i = 0; i < (ncell + nnode); i++) donorList[i] = NULL;
+    for (int i = 0; i < (ncell + nnode); i++) donorList[i] = nullptr;
 }
 
 void CartBlock::clearLists(void)
@@ -169,12 +169,12 @@ void CartBlock::clearLists(void)
     if (donorList) {
         for (i = 0; i < ncell + nnode; i++) {
             deallocateLinkList(donorList[i]);
-            donorList[i] = NULL;
+            donorList[i] = nullptr;
         }
         TIOGA_FREE(donorList);
     }
     deallocateLinkList4(interpList);
-    interpList = NULL;
+    interpList = nullptr;
 }
 
 void CartBlock::insertInInterpList(
@@ -184,16 +184,16 @@ void CartBlock::insertInInterpList(
     int ix[3];
     double* rst;
     rst = (double*)malloc(sizeof(double) * 3);
-    if (interpList == NULL) {
+    if (interpList == nullptr) {
         interpList = (INTERPLIST2*)malloc(sizeof(INTERPLIST2));
         listptr = interpList;
     } else {
         listptr->next = (INTERPLIST2*)malloc(sizeof(INTERPLIST2));
         listptr = listptr->next;
     }
-    listptr->next = NULL;
-    listptr->inode = NULL;
-    listptr->weights = NULL;
+    listptr->next = nullptr;
+    listptr->inode = nullptr;
+    listptr->weights = nullptr;
     listptr->receptorInfo[0] = procid;
     listptr->receptorInfo[1] = remoteid;
     listptr->receptorInfo[2] = remoteblockid;
@@ -363,7 +363,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                     xtmp[2] = xlo[2] + (k + 0.5) * dx[2];
                 }
 
-                if (donorList[idof] == NULL) {
+                if (donorList[idof] == nullptr) {
                     for (int h = 0; h < nmesh; h++)
                         if (holemap[h].existWall) {
                             if (checkHoleMap(
@@ -382,7 +382,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                 } else {
                     temp = donorList[idof];
                     for (int h = 0; h < nmesh; h++) iflag[h] = 0;
-                    while (temp != NULL) {
+                    while (temp != nullptr) {
                         int meshtagdonor = temp->donorData[1] - BASE;
                         iflag[meshtagdonor] = 1;
                         temp = temp->next;
@@ -422,15 +422,15 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                                             dims[0], dims[1], nf, i, j, k);
 
                 if (iblank[ibindex] == 0) {
-                    if (donorList[idof] != NULL) {
+                    if (donorList[idof] != nullptr) {
                         temp = donorList[idof];
-                        while (temp != NULL) {
+                        while (temp != nullptr) {
                             temp->cancel = 1;
                             temp = temp->next;
                         }
                     }
                 } else {
-                    if ((temp = donorList[idof]) != NULL) {
+                    if ((temp = donorList[idof]) != nullptr) {
                         // simplify logic here: the first one on the list is the
                         // best donor anyway, accept it if its not a mandatory
                         // receptor on the donor side
@@ -439,7 +439,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                             temp = temp->next;
                         }
                         // cancel other donors if some exist
-                        while (temp != NULL) {
+                        while (temp != nullptr) {
                             temp->cancel = 1;
                             temp = temp->next;
                         }
@@ -518,7 +518,7 @@ void CartBlock::processIblank(
                     xtmp[2] = xlo[2] + (k + 0.5) * dx[2];
                 }
 
-                if (donorList[idof] == NULL) {
+                if (donorList[idof] == nullptr) {
                     for (int h = 0; h < nmesh; h++)
                         if (holemap[h].existWall) {
                             int SB_val =
@@ -537,7 +537,7 @@ void CartBlock::processIblank(
                 } else {
                     temp = donorList[idof];
                     for (int h = 0; h < nmesh; h++) iflag[h] = 0;
-                    while (temp != NULL) {
+                    while (temp != nullptr) {
                         int meshtagdonor = temp->donorData[1] - BASE;
                         iflag[meshtagdonor] = 1;
                         temp = temp->next;
@@ -578,15 +578,15 @@ void CartBlock::processIblank(
                                             dims[0], dims[1], nf, i, j, k);
 
                 if (iblank[ibindex] == 0) {
-                    if (donorList[idof] != NULL) {
+                    if (donorList[idof] != nullptr) {
                         temp = donorList[idof];
-                        while (temp != NULL) {
+                        while (temp != nullptr) {
                             temp->cancel = 1;
                             temp = temp->next;
                         }
                     }
                 } else {
-                    if ((temp = donorList[idof]) != NULL) {
+                    if ((temp = donorList[idof]) != nullptr) {
                         // simplify logic here: the first one on the list is the
                         // best donor anyway, accept it if its not a mandatory
                         // receptor on the donor side
@@ -595,7 +595,7 @@ void CartBlock::processIblank(
                             temp = temp->next;
                         }
                         // cancel other donors if some exist
-                        while (temp != NULL) {
+                        while (temp != nullptr) {
                             temp->cancel = 1;
                             temp = temp->next;
                         }
@@ -649,9 +649,9 @@ void CartBlock::getCancellationData(int* cancelledData, int* ncancel)
             for (j = 0; j < dims[1] + isNodal; j++)
                 for (i = 0; i < dims[0] + isNodal; i++) {
                     idof++;
-                    if (donorList[idof] != NULL) {
+                    if (donorList[idof] != nullptr) {
                         temp = donorList[idof];
-                        while (temp != NULL) {
+                        while (temp != nullptr) {
                             if (temp->cancel == 1) {
                                 (*ncancel)++;
                                 cancelledData[m++] = temp->donorData[0];

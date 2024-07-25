@@ -371,9 +371,9 @@ void parallelComm::setMap(int ns, int nr, int* snd, int* rcv)
     int i;
     //
     if (sndMap) TIOGA_FREE(sndMap);
-    sndMap = NULL;
+    sndMap = nullptr;
     if (rcvMap) TIOGA_FREE(rcvMap);
-    rcvMap = NULL;
+    rcvMap = nullptr;
     //
     nsend = ns;
     nrecv = nr;
@@ -419,14 +419,14 @@ void parallelComm::initPackets(PACKET* sndPack, PACKET* rcvPack)
     //
     for (i = 0; i < nsend; i++) {
         sndPack[i].nints = sndPack[i].nreals = 0;
-        sndPack[i].intData = NULL;
-        sndPack[i].realData = NULL;
+        sndPack[i].intData = nullptr;
+        sndPack[i].realData = nullptr;
     }
     //
     for (i = 0; i < nrecv; i++) {
         rcvPack[i].nints = rcvPack[i].nreals = 0;
-        rcvPack[i].intData = NULL;
-        rcvPack[i].realData = NULL;
+        rcvPack[i].intData = nullptr;
+        rcvPack[i].realData = nullptr;
     }
     //
 }

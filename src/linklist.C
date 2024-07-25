@@ -23,7 +23,7 @@
 
 void deallocateLinkList(DONORLIST* temp)
 {
-    while (temp != NULL) {
+    while (temp != nullptr) {
         DONORLIST* next = temp->next;
         TIOGA_FREE(temp);
         temp = next;
@@ -32,7 +32,7 @@ void deallocateLinkList(DONORLIST* temp)
 
 void deallocateLinkList2(INTEGERLIST* temp)
 {
-    while (temp != NULL) {
+    while (temp != nullptr) {
         INTEGERLIST* next = temp->next;
         TIOGA_FREE(temp);
         temp = next;
@@ -41,7 +41,7 @@ void deallocateLinkList2(INTEGERLIST* temp)
 
 void deallocateLinkList3(INTEGERLIST2* temp)
 {
-    while (temp != NULL) {
+    while (temp != nullptr) {
         INTEGERLIST2* tnext = temp->next;
         if (temp->intData) TIOGA_FREE(temp->intData);
         if (temp->realData) TIOGA_FREE(temp->realData);
@@ -52,7 +52,7 @@ void deallocateLinkList3(INTEGERLIST2* temp)
 
 void deallocateLinkList4(INTERPLIST2* temp)
 {
-    while (temp != NULL) {
+    while (temp != nullptr) {
         INTERPLIST2* tnext = temp->next;
         if (temp->inode) TIOGA_FREE(temp->inode);
         if (temp->weights) TIOGA_FREE(temp->weights);
@@ -68,11 +68,11 @@ void insertInList(DONORLIST** donorList, DONORLIST* temp1)
     int inserted;
     temp = *donorList;
     inserted = 0;
-    ptemp = NULL;
-    while (temp != NULL && !inserted) {
+    ptemp = nullptr;
+    while (temp != nullptr && !inserted) {
         if (fabs(temp->donorRes) > temp1->donorRes) {
             temp1->next = temp;
-            if (ptemp != NULL) {
+            if (ptemp != nullptr) {
                 ptemp->next = temp1;
             } else {
                 *donorList = temp1;
@@ -85,10 +85,10 @@ void insertInList(DONORLIST** donorList, DONORLIST* temp1)
     }
     if (!inserted) {
         if (*donorList) {
-            temp1->next = NULL;
+            temp1->next = nullptr;
             ptemp->next = temp1;
         } else {
-            temp1->next = NULL;
+            temp1->next = nullptr;
             *donorList = temp1;
         }
     }

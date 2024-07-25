@@ -58,13 +58,13 @@ public:
     {
         global_id = 0;
         dims[0] = dims[1] = dims[2] = 0;
-        ibl_cell = NULL;
-        ibl_node = NULL;
-        qcell = NULL;
-        qnode = NULL;
+        ibl_cell = nullptr;
+        ibl_node = nullptr;
+        qcell = nullptr;
+        qnode = nullptr;
         interpListSize = 0;
-        donorList = NULL;
-        interpList = NULL;
+        donorList = nullptr;
+        interpList = nullptr;
         donor_frac = nullptr;
         nvar_cell = 0;
         nvar_node = 0;

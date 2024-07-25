@@ -119,17 +119,17 @@ public:
       mtags(0)
     */
     {
-        mb = NULL;
-        cg = NULL;
-        cb = NULL;
-        holeMap = NULL;
-        adaptiveHoleMap = NULL;
-        pc = NULL;
-        sendCount = NULL;
-        recvCount = NULL;
-        pc_cart = NULL;
-        meshblockComplement = NULL;
-        meshblockComposite = NULL;
+        mb = nullptr;
+        cg = nullptr;
+        cb = nullptr;
+        holeMap = nullptr;
+        adaptiveHoleMap = nullptr;
+        pc = nullptr;
+        sendCount = nullptr;
+        recvCount = nullptr;
+        pc_cart = nullptr;
+        meshblockComplement = nullptr;
+        meshblockComposite = nullptr;
         // obblist=NULL;
         // isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;
         isym = 3;
@@ -141,7 +141,7 @@ public:
         iamrGlobal = 0;
         mexclude = 3, nfringe = 1;
         USE_ADAPTIVE_HOLEMAP = 0; // Default to original hole map
-        qblock = NULL;
+        qblock = nullptr;
         mblocks.clear();
         mtags.clear();
     }
@@ -181,8 +181,8 @@ public:
         int* nv,
         int* nc,
         int** vconn,
-        uint64_t* cell_gid = NULL,
-        uint64_t* node_gid = NULL);
+        uint64_t* cell_gid = nullptr,
+        uint64_t* node_gid = nullptr);
 
     void registerSolution(int btag, double* q);
 

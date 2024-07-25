@@ -237,12 +237,12 @@ void tioga::exchangeAMRDonors(void)
         }
         intcount[i] = 0;
     }
-    cancelledData = NULL;
+    cancelledData = nullptr;
     // if (myid==30) {
     for (i = 0; i < ncart; i++) {
         // TRACEI(i);
         if (cancelledData) TIOGA_FREE(cancelledData);
-        cancelledData = NULL;
+        cancelledData = nullptr;
         ncancel = bcount[i];
         if (ncancel > 0) {
             cancelledData = (int*)malloc(sizeof(int) * 4 * ncancel);

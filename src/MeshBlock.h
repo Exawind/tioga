@@ -205,34 +205,34 @@ public:
     /** basic constructor */
     MeshBlock()
     {
-        nv = NULL;
-        nc = NULL;
-        x = NULL;
-        iblank = NULL;
-        iblank_cell = NULL;
-        vconn = NULL;
-        wbcnode = NULL;
-        obcnode = NULL;
-        cellRes = NULL;
-        nodeRes = NULL;
-        elementBbox = NULL;
-        elementList = NULL;
-        adt = NULL;
-        donorList = NULL;
-        interpList = NULL;
-        interp2donor = NULL;
-        obb = NULL;
+        nv = nullptr;
+        nc = nullptr;
+        x = nullptr;
+        iblank = nullptr;
+        iblank_cell = nullptr;
+        vconn = nullptr;
+        wbcnode = nullptr;
+        obcnode = nullptr;
+        cellRes = nullptr;
+        nodeRes = nullptr;
+        elementBbox = nullptr;
+        elementList = nullptr;
+        adt = nullptr;
+        donorList = nullptr;
+        interpList = nullptr;
+        interp2donor = nullptr;
+        obb = nullptr;
         nsearch = 0;
-        isearch = NULL;
-        tagsearch = NULL;
-        res_search = NULL;
-        xsearch = NULL;
-        donorId = NULL;
-        xtag = NULL;
-        adt = NULL;
-        cancelList = NULL;
-        userSpecifiedNodeRes = NULL;
-        userSpecifiedCellRes = NULL;
+        isearch = nullptr;
+        tagsearch = nullptr;
+        res_search = nullptr;
+        xsearch = nullptr;
+        donorId = nullptr;
+        xtag = nullptr;
+        adt = nullptr;
+        cancelList = nullptr;
+        userSpecifiedNodeRes = nullptr;
+        userSpecifiedCellRes = nullptr;
         nfringe = 1;
         composite = 0;
         mexclude = 3;
@@ -241,39 +241,39 @@ public:
         blockcomm = MPI_COMM_NULL;
         // new vars
         ninterp = ninterp2 = interpListSize = interp2ListSize = 0;
-        ctag = NULL;
-        pointsPerCell = NULL;
+        ctag = nullptr;
+        pointsPerCell = nullptr;
         maxPointsPerCell = 0;
-        rxyz = NULL;
+        rxyz = nullptr;
         ntotalPoints = 0;
-        rst = NULL;
+        rst = nullptr;
         ihigh = 0;
         ipoint = 0;
-        interpList2 = NULL;
-        picked = NULL;
-        ctag_cart = NULL;
-        rxyzCart = NULL;
-        donorIdCart = NULL;
-        pickedCart = NULL;
+        interpList2 = nullptr;
+        picked = nullptr;
+        ctag_cart = nullptr;
+        rxyzCart = nullptr;
+        donorIdCart = nullptr;
+        pickedCart = nullptr;
         ntotalPointsCart = 0;
         nreceptorCellsCart = 0;
         ninterpCart = 0;
         interpListCartSize = 0;
-        interpListCart = NULL;
+        interpListCart = nullptr;
         resolutionScale = 1.0;
-        receptorIdCart = NULL;
+        receptorIdCart = nullptr;
         searchTol = TOL;
         dominanceFlag = 0;
 
-        cellGID = NULL;
-        iblank_reduced = NULL;
+        cellGID = nullptr;
+        iblank_reduced = nullptr;
         uniform_hex = 0;
         check_uniform_hex_flag = 0;
-        uindx = NULL;
-        obh = NULL;
-        invmap = NULL;
-        icft = NULL;
-        mapmask = NULL;
+        uindx = nullptr;
+        obh = nullptr;
+        invmap = nullptr;
+        icft = nullptr;
+        mapmask = nullptr;
     };
 
     /** basic destructor */
@@ -304,8 +304,8 @@ public:
         int* nvi,
         int* nci,
         int** vconni,
-        uint64_t* cell_gid = NULL,
-        uint64_t* node_gid = NULL);
+        uint64_t* cell_gid = nullptr,
+        uint64_t* node_gid = nullptr);
 
     void setResolutions(double* nres, double* cres);
 

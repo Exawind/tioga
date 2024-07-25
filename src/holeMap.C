@@ -348,12 +348,12 @@ void tioga::getAdaptiveHoleMap(void)
                 lvl->octants[0].refined = 0;
 
                 // set neighbor octants to NULL since Level 0
-                for (n = 0; n < 6; n++) lvl->octants[0].nhbr[n] = NULL;
+                for (n = 0; n < 6; n++) lvl->octants[0].nhbr[n] = nullptr;
 
                 // check if outer boundary exists
                 mb->markBoundaryMapSurface(
                     OUTERNODETYPE, AHMOLocal.extents_lo, AHMOLocal.extents_hi,
-                    &AHMOLocal.levels[0], NULL, existOuter.data());
+                    &AHMOLocal.levels[0], nullptr, existOuter.data());
 
                 // check if initial octant contains both boundary types
                 if (existOuter[0]) {
@@ -453,7 +453,7 @@ void tioga::getAdaptiveHoleMap(void)
                 // check wall boundaries
                 mb->markBoundaryMapSurface(
                     WALLNODETYPE, AHMOLocal.extents_lo, AHMOLocal.extents_hi,
-                    &AHMOLocal.levels[level_id], NULL, existWall.data());
+                    &AHMOLocal.levels[level_id], nullptr, existWall.data());
 
                 // inform all mesh-block processes with this body tag of the
                 // octants flags (note the communicator)
@@ -630,7 +630,7 @@ void tioga::getAdaptiveHoleMap(void)
                                     WALLNODETYPE, meta.extents_lo,
                                     meta.extents_hi, level->level_id,
                                     level->elem_count, level->octants.data(),
-                                    NULL, existWall.data());
+                                    nullptr, existWall.data());
                             }
                         }
 

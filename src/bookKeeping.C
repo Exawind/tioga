@@ -109,7 +109,7 @@ void MeshBlock::initializeDonorList(void)
 
     donorListLength = nnodes;
     donorList = (DONORLIST**)malloc(sizeof(DONORLIST*) * donorListLength);
-    for (i = 0; i < donorListLength; i++) donorList[i] = NULL;
+    for (i = 0; i < donorListLength; i++) donorList[i] = nullptr;
 }
 
 void MeshBlock::insertAndSort(
@@ -168,7 +168,7 @@ void MeshBlock::processDonors(
         if (verbose) TRACEI(iblank[i]);
         if (verbose) TRACED(nodeRes[i]);
         if (verbose) printf("%f %f %f\n", x[3 * i], x[3 * i + 1], x[3 * i + 2]);
-        if (donorList[i] == NULL) {
+        if (donorList[i] == nullptr) {
             if (verbose) {
                 printf("No donor found for %d\n", i);
             }
@@ -184,7 +184,7 @@ void MeshBlock::processDonors(
         } else {
             temp = donorList[i];
             for (j = 0; j < nmesh; j++) iflag[j] = 0;
-            while (temp != NULL) {
+            while (temp != nullptr) {
                 meshtagdonor = temp->donorData[1] - BASE;
                 iflag[meshtagdonor] = 1;
                 if (verbose) {
@@ -281,9 +281,9 @@ void MeshBlock::processDonors(
             TRACEI(iblank[i]);
             TRACED(nodeRes[i]);
         }
-        if (donorList[i] != NULL && iblank[i] != 0) {
+        if (donorList[i] != nullptr && iblank[i] != 0) {
             temp = donorList[i];
-            while (temp != NULL) {
+            while (temp != nullptr) {
                 if (verbose) TRACED(temp->donorRes);
                 if (temp->donorRes < nodeRes[i]) {
                     iblank[i] = -temp->donorData[1];
@@ -317,7 +317,7 @@ void MeshBlock::processDonors(
         // if (meshtag==3 && i==34299) verbose=1;
         if (iblank[i] < 0) {
             temp = donorList[i];
-            while (temp != NULL) {
+            while (temp != nullptr) {
                 if (temp->donorRes < nodeRes[i]) {
                     break;
                 }
@@ -369,7 +369,7 @@ void MeshBlock::processDonors(
         verbose = 0;
         if (verbose) TRACEI(i);
 
-        if (donorList[i] == NULL) {
+        if (donorList[i] == nullptr) {
             // No Donor Cells Found: point is either a field or hole.
             //    Check the point is in any hole SB --> hole point
             if (verbose) printf("No donor found for %d\n", i);
@@ -389,7 +389,7 @@ void MeshBlock::processDonors(
             for (j = 0; j < nmesh; j++) iflag[j] = 0;
 
             // find mesh tags that have a candidate donor cell
-            while (temp != NULL) {
+            while (temp != nullptr) {
                 meshtagdonor = temp->donorData[1] - BASE;
                 iflag[meshtagdonor] = 1;
 
@@ -497,11 +497,11 @@ void MeshBlock::processDonors(
             TRACEI(iblank[i]);
         }
 
-        if (donorList[i] != NULL && iblank[i] != 0) {
+        if (donorList[i] != nullptr && iblank[i] != 0) {
             temp = donorList[i];
             if (verbose) TRACED(nodeRes[i]);
 
-            while (temp != NULL) {
+            while (temp != nullptr) {
                 if (verbose) TRACED(temp->donorRes);
 
                 if (temp->donorRes < nodeRes[i]) {
@@ -532,7 +532,7 @@ void MeshBlock::processDonors(
         verbose = 0;
         if (iblank[i] < 0) {
             temp = donorList[i];
-            while (temp != NULL) {
+            while (temp != nullptr) {
                 if (temp->donorRes < nodeRes[i]) break;
                 temp = temp->next;
             }
@@ -570,11 +570,11 @@ void MeshBlock::initializeInterpList(int ninterp_input)
     interpListSize = ninterp_input;
     interpList = (INTERPLIST*)malloc(sizeof(INTERPLIST) * interpListSize);
     for (i = 0; i < interpListSize; i++) {
-        interpList[i].inode = NULL;
-        interpList[i].weights = NULL;
+        interpList[i].inode = nullptr;
+        interpList[i].weights = nullptr;
     }
     if (cancelList) deallocateLinkList2(cancelList);
-    cancelList = NULL;
+    cancelList = nullptr;
     ncancel = 0;
     if (interp2donor) TIOGA_FREE(interp2donor);
     interp2donor = (int*)malloc(sizeof(int) * nsearch);
@@ -652,8 +652,8 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
         //
         // go to the end of the list
         //
-        if (clist != NULL)
-            while (clist->next != NULL) clist = clist->next;
+        if (clist != nullptr)
+            while (clist->next != nullptr) clist = clist->next;
         //
         for (m = 0; m < nvert; m++) {
             verbose = 0;
@@ -672,15 +672,15 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
             }
             if (iblank[inode[m]] <= 0 && nodeRes[inode[m]] != BIGVALUE) {
                 if (iblank[inode[m]] < 0) iblank[inode[m]] = 1;
-                if (clist == NULL) {
+                if (clist == nullptr) {
                     clist = (INTEGERLIST*)malloc(sizeof(INTEGERLIST));
                     clist->inode = inode[m];
-                    clist->next = NULL;
+                    clist->next = nullptr;
                     cancelList = clist;
                 } else {
                     clist->next = (INTEGERLIST*)malloc(sizeof(INTEGERLIST));
                     clist->next->inode = inode[m];
-                    clist->next->next = NULL;
+                    clist->next->next = nullptr;
                     clist = clist->next;
                 }
                 ncancel++;
@@ -734,9 +734,9 @@ void MeshBlock::getCancellationData(int* nrecords, int** intData)
     if (ncancel > 0) {
         (*intData) = (int*)malloc(sizeof(int) * (*nrecords) * 3);
         i = 0;
-        for (clist = cancelList; clist != NULL; clist = clist->next) {
+        for (clist = cancelList; clist != nullptr; clist = clist->next) {
             inode = clist->inode;
-            if (donorList[inode] != NULL) {
+            if (donorList[inode] != nullptr) {
                 (*intData)[i++] = donorList[inode]->donorData[0];
                 (*intData)[i++] = donorList[inode]->donorData[2];
                 (*intData)[i++] = donorList[inode]->donorData[1];
@@ -889,21 +889,21 @@ void MeshBlock::reduce_fringes(void)
     }
 
     if (cancelList) deallocateLinkList2(cancelList);
-    cancelList = NULL;
+    cancelList = nullptr;
     ncancel = 0;
     clist = cancelList;
 
     for (i = 0; i < nnodes; i++) {
         if (iblank[i] < 0 && iblank_reduced[i] == 0) {
-            if (clist == NULL) {
+            if (clist == nullptr) {
                 clist = (INTEGERLIST*)malloc(sizeof(INTEGERLIST));
                 clist->inode = i;
-                clist->next = NULL;
+                clist->next = nullptr;
                 cancelList = clist;
             } else {
                 clist->next = (INTEGERLIST*)malloc(sizeof(INTEGERLIST));
                 clist->next->inode = i;
-                clist->next->next = NULL;
+                clist->next->next = nullptr;
                 clist = clist->next;
             }
             ncancel++;

@@ -36,7 +36,7 @@ void MeshBlock::getCellIblanks2(void)
     int verbose;
 
     icell = 0;
-    if (iblank_cell == NULL) iblank_cell = (int*)malloc(sizeof(int) * ncells);
+    if (iblank_cell == nullptr) iblank_cell = (int*)malloc(sizeof(int) * ncells);
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {
@@ -92,7 +92,7 @@ void MeshBlock::getCellIblanks(void)
     }
 
     icell = 0;
-    if (iblank_cell == NULL) iblank_cell = (int*)malloc(sizeof(int) * ncells);
+    if (iblank_cell == nullptr) iblank_cell = (int*)malloc(sizeof(int) * ncells);
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {
@@ -184,14 +184,14 @@ void MeshBlock::getInternalNodes(void)
     //
     nreceptorCells = 0;
     //
-    if (ctag != NULL) TIOGA_FREE(ctag);
+    if (ctag != nullptr) TIOGA_FREE(ctag);
     ctag = (int*)malloc(sizeof(int) * ncells);
     //
     for (i = 0; i < ncells; i++)
         if (iblank_cell[i] == -1) ctag[nreceptorCells++] = i + BASE;
     //
     if (ihigh) {
-        if (pointsPerCell != NULL) TIOGA_FREE(pointsPerCell);
+        if (pointsPerCell != nullptr) TIOGA_FREE(pointsPerCell);
         pointsPerCell = (int*)malloc(sizeof(int) * nreceptorCells);
         //
         maxPointsPerCell = 0;
@@ -203,7 +203,7 @@ void MeshBlock::getInternalNodes(void)
             maxPointsPerCell = std::max(maxPointsPerCell, pointsPerCell[i]);
         }
         //
-        if (rxyz != NULL) TIOGA_FREE(rxyz);
+        if (rxyz != nullptr) TIOGA_FREE(rxyz);
         // printf("getInternalNodes : %d %d\n",myid,ntotalPoints);
         rxyz = (double*)malloc(sizeof(double) * ntotalPoints * 3);
         //
@@ -214,7 +214,7 @@ void MeshBlock::getInternalNodes(void)
         }
     } else {
         ntotalPoints = 0;
-        if (picked != NULL) TIOGA_FREE(picked);
+        if (picked != nullptr) TIOGA_FREE(picked);
         picked = (int*)malloc(sizeof(int) * nnodes);
         for (i = 0; i < nnodes; i++) {
             picked[i] = 0;
@@ -224,7 +224,7 @@ void MeshBlock::getInternalNodes(void)
             }
         }
 
-        if (rxyz != NULL) TIOGA_FREE(rxyz);
+        if (rxyz != nullptr) TIOGA_FREE(rxyz);
         rxyz = (double*)malloc(sizeof(double) * ntotalPoints * 3);
         m = 0;
         for (i = 0; i < nnodes; i++)
@@ -308,8 +308,8 @@ void MeshBlock::processPointDonors(void)
     interp2ListSize = ninterp2;
     interpList2 = (INTERPLIST*)malloc(sizeof(INTERPLIST) * interp2ListSize);
     for (i = 0; i < interp2ListSize; i++) {
-        interpList2[i].inode = NULL;
-        interpList2[i].weights = NULL;
+        interpList2[i].inode = nullptr;
+        interpList2[i].weights = nullptr;
     }
     //
     // printf("nsearch=%d %d\n",nsearch,myid);

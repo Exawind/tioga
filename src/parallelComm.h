@@ -47,8 +47,8 @@ public:
 
     parallelComm()
     {
-        sndMap = NULL;
-        rcvMap = NULL;
+        sndMap = nullptr;
+        rcvMap = nullptr;
     }
 
     ~parallelComm()

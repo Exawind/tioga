@@ -47,14 +47,14 @@ void tioga::exchangeSearchData(int at_points)
     //
     for (i = 0; i < nsend; i++) {
         sndPack[i].nints = sndPack[i].nreals = 0;
-        sndPack[i].intData = NULL;
-        sndPack[i].realData = NULL;
+        sndPack[i].intData = nullptr;
+        sndPack[i].realData = nullptr;
     }
     //
     for (i = 0; i < nrecv; i++) {
         rcvPack[i].nints = rcvPack[i].nreals = 0;
-        rcvPack[i].intData = NULL;
-        rcvPack[i].realData = NULL;
+        rcvPack[i].intData = nullptr;
+        rcvPack[i].realData = nullptr;
     }
 
     // Process each intersection pair and determine the total data that needs to
@@ -120,28 +120,28 @@ void tioga::exchangeSearchData(int at_points)
 
         if (mb->xsearch) {
             TIOGA_FREE(mb->xsearch);
-            mb->xsearch = NULL;
+            mb->xsearch = nullptr;
         }
         if (mb->isearch) {
             TIOGA_FREE(mb->isearch);
-            mb->isearch = NULL;
+            mb->isearch = nullptr;
         }
         if (mb->tagsearch) {
             TIOGA_FREE(mb->tagsearch);
-            mb->tagsearch = NULL;
+            mb->tagsearch = nullptr;
         }
         if (mb->donorId) {
             TIOGA_FREE(mb->donorId);
-            mb->donorId = NULL;
+            mb->donorId = nullptr;
         }
         if (mb->res_search) {
             TIOGA_FREE(mb->res_search);
-            mb->res_search = NULL;
+            mb->res_search = nullptr;
         }
         if (at_points == 1) {
             if (mb->rst) {
                 TIOGA_FREE(mb->rst);
-                mb->rst = NULL;
+                mb->rst = nullptr;
             }
         }
 #ifdef TIOGA_HAS_NODEGID

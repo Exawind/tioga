@@ -46,10 +46,10 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
     obcart->vec[0][0] = obcart->vec[1][1] = obcart->vec[2][2] = 1.0;
     //
     head = (INTEGERLIST2*)malloc(sizeof(INTEGERLIST2));
-    head->intData = NULL;
-    head->realData = NULL;
+    head->intData = nullptr;
+    head->realData = nullptr;
     dataPtr = head;
-    dataPtr->next = NULL;
+    dataPtr->next = nullptr;
     //
     nsearch = 0;
     //
@@ -130,7 +130,7 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
     //
     dataPtr = head->next;
     int k = 0, l = 0, n = 0, p = 0;
-    while (dataPtr != NULL) {
+    while (dataPtr != nullptr) {
         for (int j = 0; j < dataPtr->intDataSize - 1; j++)
             isearch[p++] = dataPtr->intData[j];
         tagsearch[k++] = dataPtr->intData[dataPtr->intDataSize - 1];
@@ -212,6 +212,6 @@ void MeshBlock::fillReceptorDataPtr(
 
         dataPtr->realData[dataPtr->realDataSize - 1] = vol;
 
-        dataPtr->next = NULL;
+        dataPtr->next = nullptr;
     }
 }

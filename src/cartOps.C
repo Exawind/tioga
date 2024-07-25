@@ -73,13 +73,13 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
             }
         }
         //
-        if (ctag_cart != NULL) TIOGA_FREE(ctag_cart);
+        if (ctag_cart != nullptr) TIOGA_FREE(ctag_cart);
         ctag_cart = (int*)malloc(sizeof(int) * ncells);
         nreceptorCellsCart = 0;
         for (i = 0; i < ncells; i++)
             if (iflag[i] == -1) ctag_cart[nreceptorCellsCart++] = i + 1;
 
-        if (pointsPerCell != NULL) TIOGA_FREE(pointsPerCell);
+        if (pointsPerCell != nullptr) TIOGA_FREE(pointsPerCell);
         pointsPerCell = (int*)malloc(sizeof(int) * nreceptorCellsCart);
         //
         maxPointsPerCell = 0;
@@ -91,8 +91,8 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
             maxPointsPerCell = std::max(maxPointsPerCell, pointsPerCell[i]);
         }
         //
-        if (rxyzCart != NULL) TIOGA_FREE(rxyzCart);
-        if (donorIdCart != NULL) TIOGA_FREE(donorIdCart);
+        if (rxyzCart != nullptr) TIOGA_FREE(rxyzCart);
+        if (donorIdCart != nullptr) TIOGA_FREE(donorIdCart);
         // printf("getInternalNodes : %d %d\n",myid,ntotalPoints);
         rxyzCart = (double*)malloc(sizeof(double) * ntotalPointsCart * 3);
         donorIdCart = (int*)malloc(sizeof(int) * ntotalPointsCart);
@@ -106,7 +106,7 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
         }
         TIOGA_FREE(iflag);
     } else {
-        if (pickedCart != NULL) TIOGA_FREE(pickedCart);
+        if (pickedCart != nullptr) TIOGA_FREE(pickedCart);
         pickedCart = (int*)malloc(sizeof(int) * nnodes);
         for (i = 0; i < nnodes; i++) pickedCart[i] = 0;
 
@@ -117,9 +117,9 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
                 ntotalPointsCart++;
             }
         }
-        if (rxyzCart != NULL) TIOGA_FREE(rxyzCart);
-        if (donorIdCart != NULL) TIOGA_FREE(donorIdCart);
-        if (receptorIdCart != NULL) TIOGA_FREE(receptorIdCart);
+        if (rxyzCart != nullptr) TIOGA_FREE(rxyzCart);
+        if (donorIdCart != nullptr) TIOGA_FREE(donorIdCart);
+        if (receptorIdCart != nullptr) TIOGA_FREE(receptorIdCart);
         rxyzCart = (double*)malloc(sizeof(double) * ntotalPointsCart * 3);
         donorIdCart = (int*)malloc(sizeof(int) * ntotalPointsCart);
         receptorIdCart = (int*)malloc(sizeof(int) * ntotalPointsCart);

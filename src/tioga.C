@@ -563,7 +563,7 @@ void tioga::performConnectivity(void)
     this->myTimer("tioga::getCellIblanks", 1);
     if (qblock) TIOGA_FREE(qblock);
     qblock = (double**)malloc(sizeof(double*) * nblocks);
-    for (int ib = 0; ib < nblocks; ib++) qblock[ib] = NULL;
+    for (int ib = 0; ib < nblocks; ib++) qblock[ib] = nullptr;
     //}
     // mb->writeOutput(myid);
     // TRACEI(myid);
@@ -662,13 +662,13 @@ void tioga::dataUpdate_AMR()
     // initialize send and recv packets
     //
     for (int ib = 0; ib < nblocks; ib++)
-        if (qblock[ib] == NULL) {
+        if (qblock[ib] == nullptr) {
             printf("Solution data not set, cannot update \n");
             return;
         }
-    icount = dcount = NULL;
-    integerRecords = NULL;
-    realRecords = NULL;
+    icount = dcount = nullptr;
+    integerRecords = nullptr;
+    realRecords = nullptr;
     //
     pc_cart->getMap(&nsend, &nrecv, &sndMap, &rcvMap);
     if (nsend == 0) return;
@@ -681,8 +681,8 @@ void tioga::dataUpdate_AMR()
     //
     // get the interpolated solution now
     //
-    integerRecords = NULL;
-    realRecords = NULL;
+    integerRecords = nullptr;
+    realRecords = nullptr;
     //
     // TODO : verify for nblocks > 1
     //
@@ -781,18 +781,18 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     FILE* fp;
     //
     for (int ib = 0; ib < nblocks; ib++)
-        if (qblock[ib] == NULL) {
+        if (qblock[ib] == nullptr) {
             printf("Solution data not set, cannot update \n");
             return;
         }
     //
     // initialize send and recv packets
     //
-    integerRecords = NULL;
-    realRecords = NULL;
-    itmp = NULL;
-    qtmp = NULL;
-    fp = NULL;
+    integerRecords = nullptr;
+    realRecords = nullptr;
+    itmp = nullptr;
+    qtmp = nullptr;
+    fp = nullptr;
     //
     pc->getMap(&nsend, &nrecv, &sndMap, &rcvMap);
     if (nsend == 0) return;
@@ -806,8 +806,8 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     integerRecords = (int**)malloc(sizeof(int*) * nblocks);
     realRecords = (double**)malloc(sizeof(double*) * nblocks);
     for (int ib = 0; ib < nblocks; ib++) {
-        integerRecords[ib] = NULL;
-        realRecords[ib] = NULL;
+        integerRecords[ib] = nullptr;
+        realRecords[ib] = nullptr;
     }
 
     std::vector<int> nints(nblocks, 0), nreals(nblocks, 0);
@@ -896,7 +896,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
         auto& mb = mblocks[ib];
         for (int i = 0; i < mb->ntotalPoints; i++) {
             if (itmp[ib][i] == 0 && iorphanPrint) {
-                if (fp == NULL) {
+                if (fp == nullptr) {
                     snprintf(
                         ofname, sizeof(ofname), "orphan%d.%d.dat", myid, ib);
                     fp = fopen(ofname, "w");
@@ -907,7 +907,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
         }
         ntotalPoints += mb->ntotalPoints;
     }
-    if (fp != NULL) fclose(fp);
+    if (fp != nullptr) fclose(fp);
     if (norphanPoint > 0 && iorphanPrint) {
         printf(
             "\e[0;31m"
@@ -1025,14 +1025,14 @@ void tioga::getReceptorInfo(std::vector<int>& receptors)
 
     for (int i = 0; i < nsend; i++) {
         sndPack[i].nints = sndPack[i].nreals = 0;
-        sndPack[i].intData = NULL;
-        sndPack[i].realData = NULL;
+        sndPack[i].intData = nullptr;
+        sndPack[i].realData = nullptr;
     }
     //
     for (int i = 0; i < nrecv; i++) {
         rcvPack[i].nints = rcvPack[i].nreals = 0;
-        rcvPack[i].intData = NULL;
-        rcvPack[i].realData = NULL;
+        rcvPack[i].intData = nullptr;
+        rcvPack[i].realData = nullptr;
     }
 
     std::vector<int> dcount(nblocks), fcount(nblocks);
@@ -1234,7 +1234,7 @@ void tioga::reduce_fringes(void)
     int** donorRecords = (int**)malloc(sizeof(int*) * nblocks);
     //
     for (int i = 0; i < nblocks; i++) {
-        donorRecords[i] = NULL;
+        donorRecords[i] = nullptr;
         nrecords[i] = 0;
         mblocks[i]->getCancellationData(&(nrecords[i]), &(donorRecords[i]));
     }
@@ -1295,7 +1295,7 @@ void tioga::reduce_fringes(void)
     for (int i = 0; i < nblocks; i++) {
         if (donorRecords[i]) {
             TIOGA_FREE(donorRecords[i]);
-            donorRecords[i] = NULL;
+            donorRecords[i] = nullptr;
         }
         nrecords[i] = 0;
         mblocks[i]->getInterpData(&(nrecords[i]), &(donorRecords[i]));

@@ -36,7 +36,7 @@ void MeshBlock::getInterpolatedSolution(
     int i;
     int k, m, inode;
     double weight;
-    double* qq = NULL;
+    double* qq = nullptr;
     int icount, dcount;
     //
     //

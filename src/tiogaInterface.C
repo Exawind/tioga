@@ -51,9 +51,9 @@ void tioga_init_f90_(int* scomm)
     //
     tg->setCommunicator(tcomm, id_proc, nprocs);
     for (int i = 0; i < MAXBLOCKS; i++) {
-        idata[i].nc = NULL;
-        idata[i].nv = NULL;
-        idata[i].vconn = NULL;
+        idata[i].nc = nullptr;
+        idata[i].nv = nullptr;
+        idata[i].vconn = nullptr;
     }
 }
 
@@ -73,9 +73,9 @@ void tioga_init_(MPI_Comm tcomm)
     //
     tg->setCommunicator(tcomm, id_proc, nprocs);
     for (int i = 0; i < MAXBLOCKS; i++) {
-        idata[i].nc = NULL;
-        idata[i].nv = NULL;
-        idata[i].vconn = NULL;
+        idata[i].nc = nullptr;
+        idata[i].nv = nullptr;
+        idata[i].vconn = nullptr;
     }
 }
 

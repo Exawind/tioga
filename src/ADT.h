@@ -45,28 +45,28 @@ public:
     {
         ndim = 6;
         nelem = 0;
-        adtIntegers = NULL;
-        adtReals = NULL;
-        adtExtents = NULL;
-        coord = NULL;
+        adtIntegers = nullptr;
+        adtReals = nullptr;
+        adtExtents = nullptr;
+        coord = nullptr;
     };
     ~ADT()
     {
         if (adtIntegers) free(adtIntegers);
         if (adtReals) free(adtReals);
         if (adtExtents) free(adtExtents);
-        adtIntegers = NULL;
-        adtReals = NULL;
-        adtExtents = NULL;
+        adtIntegers = nullptr;
+        adtReals = nullptr;
+        adtExtents = nullptr;
     };
     void clearData(void)
     {
         if (adtIntegers) free(adtIntegers);
         if (adtReals) free(adtReals);
         if (adtExtents) free(adtExtents);
-        adtIntegers = NULL;
-        adtReals = NULL;
-        adtExtents = NULL;
+        adtIntegers = nullptr;
+        adtReals = nullptr;
+        adtExtents = nullptr;
     };
     void buildADT(int d, int nelements, double* elementBbox);
     void searchADT(MeshBlock* mb, int* cellindx, double* xsearch);
