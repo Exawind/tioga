@@ -311,13 +311,13 @@ public:
 
     void search();
     void search_uniform_hex();
-    void writeOBB(int bid);
+    void writeOBB(int bid) const;
 
     void writeOBB2(OBB* obc, int bid);
 
-    void updateSolnData(int inode, double* qvar, double* q);
+    void updateSolnData(int inode, double* qvar, double* q) const;
 
-    int getNinterp() { return ninterp; };
+    int getNinterp() const { return ninterp; };
 
     void getInterpolatedSolution(
         int* nints,
@@ -384,7 +384,7 @@ public:
 
     /** routines that do book keeping */
 
-    void getDonorPacket(PACKET* sndPack, int nsend);
+    void getDonorPacket(PACKET* sndPack, int nsend) const;
 
     void initializeDonorList();
 
@@ -426,9 +426,9 @@ public:
 
     void clearIblanks();
 
-    void getStats(int mstat[2]);
+    void getStats(int mstat[2]) const;
 
-    void setIblanks(int inode);
+    void setIblanks(int inode) const;
 
     void getDonorCount(int* dcount, int* fcount);
 
@@ -490,7 +490,7 @@ public:
         double** realData,
         double* q,
         int nvar,
-        int interptype);
+        int interptype) const;
     void updatePointData(double* q, double* qtmp, int nvar, int interptype);
     void outputOrphan(FILE* fp, int i)
     {
@@ -523,9 +523,9 @@ public:
      * Get donor packet for multi-block/partition setups
      *
      */
-    void getMBDonorPktSizes(std::vector<int>&, std::vector<int>&);
+    void getMBDonorPktSizes(std::vector<int>&, std::vector<int>&) const;
 
-    void getMBDonorPackets(std::vector<int>&, std::vector<int>&, PACKET*);
+    void getMBDonorPackets(std::vector<int>&, std::vector<int>&, PACKET*) const;
 
     /** Reset interpolation list data structure
      *

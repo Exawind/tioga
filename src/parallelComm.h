@@ -61,7 +61,7 @@ public:
         }
     }
 
-    void sendRecvPacketsAll(PACKET* sndPack, PACKET* rcvPack);
+    void sendRecvPacketsAll(PACKET* sndPack, PACKET* rcvPack) const;
 
     void sendRecvPackets(PACKET* sndPack, PACKET* rcvPack);
 
@@ -71,9 +71,9 @@ public:
 
     void getMap(int* ns, int* nr, int** snd, int** rcv);
 
-    void initPackets(PACKET* sndPack, PACKET* rcvPack);
+    void initPackets(PACKET* sndPack, PACKET* rcvPack) const;
 
-    void clearPackets(PACKET* sndPack, PACKET* rcvPack);
+    void clearPackets(PACKET* sndPack, PACKET* rcvPack) const;
 };
 
 #endif /* PARALLELCOMM_H */

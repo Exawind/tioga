@@ -25,7 +25,7 @@
 #include "parallelComm.h"
 #define REAL double
 
-void parallelComm::sendRecvPacketsAll(PACKET* sndPack, PACKET* rcvPack)
+void parallelComm::sendRecvPacketsAll(PACKET* sndPack, PACKET* rcvPack) const
 {
     int i;
     int *sint, *sreal, *rint, *rreal;
@@ -403,7 +403,7 @@ void parallelComm::getMap(int* ns, int* nr, int** snd, int** rcv)
     return;
 }
 
-void parallelComm::clearPackets(PACKET* sndPack, PACKET* rcvPack)
+void parallelComm::clearPackets(PACKET* sndPack, PACKET* rcvPack) const
 {
     int i;
     //
@@ -422,7 +422,7 @@ void parallelComm::clearPackets(PACKET* sndPack, PACKET* rcvPack)
     //
 }
 
-void parallelComm::initPackets(PACKET* sndPack, PACKET* rcvPack)
+void parallelComm::initPackets(PACKET* sndPack, PACKET* rcvPack) const
 {
     int i;
     //

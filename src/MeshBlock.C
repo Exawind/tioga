@@ -1898,7 +1898,7 @@ void MeshBlock::getQueryPoints2(
     TIOGA_FREE(inode);
 }
 
-void MeshBlock::writeOBB(int bid)
+void MeshBlock::writeOBB(int bid) const
 {
     FILE* fp;
     char intstring[12];

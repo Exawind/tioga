@@ -411,7 +411,7 @@ void MeshBlock::getInterpolatedSolutionAtPoints(
     double** realData,
     double* q,
     int nvar,
-    int interptype)
+    int interptype) const
 {
     int i;
     int k, m, inode;

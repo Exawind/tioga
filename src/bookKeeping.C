@@ -29,7 +29,7 @@
 #include "tioga_math.h"
 #include "tioga_utils.h"
 
-void MeshBlock::getDonorPacket(PACKET* sndPack, int nsend)
+void MeshBlock::getDonorPacket(PACKET* sndPack, int nsend) const
 {
     int i, k;
     int* icount;
@@ -72,7 +72,7 @@ void MeshBlock::getDonorPacket(PACKET* sndPack, int nsend)
 }
 
 void MeshBlock::getMBDonorPktSizes(
-    std::vector<int>& nints, std::vector<int>& nreals)
+    std::vector<int>& nints, std::vector<int>& nreals) const
 {
     for (int i = 0; i < nsearch; i++) {
         if (donorId[i] > -1) {
@@ -84,7 +84,9 @@ void MeshBlock::getMBDonorPktSizes(
 }
 
 void MeshBlock::getMBDonorPackets(
-    std::vector<int>& ixOffset, std::vector<int>& rxOffset, PACKET* sndPack)
+    std::vector<int>& ixOffset,
+    std::vector<int>& rxOffset,
+    PACKET* sndPack) const
 {
     for (int i = 0; i < nsearch; i++) {
         if (donorId[i] < 0) {
@@ -877,7 +879,7 @@ void MeshBlock::clearIblanks()
     }
 }
 
-void MeshBlock::getStats(int mstats[2])
+void MeshBlock::getStats(int mstats[2]) const
 {
     int i;
     mstats[0] = mstats[1] = 0;
@@ -891,7 +893,7 @@ void MeshBlock::getStats(int mstats[2])
     }
 }
 
-void MeshBlock::setIblanks(int inode)
+void MeshBlock::setIblanks(int inode) const
 {
     /*  if (fabs(nodeRes[inode]-BIGVALUE) < TOL)
         {

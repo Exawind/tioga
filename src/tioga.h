@@ -156,7 +156,7 @@ public:
     void assembleCompositeComms();
     void assembleCompositeMap();
 
-    int getNumCompositeBodies() { return ncomposite; }
+    int getNumCompositeBodies() const { return ncomposite; }
     void setNumCompositeBodies(int ncomposite);
 
     void registerCompositeBody(
@@ -241,7 +241,7 @@ public:
 
     /** set hole map algorithm: [0] original hole map, [1] adaptive hole map */
     void setHoleMapAlgorithm(int alg) { USE_ADAPTIVE_HOLEMAP = alg; };
-    int getHoleMapAlgorithm() { return USE_ADAPTIVE_HOLEMAP; };
+    int getHoleMapAlgorithm() const { return USE_ADAPTIVE_HOLEMAP; };
     /** set symmetry bc */
     void setSymmetry(int syminput) { isym = syminput; };
     /** set resolutions for nodes and cells */
