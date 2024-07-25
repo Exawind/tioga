@@ -36,7 +36,8 @@ void MeshBlock::getCellIblanks2(void)
     int verbose;
 
     icell = 0;
-    if (iblank_cell == nullptr) iblank_cell = (int*)malloc(sizeof(int) * ncells);
+    if (iblank_cell == nullptr)
+        iblank_cell = (int*)malloc(sizeof(int) * ncells);
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {
@@ -92,7 +93,8 @@ void MeshBlock::getCellIblanks(void)
     }
 
     icell = 0;
-    if (iblank_cell == nullptr) iblank_cell = (int*)malloc(sizeof(int) * ncells);
+    if (iblank_cell == nullptr)
+        iblank_cell = (int*)malloc(sizeof(int) * ncells);
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {

@@ -554,9 +554,9 @@ void MeshBlock::tagBoundaryFaces(void)
                     const int nfacevert = numfaceverts[ctype][f];
                     const int* faceNodes = faceInfo[ctype][f];
 
-                    if (flagwbc &&
-                        checkFaceBoundaryNodes(
-                            inode, iflagwbc.data(), nfacevert, faceNodes, nullptr))
+                    if (flagwbc && checkFaceBoundaryNodes(
+                                       inode, iflagwbc.data(), nfacevert,
+                                       faceNodes, nullptr))
                         nwbcface++;
                     if (flagobc && checkFaceBoundaryNodes(
                                        inode, iflagobc.data(), nfacevert,
