@@ -156,12 +156,12 @@ void tioga::exchangeBoxes(void)
                 continue;
             }
 
-            if (obbIntersectCheck(
-                    mb->obb->vec, mb->obb->xc, mb->obb->dxc, obbRecv[ob].vec,
-                    obbRecv[ob].xc, obbRecv[ob].dxc) ||
-                obbIntersectCheck(
-                    obbRecv[ob].vec, obbRecv[ob].xc, obbRecv[ob].dxc,
-                    mb->obb->vec, mb->obb->xc, mb->obb->dxc)) {
+            if ((obbIntersectCheck(
+                     mb->obb->vec, mb->obb->xc, mb->obb->dxc, obbRecv[ob].vec,
+                     obbRecv[ob].xc, obbRecv[ob].dxc) != 0) ||
+                (obbIntersectCheck(
+                     obbRecv[ob].vec, obbRecv[ob].xc, obbRecv[ob].dxc,
+                     mb->obb->vec, mb->obb->xc, mb->obb->dxc) != 0)) {
                 int overlap_present = 1;
                 if (obbID[ob] < 0 || mytag[ib] < 0) {
                     mb->check_intersect_p4est(&obbProc[ob], &overlap_present);
@@ -169,7 +169,7 @@ void tioga::exchangeBoxes(void)
                 // If there is an intersection, store the index pair, increment
                 // number of intersections for this processor, and activate send
                 // flag
-                if (overlap_present) {
+                if (overlap_present != 0) {
                     intersectIDs.push_back(std::make_pair(ib, ob));
                     obPerProc[obbProc[ob]]++;
                     sendFlag[obbProc[ob]] = true;

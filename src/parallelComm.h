@@ -53,10 +53,10 @@ public:
 
     ~parallelComm()
     {
-        if (sndMap) {
+        if (sndMap != nullptr) {
             free(sndMap);
         }
-        if (rcvMap) {
+        if (rcvMap != nullptr) {
             free(rcvMap);
         }
     }

@@ -153,7 +153,7 @@ void MeshBlock::search(void)
         return;
     }
 
-    if (uniform_hex) {
+    if (uniform_hex != 0) {
         search_uniform_hex();
         return;
     }
@@ -221,8 +221,8 @@ void MeshBlock::search(void)
     // ADT
     //
 
-    if (elementBbox) TIOGA_FREE(elementBbox);
-    if (elementList) TIOGA_FREE(elementList);
+    if (elementBbox != nullptr) TIOGA_FREE(elementBbox);
+    if (elementList != nullptr) TIOGA_FREE(elementList);
     elementBbox = (double*)malloc(sizeof(double) * cell_count * 6);
     elementList = (int*)malloc(sizeof(int) * cell_count);
     //
@@ -272,7 +272,7 @@ void MeshBlock::search(void)
     //
     // build the ADT now
     //
-    if (adt) {
+    if (adt != nullptr) {
         adt->clearData();
     } else {
         adt = new ADT[1];
@@ -280,9 +280,9 @@ void MeshBlock::search(void)
     adt->buildADT(ndim, cell_count, elementBbox);
 #endif
     //
-    if (donorId) TIOGA_FREE(donorId);
+    if (donorId != nullptr) TIOGA_FREE(donorId);
     donorId = (int*)malloc(sizeof(int) * nsearch);
-    if (xtag) TIOGA_FREE(xtag);
+    if (xtag != nullptr) TIOGA_FREE(xtag);
     xtag = (int*)malloc(sizeof(int) * nsearch);
     //
     // create a unique hash
@@ -371,11 +371,11 @@ void MeshBlock::search(void)
 
 void MeshBlock::search_uniform_hex(void)
 {
-    if (donorId) {
+    if (donorId != nullptr) {
         free(donorId);
     }
     donorId = (int*)malloc(sizeof(int) * nsearch);
-    if (xtag) {
+    if (xtag != nullptr) {
         free(xtag);
     }
     xtag = (int*)malloc(sizeof(int) * nsearch);
@@ -421,8 +421,11 @@ void MeshBlock::search_uniform_hex(void)
                 }
                 dID[0] = uindx
                     [idx[2] * idims[1] * idims[0] + idx[1] * idims[0] + idx[0]];
-                dID[1] = (dID[0] > -1) ? (cellRes[dID[0]] == BIGVALUE) : 1;
-                for (int jj = 0; jj < 8 && (dId[0] == -1 || dID[1]); jj++) {
+                dID[1] = (dID[0] > -1)
+                             ? static_cast<int>(cellRes[dID[0]] == BIGVALUE)
+                             : 1;
+                for (int jj = 0; jj < 8 && (dId[0] == -1 || (dID[1] != 0));
+                     jj++) {
                     for (int k = 0; k < 3; k++) {
                         idx[k] = (xd[k] + xvec[jj][k]) / dx[k];
                         if (idx[k] == idims[k]) {
@@ -432,9 +435,11 @@ void MeshBlock::search_uniform_hex(void)
                     int dtest = uindx
                         [idx[2] * idims[1] * idims[0] + idx[1] * idims[0] +
                          idx[0]];
-                    dID[1] = (dtest > -1) ? (cellRes[dtest] == BIGVALUE) : 1;
+                    dID[1] = (dtest > -1)
+                                 ? static_cast<int>(cellRes[dtest] == BIGVALUE)
+                                 : 1;
                     dID[0] =
-                        (dID[0] == -1) ? dtest : (!dID[1] ? dtest : dID[0]);
+                        (dID[0] == -1) ? dtest : (dID[1] == 0 ? dtest : dID[0]);
                 }
                 donorId[i] = dID[0];
             } else {

@@ -517,7 +517,7 @@ public:
 
     // Getters
     inline int getMeshTag() const { return meshtag + (1 - BASE); }
-    inline int getWallFlag() const { return (nwbc > 0); }
+    inline int getWallFlag() const { return static_cast<int>(nwbc > 0); }
 
     /**
      * Get donor packet for multi-block/partition setups
@@ -534,10 +534,12 @@ public:
      */
     void resetInterpData()
     {
-        if (interpList) {
+        if (interpList != nullptr) {
             for (int i = 0; i < interpListSize; i++) {
-                if (interpList[i].inode) TIOGA_FREE(interpList[i].inode);
-                if (interpList[i].weights) TIOGA_FREE(interpList[i].weights);
+                if (interpList[i].inode != nullptr)
+                    TIOGA_FREE(interpList[i].inode);
+                if (interpList[i].weights != nullptr)
+                    TIOGA_FREE(interpList[i].weights);
             }
             TIOGA_FREE(interpList);
         }
@@ -564,7 +566,7 @@ public:
 
     static char overlapping1D(bound_t box1, bound_t box2)
     {
-        return ((box1.hi >= box2.lo) && (box2.hi >= box1.lo));
+        return static_cast<char>((box1.hi >= box2.lo) && (box2.hi >= box1.lo));
     }
 };
 

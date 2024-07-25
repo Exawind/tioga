@@ -143,7 +143,7 @@ public:
         // if(comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
         int sflag;
         MPI_Finalized(&sflag);
-        if (!sflag) {
+        if (sflag == 0) {
             if (comm != MPI_COMM_NULL) {
                 MPI_Comm_free(&comm);
             }

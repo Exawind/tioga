@@ -97,9 +97,9 @@ void tioga_registergrid_data_(
     int iblk = 0;
     va_start(arguments, ntypes);
 
-    if (idata[iblk].nv) TIOGA_FREE(idata[iblk].nv);
-    if (idata[iblk].nc) TIOGA_FREE(idata[iblk].nc);
-    if (idata[iblk].vconn) TIOGA_FREE(idata[iblk].vconn);
+    if (idata[iblk].nv != nullptr) TIOGA_FREE(idata[iblk].nv);
+    if (idata[iblk].nc != nullptr) TIOGA_FREE(idata[iblk].nc);
+    if (idata[iblk].vconn != nullptr) TIOGA_FREE(idata[iblk].vconn);
     idata[iblk].nv = (int*)malloc(sizeof(int) * (*ntypes));
     idata[iblk].nc = (int*)malloc(sizeof(int) * (*ntypes));
     idata[iblk].vconn = (int**)malloc(sizeof(int*) * (*ntypes));
@@ -132,9 +132,9 @@ void tioga_registergrid_data_mb_(
 
     va_start(arguments, ntypes);
 
-    if (idata[iblk].nv) TIOGA_FREE(idata[iblk].nv);
-    if (idata[iblk].nc) TIOGA_FREE(idata[iblk].nc);
-    if (idata[iblk].vconn) TIOGA_FREE(idata[iblk].vconn);
+    if (idata[iblk].nv != nullptr) TIOGA_FREE(idata[iblk].nv);
+    if (idata[iblk].nc != nullptr) TIOGA_FREE(idata[iblk].nc);
+    if (idata[iblk].vconn != nullptr) TIOGA_FREE(idata[iblk].vconn);
     idata[iblk].nv = (int*)malloc(sizeof(int) * (*ntypes));
     idata[iblk].nc = (int*)malloc(sizeof(int) * (*ntypes));
     idata[iblk].vconn = (int**)malloc(sizeof(int*) * (*ntypes));
@@ -213,9 +213,9 @@ void tioga_registersolution_(int* bid, double* q)
 void tioga_dataupdate_mb_(int* nvar, char* itype)
 {
     int interptype;
-    if (strstr(itype, "row")) {
+    if (strstr(itype, "row") != nullptr) {
         interptype = 0;
-    } else if (strstr(itype, "column")) {
+    } else if (strstr(itype, "column") != nullptr) {
         interptype = 1;
     } else {
         printf("#tiogaInterface.C:dataupdate_:unknown data orientation\n");
@@ -252,9 +252,9 @@ void tioga_dataupdate_(double* q, int* nvar, char* itype)
 void tioga_writeoutputfiles_(int* nvar, char* itype)
 {
     int interptype;
-    if (strstr(itype, "row")) {
+    if (strstr(itype, "row") != nullptr) {
         interptype = 0;
-    } else if (strstr(itype, "column")) {
+    } else if (strstr(itype, "column") != nullptr) {
         interptype = 1;
     } else {
         printf("#tiogaInterface.C:dataupdate_:unknown data orientation\n");
@@ -329,9 +329,9 @@ void tioga_delete_(void)
 {
     delete[] tg;
     for (int i = 0; i < MAXBLOCKS; i++) {
-        if (idata[i].nc) TIOGA_FREE(idata[i].nc);
-        if (idata[i].nv) TIOGA_FREE(idata[i].nv);
-        if (idata[i].vconn) TIOGA_FREE(idata[i].vconn);
+        if (idata[i].nc != nullptr) TIOGA_FREE(idata[i].nc);
+        if (idata[i].nv != nullptr) TIOGA_FREE(idata[i].nv);
+        if (idata[i].vconn != nullptr) TIOGA_FREE(idata[i].vconn);
     }
 }
 }

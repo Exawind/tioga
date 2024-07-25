@@ -46,7 +46,7 @@ void MeshBlock::getInterpolatedSolution(
     //
     (*nints) = (*nreals) = 0;
     for (i = 0; i < ninterp; i++) {
-        if (!interpList[i].cancel) {
+        if (interpList[i].cancel == 0) {
             (*nints)++;
             (*nreals) = (*nreals) + nvar;
         }
@@ -62,7 +62,7 @@ void MeshBlock::getInterpolatedSolution(
     //
     if (interptype == ROW) {
         for (i = 0; i < ninterp; i++) {
-            if (!interpList[i].cancel) {
+            if (interpList[i].cancel == 0) {
                 for (k = 0; k < nvar; k++) {
                     qq[k] = 0;
                 }
@@ -87,7 +87,7 @@ void MeshBlock::getInterpolatedSolution(
         }
     } else if (interptype == COLUMN) {
         for (i = 0; i < ninterp; i++) {
-            if (!interpList[i].cancel) {
+            if (interpList[i].cancel == 0) {
                 for (k = 0; k < nvar; k++) {
                     qq[k] = 0;
                 }
@@ -108,7 +108,7 @@ void MeshBlock::getInterpolatedSolution(
         }
     }
 
-    if (qq) TIOGA_FREE(qq);
+    if (qq != nullptr) TIOGA_FREE(qq);
 }
 
 void MeshBlock::updateSolnData(int inode, double* qvar, double* q)
@@ -138,7 +138,7 @@ void MeshBlock::getDonorCount(int* dcount, int* fcount)
     *dcount = 0;
     *fcount = 0;
     for (i = 0; i < ninterp; i++) {
-        if (!interpList[i].cancel) {
+        if (interpList[i].cancel == 0) {
             (*dcount)++;
             (*fcount) += (interpList[i].nweights + 1);
         }
@@ -153,7 +153,7 @@ void MeshBlock::getDonorInfo(int* receptors, int* indices, double* frac)
     j = 0;
     k = 0;
     for (i = 0; i < ninterp; i++) {
-        if (!interpList[i].cancel) {
+        if (interpList[i].cancel == 0) {
             for (m = 0; m < interpList[i].nweights + 1; m++) {
                 indices[j] = interpList[i].inode[m];
                 frac[j] = interpList[i].weights[m];
@@ -171,7 +171,7 @@ void MeshBlock::getReceptorInfo(int* receptors)
 {
     int k = 0;
     for (int i = 0; i < ninterp; i++) {
-        if (interpList[i].cancel) {
+        if (interpList[i].cancel != 0) {
             continue;
         }
 

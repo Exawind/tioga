@@ -107,7 +107,7 @@ void MeshBlock::getMBDonorPackets(
 void MeshBlock::initializeDonorList(void)
 {
     int i;
-    if (donorList) {
+    if (donorList != nullptr) {
         for (i = 0; i < donorListLength; i++) {
             deallocateLinkList(donorList[i]);
             // printf("\n\t Deallocate (nnodes) i: %d %d ",nnodes,i);
@@ -174,21 +174,21 @@ void MeshBlock::processDonors(
         }
         */
 
-        if (verbose) TRACEI(i);
-        if (verbose) TRACEI(iblank[i]);
-        if (verbose) TRACED(nodeRes[i]);
-        if (verbose) {
+        if (verbose != 0) TRACEI(i);
+        if (verbose != 0) TRACEI(iblank[i]);
+        if (verbose != 0) TRACED(nodeRes[i]);
+        if (verbose != 0) {
             printf("%f %f %f\n", x[3 * i], x[3 * i + 1], x[3 * i + 2]);
         }
         if (donorList[i] == nullptr) {
-            if (verbose) {
+            if (verbose != 0) {
                 printf("No donor found for %d\n", i);
             }
             for (j = 0; j < nmesh; j++) {
-                if (j != (meshtag - BASE) && holemap[j].existWall) {
+                if (j != (meshtag - BASE) && (holemap[j].existWall != 0)) {
                     if (checkHoleMap(
                             &x[3 * i], holemap[j].nx, holemap[j].sam,
-                            holemap[j].extents)) {
+                            holemap[j].extents) != 0) {
                         iblank[i] = 0;
                         break;
                     }
@@ -202,7 +202,7 @@ void MeshBlock::processDonors(
             while (temp != nullptr) {
                 meshtagdonor = temp->donorData[1] - BASE;
                 iflag[meshtagdonor] = 1;
-                if (verbose) {
+                if (verbose != 0) {
                     TRACEI(meshtagdonor);
                     TRACED(temp->donorRes);
                     TRACEI(temp->donorData[0]);
@@ -213,11 +213,11 @@ void MeshBlock::processDonors(
                 temp = temp->next;
             }
             for (j = 0; j < nmesh; j++) {
-                if (j != (meshtag - BASE) && holemap[j].existWall) {
-                    if (!iflag[j]) {
+                if (j != (meshtag - BASE) && (holemap[j].existWall != 0)) {
+                    if (iflag[j] == 0) {
                         if (checkHoleMap(
                                 &x[3 * i], holemap[j].nx, holemap[j].sam,
-                                holemap[j].extents)) {
+                                holemap[j].extents) != 0) {
                             iblank[i] = 0;
                             break;
                         }
@@ -227,7 +227,7 @@ void MeshBlock::processDonors(
         }
     }
 
-    if (!composite) {
+    if (composite == 0) {
         for (i = 0; i < nwbc; i++) {
             if (iblank[wbcnode[i] - BASE] == HOLE) {
                 printf(
@@ -285,7 +285,7 @@ void MeshBlock::processDonors(
         }
     }
     for (i = 0; i < nnodes; i++) {
-        if (mtag1[i] && iblank[i]) {
+        if ((mtag1[i] != 0) && (iblank[i] != 0)) {
             nodeRes[i] = BIGVALUE;
         }
     }
@@ -301,7 +301,7 @@ void MeshBlock::processDonors(
         // if (meshtag==2 && i==240304 && myid==1) verbose=1;
         // if (meshtag==3 && i==241402 && myid==1) verbose=1;
         // if (meshtag==3 && i==34299) verbose=1;
-        if (verbose) {
+        if (verbose != 0) {
             TRACEI(i);
             TRACEI(iblank[i]);
             TRACED(nodeRes[i]);
@@ -309,11 +309,11 @@ void MeshBlock::processDonors(
         if (donorList[i] != nullptr && iblank[i] != 0) {
             temp = donorList[i];
             while (temp != nullptr) {
-                if (verbose) TRACED(temp->donorRes);
+                if (verbose != 0) TRACED(temp->donorRes);
                 if (temp->donorRes < nodeRes[i]) {
                     iblank[i] = -temp->donorData[1];
-                    if (verbose) TRACEI(iblank[i]);
-                    if (verbose) {
+                    if (verbose != 0) TRACEI(iblank[i]);
+                    if (verbose != 0) {
                         TRACEI(temp->donorData[0]);
                         TRACEI(temp->donorData[1]);
                         TRACEI(temp->donorData[2]);
@@ -354,7 +354,7 @@ void MeshBlock::processDonors(
             (*donorRecords)[m++] = temp->donorData[0];
             (*donorRecords)[m++] = temp->donorData[2];
             (*donorRecords)[m++] = temp->donorData[1];
-            if (verbose) {
+            if (verbose != 0) {
                 TRACEI(iblank[i]);
                 TRACEI(m);
                 TRACEI((*donorRecords)[m - 3]);
@@ -392,17 +392,17 @@ void MeshBlock::processDonors(
         iblank[i] = 1;
 
         verbose = 0;
-        if (verbose) TRACEI(i);
+        if (verbose != 0) TRACEI(i);
 
         if (donorList[i] == nullptr) {
             // No Donor Cells Found: point is either a field or hole.
             //    Check the point is in any hole SB --> hole point
-            if (verbose) {
+            if (verbose != 0) {
                 printf("No donor found for %d\n", i);
             }
 
             for (j = 0; j < nmesh; j++) {
-                if (j != (meshtag - BASE) && holemap[j].existWall) {
+                if (j != (meshtag - BASE) && (holemap[j].existWall != 0u)) {
                     int SB_val = checkAdaptiveHoleMap(&x[3 * i], &holemap[j]);
                     if (SB_val != OUTSIDE_SB) {
                         iblank[i] = 0;
@@ -422,7 +422,7 @@ void MeshBlock::processDonors(
                 meshtagdonor = temp->donorData[1] - BASE;
                 iflag[meshtagdonor] = 1;
 
-                if (verbose) {
+                if (verbose != 0) {
                     TRACEI(meshtagdonor);
                     TRACED(temp->donorRes);
                     TRACEI(temp->donorData[0]);
@@ -436,8 +436,8 @@ void MeshBlock::processDonors(
             // loop all bodies that do NOT have a candidate and check if pt is
             // INSIDE/WALL
             for (j = 0; j < nmesh; j++) {
-                if (j != (meshtag - BASE) && holemap[j].existWall) {
-                    if (!iflag[j]) {
+                if (j != (meshtag - BASE) && (holemap[j].existWall != 0u)) {
+                    if (iflag[j] == 0) {
                         // body{j} does NOT have candidate so check if point is
                         // INSIDE SB
                         int SB_val =
@@ -452,7 +452,7 @@ void MeshBlock::processDonors(
         }
     }
 
-    if (!composite) {
+    if (composite == 0) {
         for (i = 0; i < nwbc; i++) {
             if (iblank[wbcnode[i] - BASE] == HOLE) {
                 fprintf(
@@ -518,7 +518,7 @@ void MeshBlock::processDonors(
     }
 
     for (i = 0; i < nnodes; i++) {
-        if (mtag1[i] && iblank[i]) {
+        if ((mtag1[i] != 0) && (iblank[i] != 0)) {
             nodeRes[i] = BIGVALUE;
         }
     }
@@ -529,22 +529,22 @@ void MeshBlock::processDonors(
     *nrecords = 0;
     for (i = 0; i < nnodes; i++) {
         verbose = 0;
-        if (verbose) {
+        if (verbose != 0) {
             TRACEI(i);
             TRACEI(iblank[i]);
         }
 
         if (donorList[i] != nullptr && iblank[i] != 0) {
             temp = donorList[i];
-            if (verbose) TRACED(nodeRes[i]);
+            if (verbose != 0) TRACED(nodeRes[i]);
 
             while (temp != nullptr) {
-                if (verbose) TRACED(temp->donorRes);
+                if (verbose != 0) TRACED(temp->donorRes);
 
                 if (temp->donorRes < nodeRes[i]) {
                     iblank[i] = -temp->donorData[1];
 
-                    if (verbose) {
+                    if (verbose != 0) {
                         TRACEI(iblank[i]);
                         TRACEI(temp->donorData[0]);
                         TRACEI(temp->donorData[1]);
@@ -582,7 +582,7 @@ void MeshBlock::processDonors(
             (*donorRecords)[m++] = temp->donorData[2];
             (*donorRecords)[m++] = temp->donorData[1];
 
-            if (verbose) {
+            if (verbose != 0) {
                 TRACEI(iblank[i]);
                 TRACEI(m);
                 TRACEI((*donorRecords)[m - 3]);
@@ -597,11 +597,12 @@ void MeshBlock::processDonors(
 void MeshBlock::initializeInterpList(int ninterp_input)
 {
     int i;
-    if (interpList) {
+    if (interpList != nullptr) {
         // for(i=0;i<ninterp;i++)
         for (i = 0; i < interpListSize; i++) {
-            if (interpList[i].inode) TIOGA_FREE(interpList[i].inode);
-            if (interpList[i].weights) TIOGA_FREE(interpList[i].weights);
+            if (interpList[i].inode != nullptr) TIOGA_FREE(interpList[i].inode);
+            if (interpList[i].weights != nullptr)
+                TIOGA_FREE(interpList[i].weights);
         }
         TIOGA_FREE(interpList);
     }
@@ -612,12 +613,12 @@ void MeshBlock::initializeInterpList(int ninterp_input)
         interpList[i].inode = nullptr;
         interpList[i].weights = nullptr;
     }
-    if (cancelList) {
+    if (cancelList != nullptr) {
         deallocateLinkList2(cancelList);
     }
     cancelList = nullptr;
     ncancel = 0;
-    if (interp2donor) TIOGA_FREE(interp2donor);
+    if (interp2donor != nullptr) TIOGA_FREE(interp2donor);
     interp2donor = (int*)malloc(sizeof(int) * nsearch);
     for (i = 0; i < nsearch; i++) {
         interp2donor[i] = -1;
@@ -650,7 +651,7 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
     pointid = isearch[3 * irecord + 1];
     blockid = isearch[3 * irecord + 2];
     meshtagrecv = tagsearch[irecord];
-    if (verbose) {
+    if (verbose != 0) {
         TRACEI(procid);
         TRACEI(pointid);
         TRACED(receptorRes);
@@ -671,16 +672,16 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
     }
     nvert = nv[n];
     acceptFlag = 1;
-    if (verbose) TRACEI(donorId[irecord])
-    if (verbose) TRACEI(n)
-    if (verbose) TRACEI(nvert)
-    if (verbose) TRACEI(i)
-    if (verbose) TRACED(nodeRes[241291]);
+    if (verbose != 0) TRACEI(donorId[irecord])
+    if (verbose != 0) TRACEI(n)
+    if (verbose != 0) TRACEI(nvert)
+    if (verbose != 0) TRACEI(i)
+    if (verbose != 0) TRACED(nodeRes[241291]);
     for (m = 0; m < nvert; m++) {
         inode[m] = vconn[n][nvert * i + m] - BASE;
-        if (verbose) TRACEI(inode[m]);
-        if (verbose) TRACEI(iblank[inode[m]])
-        if (verbose) TRACED(nodeRes[inode[m]])
+        if (verbose != 0) TRACEI(inode[m]);
+        if (verbose != 0) TRACEI(iblank[inode[m]])
+        if (verbose != 0) TRACED(nodeRes[inode[m]])
         i3 = 3 * inode[m];
         if (iblank[inode[m]] <= 0 && receptorRes2 > 0.0) {
             if (nodeRes[inode[m]] == BIGVALUE) {
@@ -695,7 +696,7 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
         }
     }
     //
-    if (verbose) TRACEI(acceptFlag);
+    if (verbose != 0) TRACEI(acceptFlag);
     if (receptorRes == BIGVALUE && resolutionScale == 1.0) {
         clist = cancelList;
         //
@@ -712,9 +713,9 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
             inode[m] = vconn[n][nvert * i + m] - BASE;
             // if (myid==763 && inode[m]==9515) verbose=1;
             // if (myid==1 && meshtag==2 && inode[m]==240304) verbose=1;
-            if (verbose) TRACEI(inode[m]);
-            if (verbose) TRACED(nodeRes[inode[m]]);
-            if (verbose) {
+            if (verbose != 0) TRACEI(inode[m]);
+            if (verbose != 0) TRACED(nodeRes[inode[m]]);
+            if (verbose != 0) {
                 TRACEI(procid);
                 TRACEI(pointid);
                 TRACED(receptorRes);
@@ -750,7 +751,7 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
     interpList[*recid].receptorInfo[0] = procid;
     interpList[*recid].receptorInfo[1] = pointid;
     interpList[*recid].receptorInfo[2] = blockid;
-    if (verbose) {
+    if (verbose != 0) {
         TRACEI(*recid);
         TRACEI(interpList[*recid].receptorInfo[0]);
         TRACEI(interpList[*recid].receptorInfo[1]);
@@ -843,14 +844,14 @@ void MeshBlock::getInterpData(int* nrecords, int** intData)
     //
     *nrecords = 0;
     for (i = 0; i < ninterp; i++) {
-        if (!interpList[i].cancel) {
+        if (interpList[i].cancel == 0) {
             (*nrecords)++;
         }
     }
     //
     (*intData) = (int*)malloc(sizeof(int) * 3 * (*nrecords));
     for (i = 0, k = 0; i < ninterp; i++) {
-        if (!interpList[i].cancel) {
+        if (interpList[i].cancel == 0) {
             (*intData)[k++] = interpList[i].receptorInfo[0];
             (*intData)[k++] = interpList[i].receptorInfo[1];
             (*intData)[k++] = interpList[i].receptorInfo[2];
@@ -866,7 +867,7 @@ void MeshBlock::clearIblanks(void)
             iblank[i] = 1;
         }
     }
-    if (iblank_reduced) {
+    if (iblank_reduced != nullptr) {
         for (i = 0; i < nnodes; i++) {
             if (iblank_reduced[i] == 0) {
                 iblank[i] = 0;
@@ -909,7 +910,7 @@ void MeshBlock::reduce_fringes(void)
     int verbose, iter;
     INTEGERLIST* clist;
     //
-    if (iblank_reduced) TIOGA_FREE(iblank_reduced);
+    if (iblank_reduced != nullptr) TIOGA_FREE(iblank_reduced);
     iblank_reduced = (int*)malloc(sizeof(int) * nnodes);
     for (int i = 0; i < nnodes; i++) {
         iblank_reduced[i] = iblank[i] > 0 ? iblank[i] : 0;
@@ -951,8 +952,9 @@ void MeshBlock::reduce_fringes(void)
                 ncount = 0;
                 for (m = 0; m < nvert; m++) {
                     inode[m] = vconn[n][nvert * i + m] - BASE;
-                    ncount = ncount + (iblank_reduced[inode[m]] == 1 ||
-                                       iblank_reduced[inode[m]] < 0);
+                    ncount = ncount + static_cast<int>(
+                                          iblank_reduced[inode[m]] == 1 ||
+                                          iblank_reduced[inode[m]] < 0);
                 }
                 if (ncount > 0 && ncount < nvert) {
                     for (m = 0; m < nvert; m++) {
@@ -968,7 +970,7 @@ void MeshBlock::reduce_fringes(void)
         }
     }
 
-    if (cancelList) {
+    if (cancelList != nullptr) {
         deallocateLinkList2(cancelList);
     }
     cancelList = nullptr;

@@ -35,7 +35,7 @@ void solvec(double** a, double* b, int* iflag, int n)
     for (i = 0; i < n; i++) {
         if (fabs(a[i][i]) < eps) {
             flag = 1;
-            for (k = i + 1; k < n && flag; k++) {
+            for (k = i + 1; k < n && (flag != 0); k++) {
                 if (a[k][i] != 0) {
                     flag = 0;
                     for (l = 0; l < n; l++) {
@@ -48,7 +48,7 @@ void solvec(double** a, double* b, int* iflag, int n)
                     b[i] = temp;
                 }
             }
-            if (flag) {
+            if (flag != 0) {
                 *iflag = 0;
                 return;
             }
@@ -178,7 +178,7 @@ void computeNodalWeights(double xv[8][3], double* xp, double frac[8], int nvert)
         //
         // check if the solution is not degenerate
         //
-        if (isolflag) {
+        if (isolflag != 0) {
             for (k = 0; k < 3; k++) {
                 frac[k] = rhs[k];
             }

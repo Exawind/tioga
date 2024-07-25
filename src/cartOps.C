@@ -30,7 +30,7 @@
 void MeshBlock::setCartIblanks(void)
 {
     int i, j, m, icount;
-    if (ihigh) {
+    if (ihigh != 0) {
         m = 0;
         //
         for (i = 0; i < nreceptorCellsCart; i++) {
@@ -63,7 +63,7 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
     int inode[8];
     int* iflag;
     //
-    if (ihigh) {
+    if (ihigh != 0) {
         iflag = (int*)malloc(sizeof(int) * ncells);
         for (i = 0; i < ncells; i++) {
             iflag[i] = 0;
@@ -145,7 +145,7 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
         m = 0;
         k = 0;
         for (i = 0; i < nnodes; i++) {
-            if (pickedCart[i]) {
+            if (pickedCart[i] != 0) {
                 receptorIdCart[k++] = i;
                 i3 = 3 * i;
                 for (j = 0; j < 3; j++) {
@@ -208,10 +208,11 @@ void MeshBlock::findInterpListCart(void)
     int isum, interpCount;
     int procid, pointid, localid;
 
-    if (interpListCart) {
+    if (interpListCart != nullptr) {
         for (i = 0; i < interpListCartSize; i++) {
-            if (interpListCart[i].inode) TIOGA_FREE(interpListCart[i].inode);
-            if (interpListCart[i].weights)
+            if (interpListCart[i].inode != nullptr)
+                TIOGA_FREE(interpListCart[i].inode);
+            if (interpListCart[i].weights != nullptr)
                 TIOGA_FREE(interpListCart[i].weights);
         }
         TIOGA_FREE(interpListCart);
@@ -300,12 +301,12 @@ void MeshBlock::getInterpolatedSolutionAMR(
     interpCount = 0;
     //
     for (i = 0; i < ninterp; i++) {
-        if (!interpList[i].cancel) {
+        if (interpList[i].cancel == 0) {
             interpCount++;
         }
     }
     for (i = 0; i < ninterpCart; i++) {
-        if (!interpListCart[i].cancel) {
+        if (interpListCart[i].cancel == 0) {
             interpCount++;
         }
     }
@@ -347,7 +348,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
     //
     if (interptype == ROW) {
         for (i = 0; i < ninterp; i++) {
-            if (!interpList[i].cancel) {
+            if (interpList[i].cancel == 0) {
                 for (k = 0; k < nvar; k++) {
                     qq[k] = 0;
                 }
@@ -371,7 +372,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
             }
         }
         for (i = 0; i < ninterpCart; i++) {
-            if (!interpListCart[i].cancel) {
+            if (interpListCart[i].cancel == 0) {
                 for (k = 0; k < nvar; k++) {
                     qq[k] = 0;
                 }
@@ -401,7 +402,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
         }
     } else if (interptype == COLUMN) {
         for (i = 0; i < ninterp; i++) {
-            if (!interpList[i].cancel) {
+            if (interpList[i].cancel == 0) {
                 for (k = 0; k < nvar; k++) {
                     qq[k] = 0;
                 }
@@ -421,7 +422,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
             }
         }
         for (i = 0; i < ninterpCart; i++) {
-            if (!interpListCart[i].cancel) {
+            if (interpListCart[i].cancel == 0) {
                 for (k = 0; k < nvar; k++) {
                     qq[k] = 0;
                 }
@@ -441,5 +442,5 @@ void MeshBlock::getInterpolatedSolutionAMR(
             }
         }
     }
-    if (qq) TIOGA_FREE(qq);
+    if (qq != nullptr) TIOGA_FREE(qq);
 }

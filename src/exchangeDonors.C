@@ -108,7 +108,7 @@ void tioga::exchangeDonors(void)
     std::vector<int> nrecords(nblocks, 0);
     int** donorRecords = (int**)malloc(sizeof(int*) * nblocks);
     double** receptorResolution = (double**)malloc(sizeof(double*) * nblocks);
-    if (USE_ADAPTIVE_HOLEMAP) {
+    if (USE_ADAPTIVE_HOLEMAP != 0) {
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
             mb->processDonors(
@@ -201,7 +201,7 @@ void tioga::exchangeDonors(void)
     // Find cancellation data (based on donor quality)
     //
     for (int i = 0; i < nblocks; i++) {
-        if (donorRecords[i]) {
+        if (donorRecords[i] != nullptr) {
             TIOGA_FREE(donorRecords[i]);
             donorRecords[i] = nullptr;
         }
@@ -253,7 +253,7 @@ void tioga::exchangeDonors(void)
     // Find final interpolation data
     //
     for (int i = 0; i < nblocks; i++) {
-        if (donorRecords[i]) {
+        if (donorRecords[i] != nullptr) {
             TIOGA_FREE(donorRecords[i]);
             donorRecords[i] = nullptr;
         }
@@ -300,15 +300,16 @@ void tioga::exchangeDonors(void)
     TIOGA_FREE(sndPack);
     TIOGA_FREE(rcvPack);
 
-    if (donorRecords) {
+    if (donorRecords != nullptr) {
         for (int i = 0; i < nblocks; i++) {
-            if (donorRecords[i]) TIOGA_FREE(donorRecords[i]);
+            if (donorRecords[i] != nullptr) TIOGA_FREE(donorRecords[i]);
         }
         TIOGA_FREE(donorRecords);
     }
-    if (receptorResolution) {
+    if (receptorResolution != nullptr) {
         for (int i = 0; i < nblocks; i++) {
-            if (receptorResolution[i]) TIOGA_FREE(receptorResolution[i]);
+            if (receptorResolution[i] != nullptr)
+                TIOGA_FREE(receptorResolution[i]);
         }
         TIOGA_FREE(receptorResolution);
     }

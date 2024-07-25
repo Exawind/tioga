@@ -71,9 +71,9 @@ void tioga::getHoleMap(void)
     }
     MPI_Allreduce(&meshtag, &maxtag, 1, MPI_INT, MPI_MAX, scomm);
     //
-    if (holeMap) {
+    if (holeMap != nullptr) {
         for (i = 0; i < nmesh; i++)
-            if (holeMap[i].existWall) TIOGA_FREE(holeMap[i].sam);
+            if (holeMap[i].existWall != 0) TIOGA_FREE(holeMap[i].sam);
         delete[] holeMap;
     }
     holeMap = new HOLEMAP[maxtag];
@@ -133,7 +133,7 @@ void tioga::getHoleMap(void)
     // from the globally reduced data
     //
     for (i = 0; i < maxtag; i++) {
-        if (holeMap[i].existWall) {
+        if (holeMap[i].existWall != 0) {
             for (j = 0; j < 3; j++) {
                 holeMap[i].extents[j] = bboxGlobal[3 * i + j];
                 holeMap[i].extents[j + 3] = bboxGlobal[3 * i + j + 3 * maxtag];
@@ -164,7 +164,7 @@ void tioga::getHoleMap(void)
     for (int ib = 0; ib < nblocks; ib++) {
         auto& mb = mblocks[ib];
         meshtag = mb->getMeshTag();
-        if (holeMap[meshtag - 1].existWall) {
+        if (holeMap[meshtag - 1].existWall != 0) {
             mb->markWallBoundary(
                 holeMap[meshtag - 1].samLocal, holeMap[meshtag - 1].nx,
                 holeMap[meshtag - 1].extents);
@@ -174,7 +174,7 @@ void tioga::getHoleMap(void)
     // allreduce the holeMap of each mesh
     //
     for (i = 0; i < maxtag; i++) {
-        if (holeMap[i].existWall) {
+        if (holeMap[i].existWall != 0) {
             bufferSize = holeMap[i].nx[0] * holeMap[i].nx[1] * holeMap[i].nx[2];
             MPI_Allreduce(
                 holeMap[i].samLocal, holeMap[i].sam, bufferSize, MPI_INT,
@@ -183,7 +183,7 @@ void tioga::getHoleMap(void)
     }
     //
     for (i = 0; i < maxtag; i++)
-        if (holeMap[i].existWall) TIOGA_FREE(holeMap[i].samLocal);
+        if (holeMap[i].existWall != 0) TIOGA_FREE(holeMap[i].samLocal);
     //
     // set the global number of meshes to maxtag
     //
@@ -192,7 +192,7 @@ void tioga::getHoleMap(void)
     // now fill the holeMap
     //
     for (i = 0; i < maxtag; i++) {
-        if (holeMap[i].existWall) {
+        if (holeMap[i].existWall != 0) {
             fillHoleMap(holeMap[i].sam, holeMap[i].nx, isym);
         }
     }
@@ -236,7 +236,7 @@ void tioga::getAdaptiveHoleMap(void)
     /* =============================== */
     /* B: reallocate adaptive hole map */
     /* =============================== */
-    if (adaptiveHoleMap) {
+    if (adaptiveHoleMap != nullptr) {
         delete[] adaptiveHoleMap;
     }
     adaptiveHoleMap = new ADAPTIVE_HOLEMAP[maxtag];
@@ -247,7 +247,7 @@ void tioga::getAdaptiveHoleMap(void)
     }
 
     ADAPTIVE_HOLEMAP_COMPOSITE* adaptiveHoleMapCOMPOSITE;
-    if (ncomposite) {
+    if (ncomposite != 0) {
         adaptiveHoleMapCOMPOSITE = new ADAPTIVE_HOLEMAP_COMPOSITE[maxtag];
         for (mi = 0; mi < maxtag; mi++) {
             adaptiveHoleMapCOMPOSITE[mi].meta.nlevel = 0;
@@ -329,7 +329,7 @@ void tioga::getAdaptiveHoleMap(void)
             /* Step 2: initialize and build adaptive map for this body */
             /* ======================================================= */
             // set extents and initialize map for this body
-            if (AHMOLocal.existWall) {
+            if (AHMOLocal.existWall != 0) {
                 for (j = 0; j < 3; j++) {
                     AHMOLocal.extents_lo[j] = bboxGlobal[j];
                     AHMOLocal.extents_hi[j] = bboxGlobal[j + 3];
@@ -355,7 +355,7 @@ void tioga::getAdaptiveHoleMap(void)
 
             // initialize level 0, check outer boundary and set adapt flag
             adaptMapLocal = adaptMap = 0;
-            if (AHMOLocal.existWall) {
+            if (AHMOLocal.existWall != 0) {
                 level_octant_t* lvl = &AHMOLocal.levels[0];
 
                 // allocate level 0
@@ -389,7 +389,7 @@ void tioga::getAdaptiveHoleMap(void)
                     &AHMOLocal.levels[0], nullptr, existOuter.data());
 
                 // check if initial octant contains both boundary types
-                if (existOuter[0]) {
+                if (existOuter[0] != 0u) {
                     lvl->octants[0].refined = 1;
                     adaptMapLocal = 1;
                 }
@@ -399,7 +399,7 @@ void tioga::getAdaptiveHoleMap(void)
                 &adaptMapLocal, &adaptMap, 1, MPI_INT, MPI_MAX, mb->blockcomm);
 
             // set all rank Outer flags
-            if (adaptMap) {
+            if (adaptMap != 0) {
                 AHMOLocal.levels[0].octants[0].refined = existOuter[0] =
                     existWall[0] = 1;
             }
@@ -407,7 +407,7 @@ void tioga::getAdaptiveHoleMap(void)
             // recursively refine adaptive map until no intersection of wall and
             // outer octants
             level_id = 0;
-            while (adaptMap) {
+            while (adaptMap != 0) {
                 level_octant_t* lvl = &AHMOLocal.levels[level_id];
 
                 // update level count
@@ -423,7 +423,7 @@ void tioga::getAdaptiveHoleMap(void)
                 nrefine = 0;
                 for (i = 0; i < lvl->elem_count; i++) {
                     refineFlag[i] = existWall[i] && existOuter[i];
-                    if (refineFlag[i]) {
+                    if (refineFlag[i] != 0) {
                         nrefine++;
                     }
                 }
@@ -447,7 +447,7 @@ void tioga::getAdaptiveHoleMap(void)
                 // fill in new level children octant info
                 nrefine = 0;
                 for (i = 0; i < lvl->elem_count; i++) {
-                    if (refineFlag[i]) {
+                    if (refineFlag[i] != 0) {
                         uint32_t newidx = OCTANT_CHILDREN * nrefine;
 
                         // set Morton code and filltype for new octants
@@ -469,7 +469,7 @@ void tioga::getAdaptiveHoleMap(void)
                 // formed
                 nrefine = 0;
                 for (i = 0; i < lvl->elem_count; i++) {
-                    if (refineFlag[i]) {
+                    if (refineFlag[i] != 0) {
                         int newidx = OCTANT_CHILDREN * nrefine;
 
                         // set neighbors for new octants
@@ -513,10 +513,10 @@ void tioga::getAdaptiveHoleMap(void)
                 // update filltype to wall if touching wall; check both boundary
                 // types
                 for (i = 0; i < new_lvl->elem_count; i++) {
-                    if (existWall[i]) {
+                    if (existWall[i] != 0u) {
                         new_lvl->octants[i].filltype = WALL_SB;
 
-                        if (existOuter[i]) {
+                        if (existOuter[i] != 0u) {
                             new_lvl->octants[i].refined = 1;
                             adaptMap = 1;
                         }
@@ -568,7 +568,7 @@ void tioga::getAdaptiveHoleMap(void)
                 /* --------------------------- */
                 if (MBC.comm != MPI_COMM_NULL) {
                     if (MBC.id == MBC.masterID) {
-                        if (AHMOLocal.existWall) {
+                        if (AHMOLocal.existWall != 0) {
                             // 1. copy nlevel and extents
                             meta.nlevel = AHMOLocal.nlevel;
                             memcpy(
@@ -660,7 +660,8 @@ void tioga::getAdaptiveHoleMap(void)
 
                             // check if mesh block belongs to composite body
                             if (compositeBodyMap[cb][bodyi]
-                                                [mb->getMeshTag() - BASE]) {
+                                                [mb->getMeshTag() - BASE] !=
+                                0) {
                                 // check wall boundaries on abutting composite
                                 // meshes
                                 mb->markBoundaryAdaptiveMapSurfaceIntersect(
@@ -678,11 +679,11 @@ void tioga::getAdaptiveHoleMap(void)
                             MPI_UINT8_T, MPI_MAX, MBC.comm);
 
                         // g. update filltype to wall if touching wall
-                        if (rankContainsBody) {
+                        if (rankContainsBody != 0) {
                             level_octant_t* new_lvl =
                                 &AHMOLocal.levels[level_id];
                             for (int ii = 0; ii < new_lvl->elem_count; ii++) {
-                                if (existWall[ii]) {
+                                if (existWall[ii] != 0u) {
                                     new_lvl->octants[ii].filltype = WALL_SB;
                                 }
                             }
@@ -702,7 +703,7 @@ void tioga::getAdaptiveHoleMap(void)
         for (mbi = 0; mbi < nblocks; mbi++) {
             ADAPTIVE_HOLEMAP_OCTANT& AHMOLocal = AHMO[mbi];
 
-            if (AHMOLocal.existWall) {
+            if (AHMOLocal.existWall != 0) {
                 for (l = 0; l < AHMOLocal.nlevel; l++) {
                     floodfill_level(&AHMOLocal.levels[l]);
                 }
@@ -731,7 +732,7 @@ void tioga::getAdaptiveHoleMap(void)
             /* --------------------------- */
             /* copy data for own mesh body */
             /* --------------------------- */
-            if (AHMLocal.existWall) {
+            if (AHMLocal.existWall != 0u) {
                 // 1. copy nlevel and extents
                 meta.nlevel = AHMOLocal.nlevel;
                 memcpy(
@@ -755,8 +756,9 @@ void tioga::getAdaptiveHoleMap(void)
                         elvl->octants[j].y = lvl->octants[j].y;
                         elvl->octants[j].z = lvl->octants[j].z;
                         elvl->octants[j].filltype = lvl->octants[j].filltype;
-                        elvl->octants[j].leafflag = !lvl->octants[j].refined;
-                        if (lvl->octants[j].refined) {
+                        elvl->octants[j].leafflag =
+                            static_cast<uint8_t>(lvl->octants[j].refined) == 0u;
+                        if (lvl->octants[j].refined != 0u) {
                             for (c = 0; c < OCTANT_CHILDREN; c++) {
                                 elvl->octants[j].children[c] =
                                     lvl->octants[j].children[c]->id;
@@ -782,7 +784,7 @@ void tioga::getAdaptiveHoleMap(void)
         ahm_meta_t& meta = AHME.meta;
 
         meta.elem_count = 0;
-        if (AHME.existWall) {
+        if (AHME.existWall != 0u) {
             meshblockCompInfo& MBC = meshblockComplement[i];
 
             // complement + master ranks only involved
@@ -828,7 +830,7 @@ void tioga::getAdaptiveHoleMap(void)
     MPI_Barrier(scomm);
 
     // clean up memory
-    if (ncomposite) {
+    if (ncomposite != 0) {
         delete[] adaptiveHoleMapCOMPOSITE;
     }
 
@@ -878,7 +880,7 @@ void tioga::outputHoleMap(void)
     char fname[80];
 
     for (i = 0; i < nmesh; i++) {
-        if (holeMap[i].existWall) {
+        if (holeMap[i].existWall != 0) {
             snprintf(
                 intstring, sizeof(intstring), "%d", 100000 + i + 100 * myid);
             snprintf(fname, sizeof(fname), "holeMap%s.dat", &(intstring[1]));
@@ -1063,7 +1065,7 @@ void tioga::outputAdaptiveHoleMap(void)
     static int ahm_step = 0;
     if (myid == 0) {
         for (m = 0; m < nmesh; m++) {
-            if (adaptiveHoleMap[m].existWall) {
+            if (adaptiveHoleMap[m].existWall != 0u) {
                 ahm_meta_t& meta = adaptiveHoleMap[m].meta;
 
                 ds[0] = meta.extents_hi[0] - meta.extents_lo[0];

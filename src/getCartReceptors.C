@@ -73,12 +73,12 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
         }
 
         int intersectCount = 0;
-        if (obbIntersectCheck(
-                obb->vec, obb->xc, obb->dxc, obcart->vec, obcart->xc,
-                obcart->dxc) ||
-            obbIntersectCheck(
-                obcart->vec, obcart->xc, obcart->dxc, obb->vec, obb->xc,
-                obb->dxc)) {
+        if ((obbIntersectCheck(
+                 obb->vec, obb->xc, obb->dxc, obcart->vec, obcart->xc,
+                 obcart->dxc) != 0) ||
+            (obbIntersectCheck(
+                 obcart->vec, obcart->xc, obcart->dxc, obb->vec, obb->xc,
+                 obb->dxc) != 0)) {
             intersectCount++;
 
             double* xtm = (double*)malloc(sizeof(double) * 3);
@@ -130,12 +130,12 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
     // if these were already allocated
     // get rid of them
     //
-    if (donorId) TIOGA_FREE(donorId);
-    if (tagsearch) TIOGA_FREE(tagsearch);
-    if (isearch) TIOGA_FREE(isearch);
-    if (rst) TIOGA_FREE(rst);
-    if (res_search) TIOGA_FREE(res_search);
-    if (xsearch) TIOGA_FREE(xsearch);
+    if (donorId != nullptr) TIOGA_FREE(donorId);
+    if (tagsearch != nullptr) TIOGA_FREE(tagsearch);
+    if (isearch != nullptr) TIOGA_FREE(isearch);
+    if (rst != nullptr) TIOGA_FREE(rst);
+    if (res_search != nullptr) TIOGA_FREE(res_search);
+    if (xsearch != nullptr) TIOGA_FREE(xsearch);
     //
     donorId = (int*)malloc(sizeof(int) * nsearch);
     tagsearch = (int*)malloc(sizeof(int) * nsearch);

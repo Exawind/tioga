@@ -198,7 +198,7 @@ void tioga::assembleCompositeComms(void)
     MPI_Allreduce(&maxtagLocal, &maxtag, 1, MPI_INT, MPI_MAX, scomm);
 
     // allocate mesh block complement communicators and rank master arrays
-    if (meshblockComposite) {
+    if (meshblockComposite != nullptr) {
         delete[] meshblockComposite;
     }
     meshblockComposite = new meshblockCompInfo[maxtag];
@@ -248,7 +248,7 @@ void tioga::assembleCompositeComms(void)
             compositecount = 0;
             for (int ii = 0; ii < numprocs; ii++) {
                 // add rank i to composite list
-                if (existMeshTag[ii]) {
+                if (existMeshTag[ii] != 0) {
                     comp_list[compositecount++] = ii;
                 }
             }
@@ -317,7 +317,7 @@ void tioga::assembleComplementComms(void)
     MPI_Allreduce(&maxtagLocal, &maxtag, 1, MPI_INT, MPI_MAX, scomm);
 
     // allocate mesh block complement communicators and rank master arrays
-    if (meshblockComplement) {
+    if (meshblockComplement != nullptr) {
         delete[] meshblockComplement;
     }
     meshblockComplement = new meshblockCompInfo[maxtag];
@@ -352,7 +352,7 @@ void tioga::assembleComplementComms(void)
         }
 
         // set complement list flag (include mesh rank master)
-        compListFlag = (existMeshTag[myid]) ? 0 : 1;
+        compListFlag = (existMeshTag[myid]) != 0 ? 0 : 1;
         if (myid == meshMasterId) {
             compListFlag = 1;
         }
@@ -369,7 +369,7 @@ void tioga::assembleComplementComms(void)
         // create MPI subgroup ranks for this mesh tag: inclusion and comp lists
         for (int i = 0; i < numprocs; i++) {
             // add rank i to appropriate list
-            if (existMeshTag[i]) {
+            if (existMeshTag[i] != 0) {
                 incl_list[incount++] = i;
             } else {
                 comp_list[excount++] = i;
@@ -385,7 +385,7 @@ void tioga::assembleComplementComms(void)
         // create complement MPI subgroup communicator and rank
         MPI_Comm_create(scomm, meshblockExcludeGroup, &(MBC.comm));
 
-        if (compListFlag) {
+        if (compListFlag != 0) {
             MPI_Comm_rank(MBC.comm, &(MBC.id));
             MPI_Comm_size(MBC.comm, &(MBC.nrank));
 
@@ -414,7 +414,7 @@ void tioga::assembleComplementComms(void)
                 // this block
                 MPI_Allreduce(
                     &myid, &body_minrank, 1, MPI_INT, MPI_MIN, mb->blockcomm);
-                mb->meshMaster = (myid == body_minrank);
+                mb->meshMaster = static_cast<char>(myid == body_minrank);
 
                 // printf("My ID[%2d] (local rank %2d of %2d), body_tag[%d] of
                 // %d blocks\n",
@@ -538,7 +538,7 @@ void tioga::profile(void)
 void tioga::performConnectivity(void)
 {
     this->myTimer("tioga::performConnectivity", 0);
-    if (USE_ADAPTIVE_HOLEMAP) {
+    if (USE_ADAPTIVE_HOLEMAP != 0) {
         this->myTimer("tioga::getAdaptiveHoleMap", 0);
         getAdaptiveHoleMap();
         this->myTimer("tioga::getAdaptiveHoleMap", 1);
@@ -571,7 +571,7 @@ void tioga::performConnectivity(void)
     this->myTimer("tioga::getCellIblanks", 0);
     for (int ib = 0; ib < nblocks; ib++) {
         auto& mb = mblocks[ib];
-        if (ihighGlobal) {
+        if (ihighGlobal != 0) {
             mb->getCellIblanks2();
         } else {
             mb->getCellIblanks();
@@ -579,7 +579,7 @@ void tioga::performConnectivity(void)
         // mb->writeGridFile(100*myid+mtags[ib]);
     }
     this->myTimer("tioga::getCellIblanks", 1);
-    if (qblock) TIOGA_FREE(qblock);
+    if (qblock != nullptr) TIOGA_FREE(qblock);
     qblock = (double**)malloc(sizeof(double*) * nblocks);
     for (int ib = 0; ib < nblocks; ib++) {
         qblock[ib] = nullptr;
@@ -800,10 +800,10 @@ void tioga::dataUpdate_AMR()
     pc_cart->clearPackets(sndPack, rcvPack);
     TIOGA_FREE(sndPack);
     TIOGA_FREE(rcvPack);
-    if (integerRecords) TIOGA_FREE(integerRecords);
-    if (realRecords) TIOGA_FREE(realRecords);
-    if (icount) TIOGA_FREE(icount);
-    if (dcount) TIOGA_FREE(dcount);
+    if (integerRecords != nullptr) TIOGA_FREE(integerRecords);
+    if (realRecords != nullptr) TIOGA_FREE(realRecords);
+    if (icount != nullptr) TIOGA_FREE(icount);
+    if (dcount != nullptr) TIOGA_FREE(dcount);
 }
 
 void tioga::dataUpdate(int nvar, int interptype, int at_points)
@@ -901,7 +901,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     //
     // decode the packets and update the data
     //
-    if (at_points) {
+    if (at_points != 0) {
         qtmp = (double**)malloc(sizeof(double*) * nblocks);
         itmp = (int**)malloc(sizeof(double*) * nblocks);
         for (int ib = 0; ib < nblocks; ib++) {
@@ -940,7 +940,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     for (int ib = 0; ib < nblocks; ib++) {
         auto& mb = mblocks[ib];
         for (int i = 0; i < mb->ntotalPoints; i++) {
-            if (itmp[ib][i] == 0 && iorphanPrint) {
+            if (itmp[ib][i] == 0 && (iorphanPrint != 0)) {
                 if (fp == nullptr) {
                     snprintf(
                         ofname, sizeof(ofname), "orphan%d.%d.dat", myid, ib);
@@ -955,7 +955,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     if (fp != nullptr) {
         fclose(fp);
     }
-    if (norphanPoint > 0 && iorphanPrint) {
+    if (norphanPoint > 0 && (iorphanPrint != 0)) {
         printf(
             "\e[0;31m"
             "Warning::"
@@ -967,7 +967,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     //
     // change the state of cells/nodes who are orphans
     //
-    if (at_points) {
+    if (at_points != 0) {
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
             mb->clearOrphans(holeMap, nmesh, itmp[ib]);
@@ -980,24 +980,24 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     pc->clearPackets(sndPack, rcvPack);
     TIOGA_FREE(sndPack);
     TIOGA_FREE(rcvPack);
-    if (integerRecords) {
+    if (integerRecords != nullptr) {
         for (int ib = 0; ib < nblocks; ib++)
-            if (integerRecords[ib]) TIOGA_FREE(integerRecords[ib]);
+            if (integerRecords[ib] != nullptr) TIOGA_FREE(integerRecords[ib]);
         TIOGA_FREE(integerRecords);
     }
-    if (realRecords) {
+    if (realRecords != nullptr) {
         for (int ib = 0; ib < nblocks; ib++)
-            if (realRecords[ib]) TIOGA_FREE(realRecords[ib]);
+            if (realRecords[ib] != nullptr) TIOGA_FREE(realRecords[ib]);
         TIOGA_FREE(realRecords);
     }
-    if (qtmp) {
+    if (qtmp != nullptr) {
         for (int ib = 0; ib < nblocks; ib++)
-            if (qtmp[ib]) TIOGA_FREE(qtmp[ib]);
+            if (qtmp[ib] != nullptr) TIOGA_FREE(qtmp[ib]);
         TIOGA_FREE(qtmp);
     }
-    if (itmp) {
+    if (itmp != nullptr) {
         for (int ib = 0; ib < nblocks; ib++)
-            if (itmp[ib]) TIOGA_FREE(itmp[ib]);
+            if (itmp[ib] != nullptr) TIOGA_FREE(itmp[ib]);
         TIOGA_FREE(itmp);
     }
 }
@@ -1162,32 +1162,32 @@ void tioga::getReceptorInfo(std::vector<int>& receptors)
 tioga::~tioga()
 {
     int i;
-    if (holeMap) {
+    if (holeMap != nullptr) {
         for (i = 0; i < nmesh; i++)
-            if (holeMap[i].existWall) TIOGA_FREE(holeMap[i].sam);
+            if (holeMap[i].existWall != 0) TIOGA_FREE(holeMap[i].sam);
         delete[] holeMap;
     }
-    if (adaptiveHoleMap) {
+    if (adaptiveHoleMap != nullptr) {
         delete[] adaptiveHoleMap;
     }
-    if (meshblockComplement) {
+    if (meshblockComplement != nullptr) {
         delete[] meshblockComplement;
     }
-    if (pc) {
+    if (pc != nullptr) {
         delete[] pc;
     }
-    if (pc_cart) {
+    if (pc_cart != nullptr) {
         delete[] pc_cart;
     }
-    if (sendCount) TIOGA_FREE(sendCount);
-    if (recvCount) TIOGA_FREE(recvCount);
-    if (cb) {
+    if (sendCount != nullptr) TIOGA_FREE(sendCount);
+    if (recvCount != nullptr) TIOGA_FREE(recvCount);
+    if (cb != nullptr) {
         delete[] cb;
     }
-    if (cg) {
+    if (cg != nullptr) {
         delete[] cg;
     }
-    if (qblock) TIOGA_FREE(qblock);
+    if (qblock != nullptr) TIOGA_FREE(qblock);
     if (myid == 0) {
         printf("Tioga exited successfully\n");
     }
@@ -1195,10 +1195,10 @@ tioga::~tioga()
 
 void tioga::register_amr_grid(TIOGA::AMRMeshInfo* minfo)
 {
-    if (cg) {
+    if (cg != nullptr) {
         delete[] cg;
     }
-    if (cb) {
+    if (cb != nullptr) {
         delete[] cb;
     }
 
@@ -1229,7 +1229,7 @@ void tioga::register_amr_solution()
 void tioga::register_amr_global_data(
     int nf, int* idata, double* rdata, int ngridsin)
 {
-    if (cg) {
+    if (cg != nullptr) {
         delete[] cg;
     }
     cg = new CartGrid[1];
@@ -1240,7 +1240,7 @@ void tioga::register_amr_global_data(
 void tioga::set_amr_patch_count(int npatchesin)
 {
     ncart = npatchesin;
-    if (cb) {
+    if (cb != nullptr) {
         delete[] cb;
     }
     cb = new CartBlock[ncart];
@@ -1371,7 +1371,7 @@ void tioga::reduce_fringes(void)
     // Find final interpolation data
     //
     for (int i = 0; i < nblocks; i++) {
-        if (donorRecords[i]) {
+        if (donorRecords[i] != nullptr) {
             TIOGA_FREE(donorRecords[i]);
             donorRecords[i] = nullptr;
         }
@@ -1418,9 +1418,9 @@ void tioga::reduce_fringes(void)
     TIOGA_FREE(sndPack);
     TIOGA_FREE(rcvPack);
 
-    if (donorRecords) {
+    if (donorRecords != nullptr) {
         for (int i = 0; i < nblocks; i++) {
-            if (donorRecords[i]) TIOGA_FREE(donorRecords[i]);
+            if (donorRecords[i] != nullptr) TIOGA_FREE(donorRecords[i]);
         }
         TIOGA_FREE(donorRecords);
     }

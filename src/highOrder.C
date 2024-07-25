@@ -53,9 +53,9 @@ void MeshBlock::getCellIblanks2(void)
             //  verbose=1;
             // }
             ncount = 0;
-            for (m = 0; m < nvert && flag; m++) {
+            for (m = 0; m < nvert && (flag != 0); m++) {
                 inode[m] = vconn[n][nvert * i + m] - BASE;
-                if (verbose) {
+                if (verbose != 0) {
                     TRACEI(m);
                     TRACEI(inode[m]);
                     TRACEI(iblank[inode[m]]);
@@ -64,14 +64,14 @@ void MeshBlock::getCellIblanks2(void)
                     iblank_cell[icell] = 0;
                     flag = 0;
                 }
-                ncount = ncount + (iblank[inode[m]] == -1);
+                ncount = ncount + static_cast<int>(iblank[inode[m]] == -1);
             }
-            if (verbose) {
+            if (verbose != 0) {
                 TRACEI(icell);
                 TRACEI(ncount);
                 TRACEI(nvert);
             }
-            if (flag) {
+            if (flag != 0) {
                 if (ncount == nvert) {
                     iblank_cell[icell] = -1;
                 }
@@ -93,7 +93,7 @@ void MeshBlock::getCellIblanks(void)
     int verbose;
     int* ibl;
 
-    if (iblank_reduced) {
+    if (iblank_reduced != nullptr) {
         ibl = iblank_reduced;
     } else {
         ibl = iblank;
@@ -113,9 +113,9 @@ void MeshBlock::getCellIblanks(void)
             //  verbose=1;
             // }
             ncount = 0;
-            for (m = 0; m < nvert && flag; m++) {
+            for (m = 0; m < nvert && (flag != 0); m++) {
                 inode[m] = vconn[n][nvert * i + m] - BASE;
-                if (verbose) {
+                if (verbose != 0) {
                     TRACEI(m);
                     TRACEI(inode[m]);
                     TRACEI(ibl[inode[m]]);
@@ -124,14 +124,14 @@ void MeshBlock::getCellIblanks(void)
                     iblank_cell[icell] = 0;
                     flag = 0;
                 }
-                ncount = ncount + (ibl[inode[m]] == -1);
+                ncount = ncount + static_cast<int>(ibl[inode[m]] == -1);
             }
-            if (verbose) {
+            if (verbose != 0) {
                 TRACEI(icell);
                 TRACEI(ncount);
                 TRACEI(nvert);
             }
-            if (flag) {
+            if (flag != 0) {
                 if (ncount == nvert) {
                     iblank_cell[icell] = -1;
                 }
@@ -148,7 +148,7 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
     int i, j, k, m;
     int reject;
 
-    if (ihigh) {
+    if (ihigh != 0) {
         m = 0;
         for (i = 0; i < nreceptorCells; i++) {
             reject = 0;
@@ -156,10 +156,11 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
                 if (itmp[m] == 0) {
                     reject = 2;
                     for (k = 0; k < nmesh; k++) {
-                        if (k != (meshtag - BASE) && holemap[k].existWall) {
+                        if (k != (meshtag - BASE) &&
+                            (holemap[k].existWall != 0)) {
                             if (checkHoleMap(
                                     &rxyz[3 * m], holemap[k].nx, holemap[k].sam,
-                                    holemap[k].extents)) {
+                                    holemap[k].extents) != 0) {
                                 reject = 1;
                                 break;
                             }
@@ -179,12 +180,12 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
     } else {
         m = 0;
         for (i = 0; i < nnodes; i++) {
-            if (picked[i]) {
+            if (picked[i] != 0) {
                 reject = 0;
                 if (itmp[m] == 0) {
                     reject = 1;
                 }
-                if (reject) {
+                if (reject != 0) {
                     iblank[i] = 1; // changed to field for near-body
                 }
                 // perhaps not the right thing to do
@@ -209,7 +210,7 @@ void MeshBlock::getInternalNodes(void)
         }
     }
     //
-    if (ihigh) {
+    if (ihigh != 0) {
         if (pointsPerCell != nullptr) TIOGA_FREE(pointsPerCell);
         pointsPerCell = (int*)malloc(sizeof(int) * nreceptorCells);
         //
@@ -247,7 +248,7 @@ void MeshBlock::getInternalNodes(void)
         rxyz = (double*)malloc(sizeof(double) * ntotalPoints * 3);
         m = 0;
         for (i = 0; i < nnodes; i++) {
-            if (picked[i]) {
+            if (picked[i] != 0) {
                 i3 = 3 * i;
                 for (j = 0; j < 3; j++) {
                     rxyz[m++] = x[i3 + j];
@@ -327,10 +328,12 @@ void MeshBlock::processPointDonors(void)
         }
     }
     //
-    if (interpList2) {
+    if (interpList2 != nullptr) {
         for (i = 0; i < interp2ListSize; i++) {
-            if (interpList2[i].inode) TIOGA_FREE(interpList2[i].inode);
-            if (interpList2[i].weights) TIOGA_FREE(interpList2[i].weights);
+            if (interpList2[i].inode != nullptr)
+                TIOGA_FREE(interpList2[i].inode);
+            if (interpList2[i].weights != nullptr)
+                TIOGA_FREE(interpList2[i].weights);
         }
         TIOGA_FREE(interpList2);
     }
@@ -345,7 +348,7 @@ void MeshBlock::processPointDonors(void)
     m = 0;
     for (i = 0; i < nsearch; i++) {
         if (donorId[i] > -1 && iblank_cell[donorId[i]] == 1) {
-            if (ihigh) {
+            if (ihigh != 0) {
                 icell = donorId[i] + BASE;
                 interpList2[m].inode = (int*)malloc(sizeof(int));
                 interpList2[m].nweights = 0;
@@ -429,7 +432,7 @@ void MeshBlock::getInterpolatedSolutionAtPoints(
     (*realData) = (double*)malloc(sizeof(double) * (*nreals));
     icount = dcount = 0;
     //
-    if (ihigh) {
+    if (ihigh != 0) {
         if (interptype == ROW) {
             for (i = 0; i < ninterp2; i++) {
                 for (k = 0; k < nvar; k++) {
@@ -513,7 +516,7 @@ void MeshBlock::updatePointData(
     int index_out;
     int npts;
     //
-    if (ihigh) {
+    if (ihigh != 0) {
         npts = NFRAC;
         qout = (double*)malloc(sizeof(double) * nvar * npts);
         //
@@ -538,7 +541,7 @@ void MeshBlock::updatePointData(
     } else {
         m = 0;
         for (i = 0; i < nnodes; i++) {
-            if (picked[i]) {
+            if (picked[i] != 0) {
                 if (iblank[i] == -1) {
                     num_var() = nvar;
                     set_interptype(interptype);

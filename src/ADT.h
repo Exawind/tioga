@@ -52,13 +52,13 @@ public:
     };
     ~ADT()
     {
-        if (adtIntegers) {
+        if (adtIntegers != nullptr) {
             free(adtIntegers);
         }
-        if (adtReals) {
+        if (adtReals != nullptr) {
             free(adtReals);
         }
-        if (adtExtents) {
+        if (adtExtents != nullptr) {
             free(adtExtents);
         }
         adtIntegers = nullptr;
@@ -67,13 +67,13 @@ public:
     };
     void clearData(void)
     {
-        if (adtIntegers) {
+        if (adtIntegers != nullptr) {
             free(adtIntegers);
         }
-        if (adtReals) {
+        if (adtReals != nullptr) {
             free(adtReals);
         }
-        if (adtExtents) {
+        if (adtExtents != nullptr) {
             free(adtExtents);
         }
         adtIntegers = nullptr;

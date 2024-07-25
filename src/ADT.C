@@ -51,11 +51,11 @@ void ADT::buildADT(int d, int nelements, double* elementBbox)
     /*
      * Allocate arrays in the class
      */
-    if (adtExtents) TIOGA_FREE(adtExtents);
+    if (adtExtents != nullptr) TIOGA_FREE(adtExtents);
     adtExtents = (double*)malloc(sizeof(double) * ndim);
-    if (adtIntegers) TIOGA_FREE(adtIntegers);
+    if (adtIntegers != nullptr) TIOGA_FREE(adtIntegers);
     adtIntegers = (int*)malloc(sizeof(int) * 4 * nelem);
-    if (adtReals) TIOGA_FREE(adtReals);
+    if (adtReals != nullptr) TIOGA_FREE(adtReals);
     adtReals = (double*)malloc(sizeof(double) * nelem * ndim);
     /*
      * Determine extent of elements

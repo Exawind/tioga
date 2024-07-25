@@ -83,7 +83,7 @@ void MeshBlock::checkContainment(
         cellIndex[0] = -1;
         cellIndex[1] = 0;
         donor_inclusion_test(&icell1, xsearch, &passFlag, &(rst[ipoint]));
-        if (passFlag) {
+        if (passFlag != 0) {
             cellIndex[0] = icell;
         }
         return;

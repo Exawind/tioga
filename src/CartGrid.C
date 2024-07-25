@@ -31,15 +31,15 @@
 CartGrid::~CartGrid()
 {
     if (own_data_ptrs) {
-        if (global_id) TIOGA_FREE(global_id);
-        if (level_num) TIOGA_FREE(level_num);
-        if (proc_id) TIOGA_FREE(proc_id);
-        if (local_id) TIOGA_FREE(local_id);
-        if (ilo) TIOGA_FREE(ilo);
-        if (ihi) TIOGA_FREE(ihi);
-        if (dims) TIOGA_FREE(dims);
-        if (xlo) TIOGA_FREE(xlo);
-        if (dx) TIOGA_FREE(dx);
+        if (global_id != nullptr) TIOGA_FREE(global_id);
+        if (level_num != nullptr) TIOGA_FREE(level_num);
+        if (proc_id != nullptr) TIOGA_FREE(proc_id);
+        if (local_id != nullptr) TIOGA_FREE(local_id);
+        if (ilo != nullptr) TIOGA_FREE(ilo);
+        if (ihi != nullptr) TIOGA_FREE(ihi);
+        if (dims != nullptr) TIOGA_FREE(dims);
+        if (xlo != nullptr) TIOGA_FREE(xlo);
+        if (dx != nullptr) TIOGA_FREE(dx);
     }
 
     if (own_amr_mesh_info && (m_info != nullptr)) {
@@ -55,8 +55,8 @@ CartGrid::~CartGrid()
         delete m_info;
     }
 
-    if (lcount) TIOGA_FREE(lcount);
-    if (dxlvl) TIOGA_FREE(dxlvl);
+    if (lcount != nullptr) TIOGA_FREE(lcount);
+    if (dxlvl != nullptr) TIOGA_FREE(dxlvl);
 
     if (m_info_device != nullptr) {
         TIOGA_FREE_DEVICE(m_info_device);
@@ -185,15 +185,15 @@ void CartGrid::search(double* x, int* donorid, int npts)
     int dcount;
     dcount = 0;
     for (i = 0; i < npts; i++) {
-        flag = 0;
+        flag = false;
         donorid[i] = -1;
-        for (l = maxlevel - 1; l >= 0 && flag == 0; l--) {
+        for (l = maxlevel - 1; l >= 0 && static_cast<int>(flag) == 0; l--) {
             for (n = 0; n < 3; n++) {
                 il[n] = floor((x[3 * i + n] - xlosup[n]) / dxlvl[3 * l + n]);
             }
-            for (j = 0; j < ngrids && flag == 0; j++) {
+            for (j = 0; j < ngrids && static_cast<int>(flag) == 0; j++) {
                 if (level_num[j] == l) {
-                    flag = 1;
+                    flag = true;
                     // for(n=0;n<3;n++) flag=flag && (x[3*i+n] >=xlo[3*j+n]);
                     // for(n=0;n<3;n++) flag=flag && (x[3*i+n] <=xlo[3*j+n]+
                     //   			 dx[3*j+n]*(dims[3*j+n]));

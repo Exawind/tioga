@@ -192,7 +192,7 @@ void CartBlock::initializeLists(void)
 void CartBlock::clearLists(void)
 {
     int i;
-    if (donorList) {
+    if (donorList != nullptr) {
         for (i = 0; i < ncell + nnode; i++) {
             deallocateLinkList(donorList[i]);
             donorList[i] = nullptr;
@@ -391,10 +391,10 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
 
                 if (donorList[idof] == nullptr) {
                     for (int h = 0; h < nmesh; h++) {
-                        if (holemap[h].existWall) {
+                        if (holemap[h].existWall != 0) {
                             if (checkHoleMap(
                                     xtmp, holemap[h].nx, holemap[h].sam,
-                                    holemap[h].extents)) {
+                                    holemap[h].extents) != 0) {
                                 int ibindex =
                                     isNodal
                                         ? cart_utils::get_node_index(
@@ -417,11 +417,11 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                         temp = temp->next;
                     }
                     for (int h = 0; h < nmesh; h++) {
-                        if (holemap[h].existWall) {
-                            if (!iflag[h]) {
+                        if (holemap[h].existWall != 0) {
+                            if (iflag[h] == 0) {
                                 if (checkHoleMap(
                                         xtmp, holemap[h].nx, holemap[h].sam,
-                                        holemap[h].extents)) {
+                                        holemap[h].extents) != 0) {
                                     int ibindex =
                                         isNodal
                                             ? cart_utils::get_node_index(
@@ -509,8 +509,8 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
         }
     */
 
-    if (iflag) TIOGA_FREE(iflag);
-    if (xtmp) TIOGA_FREE(xtmp);
+    if (iflag != nullptr) TIOGA_FREE(iflag);
+    if (xtmp != nullptr) TIOGA_FREE(xtmp);
     // fclose(fp);
 }
 
@@ -554,7 +554,7 @@ void CartBlock::processIblank(
 
                 if (donorList[idof] == nullptr) {
                     for (int h = 0; h < nmesh; h++) {
-                        if (holemap[h].existWall) {
+                        if (holemap[h].existWall != 0u) {
                             int SB_val =
                                 checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
                             if (SB_val != OUTSIDE_SB) {
@@ -580,8 +580,8 @@ void CartBlock::processIblank(
                         temp = temp->next;
                     }
                     for (int h = 0; h < nmesh; h++) {
-                        if (holemap[h].existWall) {
-                            if (!iflag[h]) {
+                        if (holemap[h].existWall != 0u) {
+                            if (iflag[h] == 0) {
                                 int SB_val =
                                     checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
                                 if (SB_val != OUTSIDE_SB) {
@@ -672,8 +672,8 @@ void CartBlock::processIblank(
         }
     */
 
-    if (iflag) TIOGA_FREE(iflag);
-    if (xtmp) TIOGA_FREE(xtmp);
+    if (iflag != nullptr) TIOGA_FREE(iflag);
+    if (xtmp != nullptr) TIOGA_FREE(xtmp);
     // fclose(fp);
 }
 

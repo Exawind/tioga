@@ -250,7 +250,7 @@ int triBoxOverlap(
     /*  compute plane equation of triangle: normal*x+d=0 */
     CROSS(normal, e0, e1);
 
-    if (!planeBoxOverlap(normal, v0, boxhalfsize)) {
+    if (planeBoxOverlap(normal, v0, boxhalfsize) == 0) {
         return 0;
     }
     return 1; /* box and triangle overlaps */

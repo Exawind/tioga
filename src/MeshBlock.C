@@ -148,13 +148,13 @@ void MeshBlock::preprocess(int use_adaptholemap)
     //
     // find oriented bounding boxes
     //
-    if (check_uniform_hex_flag) {
+    if (check_uniform_hex_flag != 0) {
         check_for_uniform_hex();
-        if (uniform_hex) {
+        if (uniform_hex != 0) {
             create_hex_cell_map();
         }
     }
-    if (obb) TIOGA_FREE(obb);
+    if (obb != nullptr) TIOGA_FREE(obb);
     obb = (OBB*)malloc(sizeof(OBB));
     findOBB(x, obb->xc, obb->dxc, obb->vec, nnodes);
     if (use_adaptholemap == 1) {
@@ -183,8 +183,8 @@ void MeshBlock::tagBoundary(void)
     // initialized, cellRes would be NULL in this case
     //
 
-    if (cellRes) TIOGA_FREE(cellRes);
-    if (nodeRes) TIOGA_FREE(nodeRes);
+    if (cellRes != nullptr) TIOGA_FREE(cellRes);
+    if (nodeRes != nullptr) TIOGA_FREE(nodeRes);
 
     //
     cellRes = (double*)malloc(sizeof(double) * ncells);
@@ -221,7 +221,7 @@ void MeshBlock::tagBoundary(void)
             nodeRes[i] = 0.0;
         }
 
-        if (!dominanceFlag) {
+        if (dominanceFlag == 0) {
             k = 0;
             for (n = 0; n < ntypes; n++) {
                 nvert = nv[n];
@@ -276,10 +276,10 @@ void MeshBlock::tagBoundary(void)
     //
     // Also create the inverse map of nodes
     //
-    if (icft) TIOGA_FREE(icft);
+    if (icft != nullptr) TIOGA_FREE(icft);
     icft =
         (int*)malloc(sizeof(int) * (mapdims[2] * mapdims[1] * mapdims[0] + 1));
-    if (invmap) TIOGA_FREE(invmap);
+    if (invmap != nullptr) TIOGA_FREE(invmap);
     invmap = (int*)malloc(sizeof(int) * nnodes);
     for (int i = 0; i < mapdims[2] * mapdims[1] * mapdims[0] + 1; i++) {
         icft[i] = -1;
@@ -336,7 +336,7 @@ void MeshBlock::tagBoundary(void)
     // now tag all the nodes of boundary cells
     // to be mandatory receptors
     // also make the inverse map mask
-    if (mapmask) TIOGA_FREE(mapmask);
+    if (mapmask != nullptr) TIOGA_FREE(mapmask);
     mapmask = (int*)malloc(sizeof(int) * mapdims[2] * mapdims[1] * mapdims[0]);
     for (int i = 0; i < mapdims[2] * mapdims[1] * mapdims[0]; i++) {
         mapmask[i] = 0;
@@ -353,7 +353,7 @@ void MeshBlock::tagBoundary(void)
             }
             for (m = 0; m < nvert; m++) {
                 inode[m] = vconn[n][nvert * i + m] - BASE;
-                if (iflag[inode[m]]) {
+                if (iflag[inode[m]] != 0) {
                     itag = 1;
                 }
                 for (int j = 0; j < 3; j++) {
@@ -383,7 +383,7 @@ void MeshBlock::tagBoundary(void)
                     }
                 }
             }
-            if (itag) {
+            if (itag != 0) {
                 for (m = 0; m < nvert; m++) {
                     // iflag[inode[m]]=1;
                     nodeRes[inode[m]] = BIGVALUE;
@@ -533,7 +533,7 @@ void MeshBlock::tagBoundaryFaces(void)
     }
 
     // 3. loop WBC unique map and set WBC duplicate flags
-    if (wbc_nonunique_flag) {
+    if (wbc_nonunique_flag != 0) {
         for (i = 0; i < nwbc; i++) {
             int nodei = wbcnode[i] - BASE;
             iflagwbc[nodei] = iflagwbc[WBC_unique_map[i]];
@@ -554,7 +554,7 @@ void MeshBlock::tagBoundaryFaces(void)
 
     // if duplicate found, set duplicate array pointer
     const char* duplicateCheck =
-        (flagduplicate) ? iflagduplicates.data() : nullptr;
+        (flagduplicate) != 0 ? iflagduplicates.data() : nullptr;
 
     /* ======================================================== */
     /* 2. COMPUTE LOCAL BOUNDING BOX (after adjusting iflagwbc) */
@@ -584,16 +584,16 @@ void MeshBlock::tagBoundaryFaces(void)
             flagwbc = flagobc = 0;
             for (j = 0; j < nvert; j++) {
                 ii = vconn[n][nvert * i + j] - BASE;
-                if (iflagwbc[ii]) {
+                if (iflagwbc[ii] != 0) {
                     flagwbc = 1;
                 }
-                if (iflagobc[ii]) {
+                if (iflagobc[ii] != 0) {
                     flagobc = 1;
                 }
             }
 
             // count faces
-            if (flagwbc || flagobc) {
+            if ((flagwbc != 0) || (flagobc != 0)) {
                 ctype = celltypes[nvert];
                 for (j = 0; j < nvert; j++) {
                     inode[j] = vconn[n][nvert * i + j] - BASE;
@@ -603,14 +603,16 @@ void MeshBlock::tagBoundaryFaces(void)
                     const int nfacevert = numfaceverts[ctype][f];
                     const int* faceNodes = faceInfo[ctype][f];
 
-                    if (flagwbc && checkFaceBoundaryNodes(
-                                       inode, iflagwbc.data(), nfacevert,
-                                       faceNodes, nullptr)) {
+                    if ((flagwbc != 0) &&
+                        (checkFaceBoundaryNodes(
+                             inode, iflagwbc.data(), nfacevert, faceNodes,
+                             nullptr) != 0)) {
                         nwbcface++;
                     }
-                    if (flagobc && checkFaceBoundaryNodes(
-                                       inode, iflagobc.data(), nfacevert,
-                                       faceNodes, duplicateCheck)) {
+                    if ((flagobc != 0) &&
+                        (checkFaceBoundaryNodes(
+                             inode, iflagobc.data(), nfacevert, faceNodes,
+                             duplicateCheck) != 0)) {
                         nobcface++;
                     }
                 }
@@ -636,15 +638,15 @@ void MeshBlock::tagBoundaryFaces(void)
             flagwbc = flagobc = 0;
             for (j = 0; j < nvert; j++) {
                 ii = vconn[n][nvert * i + j] - BASE;
-                if (iflagwbc[ii]) {
+                if (iflagwbc[ii] != 0) {
                     flagwbc = 1;
                 }
-                if (iflagobc[ii]) {
+                if (iflagobc[ii] != 0) {
                     flagobc = 1;
                 }
             }
             // count faces
-            if (flagwbc || flagobc) {
+            if ((flagwbc != 0) || (flagobc != 0)) {
                 ctype = celltypes[nvert];
                 for (j = 0; j < nvert; j++) {
                     inode[j] = vconn[n][nvert * i + j] - BASE;
@@ -655,9 +657,10 @@ void MeshBlock::tagBoundaryFaces(void)
                     const int* faceNodes = faceInfo[ctype][f];
 
                     // check wall boundary condition face
-                    if (flagwbc && checkFaceBoundaryNodes(
-                                       inode, iflagwbc.data(), nfacevert,
-                                       faceNodes, nullptr)) {
+                    if ((flagwbc != 0) &&
+                        (checkFaceBoundaryNodes(
+                             inode, iflagwbc.data(), nfacevert, faceNodes,
+                             nullptr) != 0)) {
                         for (d = 0; d < 3; d++) {
                             wbcfacenode[4 * nwbcface + d] =
                                 inode[faceNodes[d] - BASE];
@@ -699,9 +702,10 @@ void MeshBlock::tagBoundaryFaces(void)
                     }
 
                     // check outer boundary condition face
-                    if (flagobc && checkFaceBoundaryNodes(
-                                       inode, iflagobc.data(), nfacevert,
-                                       faceNodes, duplicateCheck)) {
+                    if ((flagobc != 0) &&
+                        (checkFaceBoundaryNodes(
+                             inode, iflagobc.data(), nfacevert, faceNodes,
+                             duplicateCheck) != 0)) {
                         for (d = 0; d < 3; d++) {
                             obcfacenode[4 * nobcface + d] =
                                 inode[faceNodes[d] - BASE];
@@ -905,7 +909,7 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
     // if fringes were reduced use
     // iblank_reduced
     //
-    if (iblank_reduced) {
+    if (iblank_reduced != nullptr) {
         ibl = iblank_reduced;
     } else {
         ibl = iblank;
@@ -1229,7 +1233,8 @@ void MeshBlock::markBoundaryAdaptiveMap(
             // check if tagged already OR
             // if taggedList provided, then octant must also be tagged in other
             // list
-            if (tagList[j] || (taggedList && taggedList[j] == 0)) {
+            if ((tagList[j] != 0u) ||
+                ((taggedList != nullptr) && taggedList[j] == 0)) {
                 continue;
             }
 
@@ -1312,7 +1317,8 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     for (j = 0; j < noctants; j++) {
         // check if tagged already OR
         // if taggedList provided, then octant must also be tagged in other list
-        if (tagList[j] || (taggedList && taggedList[j] == 0)) {
+        if ((tagList[j] != 0u) ||
+            ((taggedList != nullptr) && taggedList[j] == 0)) {
             continue;
         }
 
@@ -1343,9 +1349,9 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
             box_t& box1 = bcfacebox[i];
 
             // test bounds of octant
-            if (overlapping1D(box1.x, box2.x) &&
-                overlapping1D(box1.y, box2.y) &&
-                overlapping1D(box1.z, box2.z)) {
+            if ((overlapping1D(box1.x, box2.x) != 0) &&
+                (overlapping1D(box1.y, box2.y) != 0) &&
+                (overlapping1D(box1.z, box2.z) != 0)) {
                 /* possible overlap: use face intersection test */
 
                 // load face boundary nodes: set pointer to nodes
@@ -1358,7 +1364,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 double* pt3 = &x[3 * inode[2]];
 
                 // test triangle 1: pass first 3 triangles
-                if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt3)) {
+                if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt3) != 0) {
                     tagList[j] = 1;
                     break; // jump to next octant (break from inner BC loop)
                 }
@@ -1367,7 +1373,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 nvert = (inode[3] == -1) ? 3 : 4; // number of face vertices
                 if (nvert == 4) {
                     double* pt4 = &x[3 * inode[3]];
-                    if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt4)) {
+                    if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt4) != 0) {
                         tagList[j] = 1;
                         break; // jump to next octant (break from inner BC loop)
                     }
@@ -1429,7 +1435,8 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     for (j = 0; j < noctants; j++) {
         // check if tagged already OR
         // if taggedList provided, then octant must also be tagged in other list
-        if (tagList[j] || (taggedList && taggedList[j] == 0)) {
+        if ((tagList[j] != 0u) ||
+            ((taggedList != nullptr) && taggedList[j] == 0)) {
             continue;
         }
 
@@ -1460,9 +1467,9 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
             box_t& box1 = bcfacebox[i];
 
             // test bounds of octant
-            if (overlapping1D(box1.x, box2.x) &&
-                overlapping1D(box1.y, box2.y) &&
-                overlapping1D(box1.z, box2.z)) {
+            if ((overlapping1D(box1.x, box2.x) != 0) &&
+                (overlapping1D(box1.y, box2.y) != 0) &&
+                (overlapping1D(box1.z, box2.z) != 0)) {
                 /* possible overlap: use face intersection test */
 
                 // load face boundary nodes: set pointer to nodes
@@ -1475,7 +1482,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 double* pt3 = &x[3 * inode[2]];
 
                 // test triangle 1: pass first 3 triangles
-                if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt3)) {
+                if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt3) != 0) {
                     tagList[j] = 1;
                     break; // jump to next octant (break from inner BC loop)
                 }
@@ -1484,7 +1491,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 nvert = (inode[3] == -1) ? 3 : 4; // number of face vertices
                 if (nvert == 4) {
                     double* pt4 = &x[3 * inode[3]];
-                    if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt4)) {
+                    if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt4) != 0) {
                         tagList[j] = 1;
                         break; // jump to next octant (break from inner BC loop)
                     }
@@ -1552,14 +1559,14 @@ void MeshBlock::getReducedOBB(OBB* obc, double* realData)
                     bbox[j + 3] = std::max(bbox[j + 3], xd[j]);
                 }
             }
-            iflag = 0;
+            iflag = false;
             for (j = 0; j < 3; j++) {
                 iflag = (iflag || (bbox[j] > obc->dxc[j]));
             }
             if (iflag) {
                 continue;
             }
-            iflag = 0;
+            iflag = false;
             for (j = 0; j < 3; j++) {
                 iflag = (iflag || (bbox[j + 3] < -obc->dxc[j]));
             }
@@ -1634,7 +1641,7 @@ void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
         for (k = imin[1]; k <= imax[1]; k++) {
             for (j = imin[0]; j <= imax[0]; j++) {
                 indx = l * mapdims[1] * mapdims[0] + k * mapdims[0] + j;
-                if (mapmask[indx]) {
+                if (mapmask[indx] != 0) {
                     lmin = std::min(lmin, l);
                     kmin = std::min(kmin, k);
                     jmin = std::min(jmin, j);
@@ -1815,17 +1822,19 @@ void MeshBlock::getQueryPoints2(
                 // check if this sub-block overlaps OBC
                 //
                 iflag = 0;
-                for (ij = 0; ij < 3 && !iflag; ij++) {
-                    iflag = (iflag || (xmin[ij] + xd[ij] > obc->dxc[ij]));
+                for (ij = 0; ij < 3 && (iflag == 0); ij++) {
+                    iflag = static_cast<int>(
+                        (iflag != 0) || (xmin[ij] + xd[ij] > obc->dxc[ij]));
                 }
-                if (iflag) {
+                if (iflag != 0) {
                     continue;
                 }
                 iflag = 0;
-                for (ij = 0; ij < 3 && !iflag; ij++) {
-                    iflag = (iflag || (xmax[ij] + xd[ij] < -obc->dxc[ij]));
+                for (ij = 0; ij < 3 && (iflag == 0); ij++) {
+                    iflag = static_cast<int>(
+                        (iflag != 0) || (xmax[ij] + xd[ij] < -obc->dxc[ij]));
                 }
-                if (iflag) {
+                if (iflag != 0) {
                     continue;
                 }
                 // fprintf(fp4,"%f %f %f\n",xc[0],xc[1],xc[2]);
@@ -1940,37 +1949,41 @@ MeshBlock::~MeshBlock()
     // TIOGA_FREE all data that is owned by this MeshBlock
     // i.e not the pointers of the external code.
     //
-    if (cellRes) TIOGA_FREE(cellRes);
-    if (nodeRes) TIOGA_FREE(nodeRes);
-    if (elementBbox) TIOGA_FREE(elementBbox);
-    if (elementList) TIOGA_FREE(elementList);
-    if (adt) {
+    if (cellRes != nullptr) TIOGA_FREE(cellRes);
+    if (nodeRes != nullptr) TIOGA_FREE(nodeRes);
+    if (elementBbox != nullptr) TIOGA_FREE(elementBbox);
+    if (elementList != nullptr) TIOGA_FREE(elementList);
+    if (adt != nullptr) {
         delete[] adt;
     }
-    if (donorList) {
+    if (donorList != nullptr) {
         for (i = 0; i < nnodes; i++) {
             deallocateLinkList(donorList[i]);
         }
         TIOGA_FREE(donorList);
     }
-    if (interpList) {
+    if (interpList != nullptr) {
         for (i = 0; i < interpListSize; i++) {
-            if (interpList[i].inode) TIOGA_FREE(interpList[i].inode);
-            if (interpList[i].weights) TIOGA_FREE(interpList[i].weights);
+            if (interpList[i].inode != nullptr) TIOGA_FREE(interpList[i].inode);
+            if (interpList[i].weights != nullptr)
+                TIOGA_FREE(interpList[i].weights);
         }
         TIOGA_FREE(interpList);
     }
-    if (interpList2) {
+    if (interpList2 != nullptr) {
         for (i = 0; i < interp2ListSize; i++) {
-            if (interpList2[i].inode) TIOGA_FREE(interpList2[i].inode);
-            if (interpList2[i].weights) TIOGA_FREE(interpList2[i].weights);
+            if (interpList2[i].inode != nullptr)
+                TIOGA_FREE(interpList2[i].inode);
+            if (interpList2[i].weights != nullptr)
+                TIOGA_FREE(interpList2[i].weights);
         }
         TIOGA_FREE(interpList2);
     }
-    if (interpListCart) {
+    if (interpListCart != nullptr) {
         for (i = 0; i < interpListCartSize; i++) {
-            if (interpListCart[i].inode) TIOGA_FREE(interpListCart[i].inode);
-            if (interpListCart[i].weights)
+            if (interpListCart[i].inode != nullptr)
+                TIOGA_FREE(interpListCart[i].inode);
+            if (interpListCart[i].weights != nullptr)
                 TIOGA_FREE(interpListCart[i].weights);
         }
         TIOGA_FREE(interpListCart);
@@ -1979,42 +1992,42 @@ MeshBlock::~MeshBlock()
     // if (!ihigh) {
     //  if (iblank_cell) TIOGA_FREE(iblank_cell);
     // }
-    if (obb) TIOGA_FREE(obb);
-    if (obh) TIOGA_FREE(obh);
-    if (isearch) TIOGA_FREE(isearch);
-    if (xsearch) TIOGA_FREE(xsearch);
-    if (res_search) TIOGA_FREE(res_search);
-    if (xtag) TIOGA_FREE(xtag);
-    if (rst) TIOGA_FREE(rst);
-    if (interp2donor) TIOGA_FREE(interp2donor);
-    if (cancelList) {
+    if (obb != nullptr) TIOGA_FREE(obb);
+    if (obh != nullptr) TIOGA_FREE(obh);
+    if (isearch != nullptr) TIOGA_FREE(isearch);
+    if (xsearch != nullptr) TIOGA_FREE(xsearch);
+    if (res_search != nullptr) TIOGA_FREE(res_search);
+    if (xtag != nullptr) TIOGA_FREE(xtag);
+    if (rst != nullptr) TIOGA_FREE(rst);
+    if (interp2donor != nullptr) TIOGA_FREE(interp2donor);
+    if (cancelList != nullptr) {
         deallocateLinkList2(cancelList);
     }
-    if (ctag) TIOGA_FREE(ctag);
-    if (pointsPerCell) TIOGA_FREE(pointsPerCell);
-    if (rxyz) TIOGA_FREE(rxyz);
-    if (picked) TIOGA_FREE(picked);
-    if (rxyzCart) TIOGA_FREE(rxyzCart);
-    if (donorIdCart) TIOGA_FREE(donorIdCart);
-    if (pickedCart) TIOGA_FREE(pickedCart);
-    if (ctag_cart) TIOGA_FREE(ctag_cart);
+    if (ctag != nullptr) TIOGA_FREE(ctag);
+    if (pointsPerCell != nullptr) TIOGA_FREE(pointsPerCell);
+    if (rxyz != nullptr) TIOGA_FREE(rxyz);
+    if (picked != nullptr) TIOGA_FREE(picked);
+    if (rxyzCart != nullptr) TIOGA_FREE(rxyzCart);
+    if (donorIdCart != nullptr) TIOGA_FREE(donorIdCart);
+    if (pickedCart != nullptr) TIOGA_FREE(pickedCart);
+    if (ctag_cart != nullptr) TIOGA_FREE(ctag_cart);
 
-    if (tagsearch) TIOGA_FREE(tagsearch);
-    if (donorId) TIOGA_FREE(donorId);
-    if (receptorIdCart) TIOGA_FREE(receptorIdCart);
-    if (icft) TIOGA_FREE(icft);
-    if (mapmask) TIOGA_FREE(mapmask);
-    if (uindx) TIOGA_FREE(uindx);
-    if (invmap) TIOGA_FREE(invmap);
+    if (tagsearch != nullptr) TIOGA_FREE(tagsearch);
+    if (donorId != nullptr) TIOGA_FREE(donorId);
+    if (receptorIdCart != nullptr) TIOGA_FREE(receptorIdCart);
+    if (icft != nullptr) TIOGA_FREE(icft);
+    if (mapmask != nullptr) TIOGA_FREE(mapmask);
+    if (uindx != nullptr) TIOGA_FREE(uindx);
+    if (invmap != nullptr) TIOGA_FREE(invmap);
     int sflag;
     MPI_Finalized(&sflag);
-    if (!sflag) {
+    if (sflag == 0) {
         if (blockcomm != MPI_COMM_NULL) {
             MPI_Comm_free(&blockcomm);
         }
     }
 
-    if (m_info_device) {
+    if (m_info_device != nullptr) {
         TIOGA_FREE_DEVICE(m_info_device);
     }
 
@@ -2117,12 +2130,12 @@ void MeshBlock::check_for_uniform_hex(void)
             }
         }
     }
-    if (hex_present) {
+    if (hex_present != 0) {
         for (int j = 0; j < 3; j++) {
             dx[j] = sqrt(dx[j]);
         }
         uniform_hex = 1;
-        if (obh) TIOGA_FREE(obh);
+        if (obh != nullptr) TIOGA_FREE(obh);
         obh = (OBB*)malloc(sizeof(OBB));
         for (int j = 0; j < 3; j++) {
             for (int k = 0; k < 3; k++) {
@@ -2199,7 +2212,7 @@ void MeshBlock::create_hex_cell_map(void)
         dx[j] = (2 * obh->dxc[j]) / idims[j];
     }
     //
-    if (uindx) TIOGA_FREE(uindx);
+    if (uindx != nullptr) TIOGA_FREE(uindx);
     uindx = (int*)malloc(sizeof(int) * idims[0] * idims[1] * idims[2]);
     for (int i = 0; i < idims[0] * idims[1] * idims[2]; uindx[i++] = -1) {
         ;

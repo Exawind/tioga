@@ -168,8 +168,8 @@ void tioga::exchangeAMRDonors(void)
     // communication
     for (int i = 0; i < nsend; i++) {
         if ((sndPack[i].nints == 2) && (sndPack[i].nreals == 0)) {
-            if (sndPack[i].intData) TIOGA_FREE(sndPack[i].intData);
-            if (sndPack[i].realData) TIOGA_FREE(sndPack[i].realData);
+            if (sndPack[i].intData != nullptr) TIOGA_FREE(sndPack[i].intData);
+            if (sndPack[i].realData != nullptr) TIOGA_FREE(sndPack[i].realData);
             sndPack[i].nints = sndPack[i].nreals = 0;
         }
     }
@@ -227,7 +227,7 @@ void tioga::exchangeAMRDonors(void)
         }
     }
 
-    if (USE_ADAPTIVE_HOLEMAP) {
+    if (USE_ADAPTIVE_HOLEMAP != 0) {
         for (i = 0; i < ncart; i++) {
             cb[i].processDonors(adaptiveHoleMap, nmesh);
         }
@@ -249,7 +249,7 @@ void tioga::exchangeAMRDonors(void)
     // if (myid==30) {
     for (i = 0; i < ncart; i++) {
         // TRACEI(i);
-        if (cancelledData) TIOGA_FREE(cancelledData);
+        if (cancelledData != nullptr) TIOGA_FREE(cancelledData);
         cancelledData = nullptr;
         ncancel = bcount[i];
         if (ncancel > 0) {
@@ -298,7 +298,7 @@ void tioga::exchangeAMRDonors(void)
     for (int ib = 0; ib < nblocks; ib++) {
         mblocks[ib]->findInterpListCart();
     }
-    if (cancelledData) TIOGA_FREE(cancelledData);
+    if (cancelledData != nullptr) TIOGA_FREE(cancelledData);
     // fclose(fp);
     TIOGA_FREE(bcount);
     TIOGA_FREE(intcount);
