@@ -281,9 +281,9 @@ public:
 
     void preprocess(int use_adaptholemap);
 
-    void tagBoundary(void);
+    void tagBoundary();
 
-    void tagBoundaryFaces(void);
+    void tagBoundaryFaces();
 
     void writeGridFile(int bid);
 
@@ -317,7 +317,7 @@ public:
 
     void updateSolnData(int inode, double* qvar, double* q);
 
-    int getNinterp(void) { return ninterp; };
+    int getNinterp() { return ninterp; };
 
     void getInterpolatedSolution(
         int* nints,
@@ -424,7 +424,7 @@ public:
 
     void getInterpData(int* nrecords, int** intData);
 
-    void clearIblanks(void);
+    void clearIblanks();
 
     void getStats(int mstat[2]);
 
@@ -443,8 +443,8 @@ public:
     //
     // routines for high order connectivity and interpolation
     //
-    void getCellIblanks(void);
-    void getCellIblanks2(void);
+    void getCellIblanks();
+    void getCellIblanks2();
     void set_cell_iblank(int* iblank_cell_input)
     {
         iblank_cell = iblank_cell_input;
@@ -479,10 +479,10 @@ public:
 
     void writeCellFile(int);
     void writeBCnodes(char nodetype2tag, int bodyid);
-    void getInternalNodes(void);
+    void getInternalNodes();
     void getExtraQueryPoints(
         OBB* obb, int* nints, int** intData, int* nreals, double** realData);
-    void processPointDonors(void);
+    void processPointDonors();
     void getInterpolatedSolutionAtPoints(
         int* nints,
         int* nreals,
@@ -513,7 +513,7 @@ public:
         double* xtm,
         bool isNodal,
         INTEGERLIST2*& dataPtr);
-    void setCartIblanks(void);
+    void setCartIblanks();
 
     // Getters
     inline int getMeshTag() const { return meshtag + (1 - BASE); }
@@ -562,7 +562,7 @@ public:
     TIOGA::MeshBlockInfo* d_mesh_info() { return m_info_device; }
 
     void set_interptype(int type) { interptype = type; }
-    void checkOrphans(void);
+    void checkOrphans();
 
     static char overlapping1D(bound_t box1, bound_t box2)
     {

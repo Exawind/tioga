@@ -114,8 +114,8 @@ public:
     void insertInInterpList(
         int procid, int remoteid, int remoteblockid, double* xtmp);
     void writeCellFile(int bid);
-    void clearLists(void);
-    void initializeLists(void);
+    void clearLists();
+    void initializeLists();
 };
 
 #endif /* CARTBLOCK_H */

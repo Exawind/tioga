@@ -104,7 +104,7 @@ void MeshBlock::getMBDonorPackets(
     }
 }
 
-void MeshBlock::initializeDonorList(void)
+void MeshBlock::initializeDonorList()
 {
     int i;
     if (donorList != nullptr) {
@@ -811,7 +811,7 @@ void MeshBlock::cancelDonor(int irecord)
     }
 }
 
-void MeshBlock::resetCoincident(void)
+void MeshBlock::resetCoincident()
 {
     int i, iptr;
     int* ireset;
@@ -859,7 +859,7 @@ void MeshBlock::getInterpData(int* nrecords, int** intData)
     }
 }
 
-void MeshBlock::clearIblanks(void)
+void MeshBlock::clearIblanks()
 {
     int i;
     for (i = 0; i < nnodes; i++) {
@@ -903,7 +903,7 @@ void MeshBlock::setIblanks(int inode)
     //    }
 }
 
-void MeshBlock::reduce_fringes(void)
+void MeshBlock::reduce_fringes()
 {
     int* ibltmp;
     int m, n, nvert, i, flag, ncount, inode[8];

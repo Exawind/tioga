@@ -40,7 +40,7 @@ using namespace TIOGA;
  * have to change it at a later date when
  * there is more time to develop code
  */
-void tioga::getHoleMap(void)
+void tioga::getHoleMap()
 {
     int i, j, k, m;
     int ii, jj, kk;
@@ -216,7 +216,7 @@ void tioga::getHoleMap(void)
  * have to change it at a later date when
  * there is more time to develop code
  */
-void tioga::getAdaptiveHoleMap(void)
+void tioga::getAdaptiveHoleMap()
 {
     int maxtag, maxtagLocal;
     int mbi, mi;
@@ -868,7 +868,7 @@ void tioga::getAdaptiveHoleMap(void)
 /**
  * Output the hole map to a tecplot compatible file
  */
-void tioga::outputHoleMap(void)
+void tioga::outputHoleMap()
 {
     int i, k;
     int nnodes, ncells;
@@ -1050,7 +1050,7 @@ void writePointsVolumeBrick(
 /**
  * Output the adaptive hole map to a tecplot compatible file
  */
-void tioga::outputAdaptiveHoleMap(void)
+void tioga::outputAdaptiveHoleMap()
 {
     char filename[128];
     FILE* file;

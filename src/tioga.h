@@ -152,9 +152,9 @@ public:
     /** set communicator */
     void setCommunicator(MPI_Comm communicator, int id_proc, int nprocs);
 
-    void assembleComplementComms(void);
-    void assembleCompositeComms(void);
-    void assembleCompositeMap(void);
+    void assembleComplementComms();
+    void assembleCompositeComms();
+    void assembleCompositeMap();
 
     int getNumCompositeBodies() { return ncomposite; }
     void setNumCompositeBodies(int ncomposite);
@@ -201,19 +201,19 @@ public:
      */
     void preprocess_amr_data(int root = 0);
 
-    void profile(void);
+    void profile();
 
-    void exchangeBoxes(void);
+    void exchangeBoxes();
 
     void exchangeSearchData(int at_points = 0);
 
-    void exchangeDonors(void);
+    void exchangeDonors();
 
     /** perform overset grid connectivity */
 
-    void performConnectivity(void);
-    void performConnectivityHighOrder(void);
-    void performConnectivityAMR(void);
+    void performConnectivity();
+    void performConnectivityHighOrder();
+    void performConnectivityAMR();
 
     /** update data */
     void dataUpdate(int nvar, int interptype, int at_points = 0);
@@ -223,12 +223,12 @@ public:
     void dataUpdate_highorder(int nvar, double* q, int interptype);
 
     /** get hole map for each mesh */
-    void getHoleMap(void);
-    void getAdaptiveHoleMap(void);
+    void getHoleMap();
+    void getAdaptiveHoleMap();
 
     /** output HoleMaps */
-    void outputHoleMap(void);
-    void outputAdaptiveHoleMap(void);
+    void outputHoleMap();
+    void outputAdaptiveHoleMap();
 
     void writeData(int nvar, int interptype);
 
@@ -309,7 +309,7 @@ public:
         }
     }
 
-    void set_p4est(void)
+    void set_p4est()
     {
         for (int ib = 0; ib < nblocks; ib++) {
             mytag[ib] = -mytag[ib];
@@ -327,11 +327,11 @@ public:
     void set_amr_patch_count(int);
     void register_amr_local_data(int, int, int*, int*);
     void register_amr_solution(int, double*, int, int);
-    void exchangeAMRDonors(void);
-    void checkComm(void);
-    void outputStatistics(void);
+    void exchangeAMRDonors();
+    void checkComm();
+    void outputStatistics();
     void myTimer(char const*, int);
-    void reduce_fringes(void);
+    void reduce_fringes();
 };
 } // namespace TIOGA
 

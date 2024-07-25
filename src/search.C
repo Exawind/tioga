@@ -129,7 +129,7 @@ void uniquenode_map(uint64_t* node_ids, double* node_res, int* itag, int nnodes)
 }
 } // namespace
 
-void MeshBlock::search(void)
+void MeshBlock::search()
 {
     int i, j, k, l, m, n, p, i3;
     int ndim;
@@ -369,7 +369,7 @@ void MeshBlock::search(void)
 #endif
 }
 
-void MeshBlock::search_uniform_hex(void)
+void MeshBlock::search_uniform_hex()
 {
     if (donorId != nullptr) {
         free(donorId);

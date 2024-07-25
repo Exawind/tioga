@@ -181,7 +181,7 @@ void CartBlock::preprocess(CartGrid* cg)
                (dims[2] + 1 + 2 * nf);
 };
 
-void CartBlock::initializeLists(void)
+void CartBlock::initializeLists()
 {
     donorList = (DONORLIST**)malloc(sizeof(DONORLIST*) * (ncell + nnode));
     for (int i = 0; i < (ncell + nnode); i++) {
@@ -189,7 +189,7 @@ void CartBlock::initializeLists(void)
     }
 }
 
-void CartBlock::clearLists(void)
+void CartBlock::clearLists()
 {
     int i;
     if (donorList != nullptr) {

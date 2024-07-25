@@ -27,7 +27,7 @@
 #define ROW 0
 #define COLUMN 1
 
-void MeshBlock::setCartIblanks(void)
+void MeshBlock::setCartIblanks()
 {
     int i, j, m, icount;
     if (ihigh != 0) {
@@ -57,7 +57,7 @@ void MeshBlock::setCartIblanks(void)
     }
 }
 
-void MeshBlock::getUnresolvedMandatoryReceptors(void)
+void MeshBlock::getUnresolvedMandatoryReceptors()
 {
     int i, j, k, m, n, nvert, i3, fcount;
     int inode[8];
@@ -197,7 +197,7 @@ void MeshBlock::writeOBB2(OBB* obc, int bid)
     fclose(fp);
 }
 
-void MeshBlock::findInterpListCart(void)
+void MeshBlock::findInterpListCart()
 {
     int irecord, i3, i, j, n, m;
     double xp[3];

@@ -164,7 +164,7 @@ void MeshBlock::preprocess(int use_adaptholemap)
     tagBoundary();
 }
 
-void MeshBlock::tagBoundary(void)
+void MeshBlock::tagBoundary()
 {
     int i, j, k, n, m, ii;
     int itag;
@@ -442,7 +442,7 @@ void MeshBlock::tagBoundary(void)
     TIOGA_FREE(iextmp1);
 }
 
-void MeshBlock::tagBoundaryFaces(void)
+void MeshBlock::tagBoundaryFaces()
 {
     /* tag boundary faces (wall & outer) for locating hole points */
     char flagwbc, flagobc, flagduplicate;
@@ -2047,7 +2047,7 @@ void MeshBlock::setResolutions(double* nres, double* cres)
 // and create a data structure that will enable faster
 // searching
 //
-void MeshBlock::check_for_uniform_hex(void)
+void MeshBlock::check_for_uniform_hex()
 {
     double xv[8][3];
     int hex_present = 0;
@@ -2201,7 +2201,7 @@ void MeshBlock::check_for_uniform_hex(void)
     return;
 }
 
-void MeshBlock::create_hex_cell_map(void)
+void MeshBlock::create_hex_cell_map()
 {
     for (int j = 0; j < 3; j++) {
         xlow[j] = obh->xc[j];
@@ -2238,7 +2238,7 @@ void MeshBlock::create_hex_cell_map(void)
     }
 }
 
-void MeshBlock::checkOrphans(void)
+void MeshBlock::checkOrphans()
 {
     int norphan = 0;
     char fname[80];

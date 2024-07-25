@@ -32,7 +32,7 @@
 
 using namespace TIOGA;
 
-void tioga::exchangeBoxes(void)
+void tioga::exchangeBoxes()
 {
     int* sndMap;
     int* rcvMap;

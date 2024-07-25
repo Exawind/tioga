@@ -94,7 +94,7 @@ void tioga::registerCompositeBody(
     }
 }
 
-void tioga::assembleCompositeMap(void)
+void tioga::assembleCompositeMap()
 {
     int bodyi, bodyj;
     int maxtag;
@@ -165,7 +165,7 @@ void tioga::assembleCompositeMap(void)
     }
 }
 
-void tioga::assembleCompositeComms(void)
+void tioga::assembleCompositeComms()
 {
     MPI_Group meshblockCompositeGroup;
 
@@ -274,7 +274,7 @@ void tioga::assembleCompositeComms(void)
     }
 }
 
-void tioga::assembleComplementComms(void)
+void tioga::assembleComplementComms()
 {
     MPI_Group meshblockIncludeGroup;
     MPI_Group meshblockExcludeGroup;
@@ -519,7 +519,7 @@ void tioga::register_unstructured_solution()
     }
 }
 
-void tioga::profile(void)
+void tioga::profile()
 {
     this->myTimer("tioga::profile", 0);
     for (int ib = 0; ib < nblocks; ib++) {
@@ -535,7 +535,7 @@ void tioga::profile(void)
     this->myTimer("tioga::profile", 1);
 }
 
-void tioga::performConnectivity(void)
+void tioga::performConnectivity()
 {
     this->myTimer("tioga::performConnectivity", 0);
     if (USE_ADAPTIVE_HOLEMAP != 0) {
@@ -590,7 +590,7 @@ void tioga::performConnectivity(void)
     this->myTimer("tioga::performConnectivity", 1);
 }
 
-void tioga::performConnectivityHighOrder(void)
+void tioga::performConnectivityHighOrder()
 {
     for (int ib = 0; ib < nblocks; ib++) {
         auto& mb = mblocks[ib];
@@ -606,7 +606,7 @@ void tioga::performConnectivityHighOrder(void)
     iorphanPrint = 1;
 }
 
-void tioga::performConnectivityAMR(void)
+void tioga::performConnectivityAMR()
 {
     int i, ierr;
     int iamr;
@@ -1281,7 +1281,7 @@ void tioga::myTimer(char const*, int)
 #endif
 }
 
-void tioga::reduce_fringes(void)
+void tioga::reduce_fringes()
 {
     //
     int nsend, nrecv;

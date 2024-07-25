@@ -27,7 +27,7 @@
 
 using namespace TIOGA;
 
-void tioga::exchangeDonors(void)
+void tioga::exchangeDonors()
 {
     int nsend, nrecv;
     int* sndMap;
@@ -315,7 +315,7 @@ void tioga::exchangeDonors(void)
     }
 }
 
-void tioga::outputStatistics(void)
+void tioga::outputStatistics()
 {
     // #ifdef TIOGA_OUTPUT_STATS
     int mstats[2], mstats_sum[2], mstats_global[2];

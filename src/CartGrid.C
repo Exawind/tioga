@@ -146,7 +146,7 @@ void CartGrid::registerData(int nfin, int* idata, double* rdata, int ngridsin)
 // to promote efficient search once the concept
 // works
 //
-void CartGrid::preprocess(void)
+void CartGrid::preprocess()
 {
     int i, n;
     //

@@ -30,7 +30,7 @@
 #define COLUMN 1
 #define NFRAC 1331
 
-void MeshBlock::getCellIblanks2(void)
+void MeshBlock::getCellIblanks2()
 {
     int i;
     int n, nvert, m;
@@ -83,7 +83,7 @@ void MeshBlock::getCellIblanks2(void)
     }
 }
 
-void MeshBlock::getCellIblanks(void)
+void MeshBlock::getCellIblanks()
 {
     int i;
     int n, nvert, m;
@@ -195,7 +195,7 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
     }
 }
 
-void MeshBlock::getInternalNodes(void)
+void MeshBlock::getInternalNodes()
 {
     int i, m, j, icell, indx, isum, i3, n, nvert;
     //
@@ -305,7 +305,7 @@ void MeshBlock::getExtraQueryPoints(
     TIOGA_FREE(inode);
 }
 
-void MeshBlock::processPointDonors(void)
+void MeshBlock::processPointDonors()
 {
     int i, j, m, n;
     int isum, nvert, i3, ivert;

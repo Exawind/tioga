@@ -65,7 +65,7 @@ public:
         adtReals = nullptr;
         adtExtents = nullptr;
     };
-    void clearData(void)
+    void clearData()
     {
         if (adtIntegers != nullptr) {
             free(adtIntegers);

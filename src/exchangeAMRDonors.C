@@ -25,7 +25,7 @@
 
 using namespace TIOGA;
 
-void tioga::exchangeAMRDonors(void)
+void tioga::exchangeAMRDonors()
 {
     int i, j, k, l, m, n, i3;
     int nsend_sav, nrecv_sav, nsend, nrecv;
@@ -311,7 +311,7 @@ void tioga::exchangeAMRDonors(void)
     TIOGA_FREE(sndPack);
     TIOGA_FREE(rcvPack);
 }
-void tioga::checkComm(void)
+void tioga::checkComm()
 {
     int i;
     int nsend, nrecv;
