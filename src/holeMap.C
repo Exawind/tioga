@@ -948,7 +948,7 @@ void tioga::outputAdaptiveHoleMap(void){
         ds[1] = meta.extents_hi[1] - meta.extents_lo[1];
         ds[2] = meta.extents_hi[2] - meta.extents_lo[2];
 
-        snprintf(filename,16,"AHM.body%d.%d.tec",m,ahm_step++);
+        snprintf(filename,sizeof(filename),"AHM.body%d.%d.tec",m,ahm_step++);
         writePointsHeaderVolume(filename);
 
         file = fopen(filename, "a");

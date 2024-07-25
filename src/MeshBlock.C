@@ -839,10 +839,8 @@ void MeshBlock::writeFlowFile(int bid,double *q,int nvar,int type)
       ibl=iblank;
     }
   //
-  //snprintf(intstring,7,"%d",100000+bid);
-  //snprintf(fname,14,"flow%s.tec",&(intstring[1]));
   snprintf(intstring,sizeof(intstring),"%d",100000+bid);
-  snprintf(fname,sizeof(fname),14,"flow%s.tec",&(intstring[1]));
+  snprintf(fname,sizeof(fname),"flow%s.tec",&(intstring[1]));
   fp=fopen(fname,"w");
   fprintf(fp,"TITLE =\"Tioga output\"\n");
   fprintf(fp,"VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK\",\"BTAG\"");
