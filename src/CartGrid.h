@@ -59,11 +59,11 @@ public:
     CartGrid() = default;
     ~CartGrid();
 
-    void registerData(TIOGA::AMRMeshInfo* m_info);
+    void registerData(TIOGA::AMRMeshInfo* minfo);
     void
     registerData(int nf, const int* idata, const double* rdata, int ngridsin);
     void preprocess();
-    void search(double* x, int* donorid, int nsearch);
+    void search(double* x, int* donorid, int npts);
     void setcallback(void (*f1)(int*, double*, int*, double*))
     {
         donor_frac = f1;

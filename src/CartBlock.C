@@ -232,7 +232,7 @@ void CartBlock::insertInInterpList(
                 rst[n] = (xtmp[n] - xlo[n] - ix[n] * dx[n]) / dx[n];
             }
         }
-        if (!(ix[n] >= 0 && ix[n] < dims[n])) {
+        if (ix[n] < 0 || ix[n] >= dims[n]) {
             TRACEI(procid);
             TRACEI(global_id);
             TRACEI(local_id);
@@ -311,7 +311,7 @@ void CartBlock::insertInDonorList(
                   (j - nf) * (dims[0] + 1) + (i - nf) + ncell;
     }
 
-    if (!(pointid >= 0 && pointid < ncell + nnode)) {
+    if (pointid < 0 || pointid >= ncell + nnode) {
         TRACEI(index);
         TRACEI(nf);
         TRACEI(dims[0]);
@@ -739,7 +739,7 @@ void CartBlock::writeCellFile(int bid)
     }
     if (bid == 0) {
         fprintf(fp, "TITLE =\"Tioga output\"\n");
-        fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\",\"IBLANK_CELL\" ");
+        fprintf(fp, R"(VARIABLES="X","Y","Z","IBLANK_CELL" )");
         fprintf(fp, "\n");
     }
     fprintf(
@@ -798,5 +798,4 @@ void CartBlock::writeCellFile(int bid)
     }
 
     fclose(fp);
-    return;
 }

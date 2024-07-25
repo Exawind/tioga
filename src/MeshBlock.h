@@ -375,10 +375,10 @@ public:
         uint8_t* tagList);
 
     void getQueryPoints(
-        OBB* obb, int* nints, int** intData, int* nreals, double** realData);
+        OBB* obc, int* nints, int** intData, int* nreals, double** realData);
 
     void getQueryPoints2(
-        OBB* obb, int* nints, int** intData, int* nreals, double** realData);
+        OBB* obc, int* nints, int** intData, int* nreals, double** realData);
 
     /** routines that do book keeping */
 
