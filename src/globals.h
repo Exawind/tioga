@@ -33,12 +33,12 @@ tioga* tg;
 ** pointer storage for connectivity arrays that
 ** comes from external solver
 */
-typedef struct inpdata
+using inpdata = struct inpdata
 {
     int** vconn;
     int* nc;
     int* nv;
-} inpdata;
+};
 inpdata idata[MAXBLOCKS];
 
 #endif /* GLOBALS_H */

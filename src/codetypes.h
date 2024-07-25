@@ -33,7 +33,7 @@
 /*  Floating point definition                                         */
 /*====================================================================*/
 #define REAL double
-typedef int32_t qcoord_t;
+using qcoord_t = int32_t;
 /*====================================================================*/
 /*  Base for indexing (0 or 1) */
 /*====================================================================*/
@@ -151,21 +151,21 @@ public:
     };
 };
 
-typedef struct
+using bound_t = struct
 {
     double lo; /**< lower bound */
     double hi; /**< upper bound */
-} bound_t;
+};
 
-typedef struct
+using box_t = struct
 {
     bound_t x; /**< x bounds */
     bound_t y; /**< y bounds */
     bound_t z; /**< z bounds */
-} box_t;
+};
 
 /** The 3D full octant datatype: 130 bytes per octant */
-typedef struct octant_full
+using octant_full_t = struct octant_full
 {
     qcoord_t x, y, z; /**< [12B] binary coordinates */
     uint32_t id;      /**< [4B] element id on level */
@@ -174,15 +174,15 @@ typedef struct octant_full
     uint8_t refined;  /**< [1B] flag if refined (i.e. is a parent) */
     struct octant_full* nhbr[6];     /**< [48B] neighbor octant list */
     struct octant_full* children[8]; /**< [64B] children octants if refined */
-} octant_full_t;
+};
 
-typedef struct octant_coordinates
+using octant_coordinates_t = struct octant_coordinates
 {
     qcoord_t x, y, z; /**< [12B] binary coordinates */
-} octant_coordinates_t;
+};
 
 /** 3D octant datatype: 48 bytes per octant */
-typedef struct octant
+using octant_t = struct octant
 {
     qcoord_t x, y, z; /**< [12B] binary coordinates */
     uint8_t filltype; /**< [1B]  floodfill: [0] inside SB, [1] outside SB, [2]
@@ -190,31 +190,31 @@ typedef struct octant
     uint8_t leafflag; /**< [1B]  flag if refined (i.e. is a parent) */
     uint8_t pad[2];   /**< [2B]  padding */
     uint32_t children[8]; /**< [32B] children octant IDs */
-} octant_t;
+};
 
-typedef struct level_octant
+using level_octant_t = struct level_octant
 {
     uint32_t elem_count; /**< number of octants in level */
     uint8_t level_id;    /**< level number */
     std::vector<octant_full_t>
         octants; /**< [elem_count] locally stored octants */
-} level_octant_t;
+};
 
-typedef struct level_octant_coordinate
+using level_octant_coordinate_t = struct level_octant_coordinate
 {
     uint8_t level_id;    /**< level number */
     uint32_t elem_count; /**< number of octants in level */
     std::vector<octant_coordinates_t> octants; /**< [elem_count] octant list */
-} level_octant_coordinate_t;
+};
 
-typedef struct level
+using level_t = struct level
 {
     uint8_t level_id;              /**< level number */
     uint32_t elem_count;           /**< number of octants in level */
     std::vector<octant_t> octants; /**< [elem_count] octant list */
-} level_t;
+};
 
-typedef struct ADAPTIVE_HOLEMAP_OCTANT
+using ADAPTIVE_HOLEMAP_OCTANT = struct ADAPTIVE_HOLEMAP_OCTANT
 {
     int8_t existWall;     /**< flag to indicate map contains wall */
     double extents_lo[3]; /**< lower coordinates of tree */
@@ -222,48 +222,48 @@ typedef struct ADAPTIVE_HOLEMAP_OCTANT
 
     uint8_t nlevel; /**< number of levels */
     level_octant_t levels[OCTANT_MAXLEVEL];
-} ADAPTIVE_HOLEMAP_OCTANT;
+};
 
-typedef struct
+using ahm_meta_t = struct
 {
     uint8_t nlevel;       /**< number of levels in map */
     double extents_lo[3]; /**< lower coordinates of tree */
     double extents_hi[3]; /**< upper coordinates of tree */
     uint64_t leaf_count;  /**< total leaf octant count */
     uint64_t elem_count;  /**< total octant count */
-} ahm_meta_t;
+};
 
-typedef struct
+using ahm_meta_minimal_t = struct
 {
     uint8_t nlevel;       /**< number of levels in map */
     double extents_lo[3]; /**< lower coordinates of tree */
     double extents_hi[3]; /**< upper coordinates of tree */
     uint64_t elem_count;  /**< total octant count */
-} ahm_meta_minimal_t;
+};
 
-typedef struct ADAPTIVE_HOLEMAP_COMPOSITE
+using ADAPTIVE_HOLEMAP_COMPOSITE = struct ADAPTIVE_HOLEMAP_COMPOSITE
 {
     ahm_meta_minimal_t meta; /**< adaptive hole map meta data */
     level_octant_coordinate_t levels[OCTANT_MAXLEVEL];
-} ADAPTIVE_HOLEMAP_COMPOSITE;
+};
 
-typedef struct ADAPTIVE_HOLEMAP
+using ADAPTIVE_HOLEMAP = struct ADAPTIVE_HOLEMAP
 {
     uint8_t existWall; /**< flag to indicate map contains wall */
     ahm_meta_t meta;   /**< adaptive hole map meta data */
     level_t levels[OCTANT_MAXLEVEL];
-} ADAPTIVE_HOLEMAP;
+};
 
-typedef struct HOLEMAP
+using HOLEMAP = struct HOLEMAP
 {
     int existWall;
     int nx[3];
     int* samLocal;
     int* sam;
     double extents[6];
-} HOLEMAP;
+};
 
-typedef struct OBB
+using OBB = struct OBB
 {
     double xc[3];
     double dxc[3];
@@ -275,26 +275,26 @@ typedef struct OBB
     int tag_remote;
     int send_tag;
     int recv_tag;
-} OBB;
+};
 
-typedef struct DONORLIST
+using DONORLIST = struct DONORLIST
 {
     int donorData[4];
     double donorRes;
     double receptorRes;
     int cancel;
     struct DONORLIST* next;
-} DONORLIST;
+};
 
-typedef struct PACKET
+using PACKET = struct PACKET
 {
     int nints;
     int nreals;
     int* intData;
     REAL* realData;
-} PACKET;
+};
 
-typedef struct INTERPLIST
+using INTERPLIST = struct INTERPLIST
 {
     int cancel;
     int nweights;
@@ -302,9 +302,9 @@ typedef struct INTERPLIST
     double xtmp[3];
     int* inode;
     double* weights;
-} INTERPLIST;
+};
 
-typedef struct INTERPLIST2
+using INTERPLIST2 = struct INTERPLIST2
 {
     int cancel;
     int nweights;
@@ -312,27 +312,27 @@ typedef struct INTERPLIST2
     int* inode;
     double* weights;
     struct INTERPLIST2* next;
-} INTERPLIST2;
+};
 
-typedef struct INTEGERLIST
+using INTEGERLIST = struct INTEGERLIST
 {
     int inode;
     struct INTEGERLIST* next;
-} INTEGERLIST;
+};
 
-typedef struct INTEGERLIST2
+using INTEGERLIST2 = struct INTEGERLIST2
 {
     int intDataSize, realDataSize;
     int* intData;
     double* realData;
     struct INTEGERLIST2* next;
-} INTEGERLIST2;
+};
 
-typedef struct CompositeBody
+using CompositeBody = struct CompositeBody
 {
     double searchTol;
     std::vector<int> bodyids;
     std::vector<int> dominanceflags;
-} CompositeBody;
+};
 
 #endif /* CODETYPES_H */
