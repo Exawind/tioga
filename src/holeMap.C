@@ -389,7 +389,7 @@ void tioga::getAdaptiveHoleMap()
                     &AHMOLocal.levels[0], nullptr, existOuter.data());
 
                 // check if initial octant contains both boundary types
-                if (existOuter[0] != 0u) {
+                if (existOuter[0] != 0U) {
                     lvl->octants[0].refined = 1;
                     adaptMapLocal = 1;
                 }
@@ -513,10 +513,10 @@ void tioga::getAdaptiveHoleMap()
                 // update filltype to wall if touching wall; check both boundary
                 // types
                 for (i = 0; i < new_lvl->elem_count; i++) {
-                    if (existWall[i] != 0u) {
+                    if (existWall[i] != 0U) {
                         new_lvl->octants[i].filltype = WALL_SB;
 
-                        if (existOuter[i] != 0u) {
+                        if (existOuter[i] != 0U) {
                             new_lvl->octants[i].refined = 1;
                             adaptMap = 1;
                         }
@@ -683,7 +683,7 @@ void tioga::getAdaptiveHoleMap()
                             level_octant_t* new_lvl =
                                 &AHMOLocal.levels[level_id];
                             for (int ii = 0; ii < new_lvl->elem_count; ii++) {
-                                if (existWall[ii] != 0u) {
+                                if (existWall[ii] != 0U) {
                                     new_lvl->octants[ii].filltype = WALL_SB;
                                 }
                             }
@@ -732,7 +732,7 @@ void tioga::getAdaptiveHoleMap()
             /* --------------------------- */
             /* copy data for own mesh body */
             /* --------------------------- */
-            if (AHMLocal.existWall != 0u) {
+            if (AHMLocal.existWall != 0U) {
                 // 1. copy nlevel and extents
                 meta.nlevel = AHMOLocal.nlevel;
                 memcpy(
@@ -757,8 +757,8 @@ void tioga::getAdaptiveHoleMap()
                         elvl->octants[j].z = lvl->octants[j].z;
                         elvl->octants[j].filltype = lvl->octants[j].filltype;
                         elvl->octants[j].leafflag =
-                            static_cast<uint8_t>(lvl->octants[j].refined) == 0u;
-                        if (lvl->octants[j].refined != 0u) {
+                            static_cast<uint8_t>(lvl->octants[j].refined) == 0U;
+                        if (lvl->octants[j].refined != 0U) {
                             for (c = 0; c < OCTANT_CHILDREN; c++) {
                                 elvl->octants[j].children[c] =
                                     lvl->octants[j].children[c]->id;
@@ -784,7 +784,7 @@ void tioga::getAdaptiveHoleMap()
         ahm_meta_t& meta = AHME.meta;
 
         meta.elem_count = 0;
-        if (AHME.existWall != 0u) {
+        if (AHME.existWall != 0U) {
             meshblockCompInfo const& MBC = meshblockComplement[i];
 
             // complement + master ranks only involved
@@ -1065,7 +1065,7 @@ void tioga::outputAdaptiveHoleMap()
     static int ahm_step = 0;
     if (myid == 0) {
         for (m = 0; m < nmesh; m++) {
-            if (adaptiveHoleMap[m].existWall != 0u) {
+            if (adaptiveHoleMap[m].existWall != 0U) {
                 ahm_meta_t const& meta = adaptiveHoleMap[m].meta;
 
                 ds[0] = meta.extents_hi[0] - meta.extents_lo[0];

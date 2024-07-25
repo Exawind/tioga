@@ -404,7 +404,7 @@ void MeshBlock::processDonors(
             }
 
             for (j = 0; j < nmesh; j++) {
-                if (j != (meshtag - BASE) && (holemap[j].existWall != 0u)) {
+                if (j != (meshtag - BASE) && (holemap[j].existWall != 0U)) {
                     int const SB_val =
                         checkAdaptiveHoleMap(&x[3 * i], &holemap[j]);
                     if (SB_val != OUTSIDE_SB) {
@@ -439,7 +439,7 @@ void MeshBlock::processDonors(
             // loop all bodies that do NOT have a candidate and check if pt is
             // INSIDE/WALL
             for (j = 0; j < nmesh; j++) {
-                if (j != (meshtag - BASE) && (holemap[j].existWall != 0u)) {
+                if (j != (meshtag - BASE) && (holemap[j].existWall != 0U)) {
                     if (iflag[j] == 0) {
                         // body{j} does NOT have candidate so check if point is
                         // INSIDE SB

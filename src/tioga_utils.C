@@ -1036,114 +1036,114 @@ void octant_children_neighbors(
      */
 
     // OCTANT: [0]
-    c0->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0u))
+    c0->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0U))
                         ? q->nhbr[XLO]->children[1]
                         : q->nhbr[XLO];
     c0->nhbr[XHI] = c1;
-    c0->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0u))
+    c0->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0U))
                         ? q->nhbr[YLO]->children[2]
                         : q->nhbr[YLO];
     c0->nhbr[YHI] = c2;
-    c0->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0u))
+    c0->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0U))
                         ? q->nhbr[ZLO]->children[4]
                         : q->nhbr[ZLO];
     c0->nhbr[ZHI] = c4;
 
     // OCTANT: [1]
     c1->nhbr[XLO] = c0;
-    c1->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0u))
+    c1->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0U))
                         ? q->nhbr[XHI]->children[0]
                         : q->nhbr[XHI];
-    c1->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0u))
+    c1->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0U))
                         ? q->nhbr[YLO]->children[3]
                         : q->nhbr[YLO];
     c1->nhbr[YHI] = c3;
-    c1->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0u))
+    c1->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0U))
                         ? q->nhbr[ZLO]->children[5]
                         : q->nhbr[ZLO];
     c1->nhbr[ZHI] = c5;
 
     // OCTANT: [2]
-    c2->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0u))
+    c2->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0U))
                         ? q->nhbr[XLO]->children[3]
                         : q->nhbr[XLO];
     c2->nhbr[XHI] = c3;
     c2->nhbr[YLO] = c0;
-    c2->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0u))
+    c2->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0U))
                         ? q->nhbr[YHI]->children[0]
                         : q->nhbr[YHI];
-    c2->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0u))
+    c2->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0U))
                         ? q->nhbr[ZLO]->children[6]
                         : q->nhbr[ZLO];
     c2->nhbr[ZHI] = c6;
 
     // OCTANT: [3]
     c3->nhbr[XLO] = c2;
-    c3->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0u))
+    c3->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0U))
                         ? q->nhbr[XHI]->children[2]
                         : q->nhbr[XHI];
     c3->nhbr[YLO] = c1;
-    c3->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0u))
+    c3->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0U))
                         ? q->nhbr[YHI]->children[1]
                         : q->nhbr[YHI];
-    c3->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0u))
+    c3->nhbr[ZLO] = ((q->nhbr[ZLO] != nullptr) && (q->nhbr[ZLO]->refined != 0U))
                         ? q->nhbr[ZLO]->children[7]
                         : q->nhbr[ZLO];
     c3->nhbr[ZHI] = c7;
 
     // OCTANT: [4]
-    c4->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0u))
+    c4->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0U))
                         ? q->nhbr[XLO]->children[5]
                         : q->nhbr[XLO];
     c4->nhbr[XHI] = c5;
-    c4->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0u))
+    c4->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0U))
                         ? q->nhbr[YLO]->children[6]
                         : q->nhbr[YLO];
     c4->nhbr[YHI] = c6;
     c4->nhbr[ZLO] = c0;
-    c4->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0u))
+    c4->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0U))
                         ? q->nhbr[ZHI]->children[0]
                         : q->nhbr[ZHI];
 
     // OCTANT: [5]
     c5->nhbr[XLO] = c4;
-    c5->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0u))
+    c5->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0U))
                         ? q->nhbr[XHI]->children[4]
                         : q->nhbr[XHI];
-    c5->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0u))
+    c5->nhbr[YLO] = ((q->nhbr[YLO] != nullptr) && (q->nhbr[YLO]->refined != 0U))
                         ? q->nhbr[YLO]->children[7]
                         : q->nhbr[YLO];
     c5->nhbr[YHI] = c7;
     c5->nhbr[ZLO] = c1;
-    c5->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0u))
+    c5->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0U))
                         ? q->nhbr[ZHI]->children[1]
                         : q->nhbr[ZHI];
 
     // OCTANT: [6]
-    c6->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0u))
+    c6->nhbr[XLO] = ((q->nhbr[XLO] != nullptr) && (q->nhbr[XLO]->refined != 0U))
                         ? q->nhbr[XLO]->children[7]
                         : q->nhbr[XLO];
     c6->nhbr[XHI] = c7;
     c6->nhbr[YLO] = c4;
-    c6->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0u))
+    c6->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0U))
                         ? q->nhbr[YHI]->children[4]
                         : q->nhbr[YHI];
     c6->nhbr[ZLO] = c2;
-    c6->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0u))
+    c6->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0U))
                         ? q->nhbr[ZHI]->children[2]
                         : q->nhbr[ZHI];
 
     // OCTANT: [7]
     c7->nhbr[XLO] = c6;
-    c7->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0u))
+    c7->nhbr[XHI] = ((q->nhbr[XHI] != nullptr) && (q->nhbr[XHI]->refined != 0U))
                         ? q->nhbr[XHI]->children[6]
                         : q->nhbr[XHI];
     c7->nhbr[YLO] = c5;
-    c7->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0u))
+    c7->nhbr[YHI] = ((q->nhbr[YHI] != nullptr) && (q->nhbr[YHI]->refined != 0U))
                         ? q->nhbr[YHI]->children[5]
                         : q->nhbr[YHI];
     c7->nhbr[ZLO] = c3;
-    c7->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0u))
+    c7->nhbr[ZHI] = ((q->nhbr[ZHI] != nullptr) && (q->nhbr[ZHI]->refined != 0U))
                         ? q->nhbr[ZHI]->children[3]
                         : q->nhbr[ZHI];
 }
@@ -1163,7 +1163,7 @@ void floodfill_octant(octant_full_t* o)
     ipaint = INSIDE_SB;
     for (n = 0; n < nneig && ipaint == INSIDE_SB; n++) {
         // search neighbor if it exists and is a leaf
-        if ((o->nhbr[n] != nullptr) && (o->nhbr[n]->refined == 0u)) {
+        if ((o->nhbr[n] != nullptr) && (o->nhbr[n]->refined == 0U)) {
             if (o->nhbr[n]->filltype == OUTSIDE_SB) {
                 ipaint = OUTSIDE_SB;
             }
@@ -1180,14 +1180,14 @@ void floodfill_level(level_octant_t* level)
 
     for (j = 0; j < level->elem_count; j++) {
         octant_full_t* o = &level->octants[j];
-        if (o->refined == 0u) {
+        if (o->refined == 0U) {
             floodfill_octant(o);
         }
 
         // fill neighbors (required since we jump around mesh due to Morton
         // order)
         for (n = 0; n < nneig; n++) {
-            if ((o->nhbr[n] != nullptr) && (o->nhbr[n]->refined == 0u)) {
+            if ((o->nhbr[n] != nullptr) && (o->nhbr[n]->refined == 0U)) {
                 floodfill_octant(o->nhbr[n]);
             }
         }

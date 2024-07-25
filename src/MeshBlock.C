@@ -1233,7 +1233,7 @@ void MeshBlock::markBoundaryAdaptiveMap(
             // check if tagged already OR
             // if taggedList provided, then octant must also be tagged in other
             // list
-            if ((tagList[j] != 0u) ||
+            if ((tagList[j] != 0U) ||
                 ((taggedList != nullptr) && taggedList[j] == 0)) {
                 continue;
             }
@@ -1317,7 +1317,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     for (j = 0; j < noctants; j++) {
         // check if tagged already OR
         // if taggedList provided, then octant must also be tagged in other list
-        if ((tagList[j] != 0u) ||
+        if ((tagList[j] != 0U) ||
             ((taggedList != nullptr) && taggedList[j] == 0)) {
             continue;
         }
@@ -1435,7 +1435,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     for (j = 0; j < noctants; j++) {
         // check if tagged already OR
         // if taggedList provided, then octant must also be tagged in other list
-        if ((tagList[j] != 0u) ||
+        if ((tagList[j] != 0U) ||
             ((taggedList != nullptr) && taggedList[j] == 0)) {
             continue;
         }
@@ -2131,15 +2131,15 @@ void MeshBlock::check_for_uniform_hex()
         }
     }
     if (hex_present != 0) {
-        for (int j = 0; j < 3; j++) {
-            dx[j] = sqrt(dx[j]);
+        for (double& j : dx) {
+            j = sqrt(j);
         }
         uniform_hex = 1;
         if (obh != nullptr) TIOGA_FREE(obh);
         obh = (OBB*)malloc(sizeof(OBB));
-        for (int j = 0; j < 3; j++) {
+        for (auto& j : obh->vec) {
             for (int k = 0; k < 3; k++) {
-                obh->vec[j][k] = 0;
+                j[k] = 0;
             }
         }
         for (int k = 0; k < 3; k++) {
@@ -2161,8 +2161,8 @@ void MeshBlock::check_for_uniform_hex()
         //
         for (int i = 0; i < nnodes; i++) {
             int const i3 = 3 * i;
-            for (int j = 0; j < 3; j++) {
-                xd[j] = 0;
+            for (double& j : xd) {
+                j = 0;
             }
             //
             for (int j = 0; j < 3; j++) {

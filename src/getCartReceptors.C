@@ -45,9 +45,9 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
     }
     //
     OBB* obcart = (OBB*)malloc(sizeof(OBB));
-    for (int j = 0; j < 3; j++) {
+    for (auto& j : obcart->vec) {
         for (int k = 0; k < 3; k++) {
-            obcart->vec[j][k] = 0;
+            j[k] = 0;
         }
     }
     obcart->vec[0][0] = obcart->vec[1][1] = obcart->vec[2][2] = 1.0;
@@ -81,7 +81,7 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
                  obb->dxc) != 0)) {
             intersectCount++;
 
-            double* xtm = (double*)malloc(sizeof(double) * 3);
+            auto* xtm = (double*)malloc(sizeof(double) * 3);
 
             for (int j = 0; j < cg->dims[3 * c]; j++) {
                 for (int k = 0; k < cg->dims[3 * c + 1]; k++) {
@@ -200,8 +200,8 @@ void MeshBlock::fillReceptorDataPtr(
     }
 
     double xd[3];
-    for (int jj = 0; jj < 3; jj++) {
-        xd[jj] = 0;
+    for (double& jj : xd) {
+        jj = 0;
     }
     for (int jj = 0; jj < 3; jj++) {
         for (int kk = 0; kk < 3; kk++) {

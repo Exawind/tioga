@@ -35,7 +35,7 @@ struct Node
     double x, y, z;
     const double eps = 1E-10;
 
-    Node() {}
+    Node() = default;
     Node(int id, double* geo)
     {
         this->id = id;

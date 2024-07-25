@@ -90,16 +90,16 @@ void tioga::exchangeBoxes()
     int m = 0;
     for (int ib = 0; ib < nblocks; ib++) {
         myOBBdata[m++] = (double)mytag[ib];
-        for (int i = 0; i < 3; i++) {
+        for (auto& i : mblocks[ib]->obb->vec) {
             for (int j = 0; j < 3; j++) {
-                myOBBdata[m++] = mblocks[ib]->obb->vec[i][j];
+                myOBBdata[m++] = i[j];
             }
         }
-        for (int i = 0; i < 3; i++) {
-            myOBBdata[m++] = mblocks[ib]->obb->xc[i];
+        for (double i : mblocks[ib]->obb->xc) {
+            myOBBdata[m++] = i;
         }
-        for (int i = 0; i < 3; i++) {
-            myOBBdata[m++] = mblocks[ib]->obb->dxc[i];
+        for (double i : mblocks[ib]->obb->dxc) {
+            myOBBdata[m++] = i;
         }
     }
 
@@ -119,18 +119,18 @@ void tioga::exchangeBoxes()
         for (int n = 0; n < nbPerProc[k]; n++) {
             obbProc[ix] = k;
             obbID[ix] = (int)(allOBBdata[m++] + 0.5);
-            for (int i = 0; i < 3; i++) {
+            for (auto& i : obbRecv[ix].vec) {
                 for (int j = 0; j < 3; j++) {
-                    obbRecv[ix].vec[i][j] = allOBBdata[m++];
+                    i[j] = allOBBdata[m++];
                 }
             }
 
-            for (int i = 0; i < 3; i++) {
-                obbRecv[ix].xc[i] = allOBBdata[m++];
+            for (double& i : obbRecv[ix].xc) {
+                i = allOBBdata[m++];
             }
 
-            for (int i = 0; i < 3; i++) {
-                obbRecv[ix].dxc[i] = allOBBdata[m++];
+            for (double& i : obbRecv[ix].dxc) {
+                i = allOBBdata[m++];
             }
 
             ix++;
@@ -279,12 +279,12 @@ void tioga::exchangeBoxes()
             obblist[ii].iblk_remote = rcvPack[k].intData[n + 1];
             obblist[ii].tag_remote = rcvPack[k].intData[n + 2];
 
-            for (int i = 0; i < 3; i++) {
-                obblist[ii].xc[i] = rcvPack[k].realData[m++];
+            for (double& i : obblist[ii].xc) {
+                i = rcvPack[k].realData[m++];
             }
 
-            for (int i = 0; i < 3; i++) {
-                obblist[ii].dxc[i] = rcvPack[k].realData[m++];
+            for (double& i : obblist[ii].dxc) {
+                i = rcvPack[k].realData[m++];
             }
         }
     }

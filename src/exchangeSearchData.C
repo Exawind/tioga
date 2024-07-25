@@ -64,7 +64,7 @@ void tioga::exchangeSearchData(int at_points)
     std::vector<int> nintsSend(nobb);
     std::vector<int> nrealsSend(nobb);
     int** int_data = (int**)malloc(sizeof(int*) * nobb);
-    double** real_data = (double**)malloc(sizeof(double*) * nobb);
+    auto** real_data = (double**)malloc(sizeof(double*) * nobb);
 
     for (int ii = 0; ii < nobb; ii++) {
         int const ib = obblist[ii].iblk_local;

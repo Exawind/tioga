@@ -362,7 +362,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
 
     DONORLIST* temp;
     int* iflag = (int*)malloc(sizeof(int) * nmesh);
-    double* xtmp = (double*)malloc(sizeof(double) * 3);
+    auto* xtmp = (double*)malloc(sizeof(double) * 3);
 
     // set variables based on isNodal flag
     int idof = isNodal ? (ncell - 1) : -1;
@@ -526,7 +526,7 @@ void CartBlock::processIblank(
 
     DONORLIST* temp;
     int* iflag = (int*)malloc(sizeof(int) * nmesh);
-    double* xtmp = (double*)malloc(sizeof(double) * 3);
+    auto* xtmp = (double*)malloc(sizeof(double) * 3);
 
     // set variables based on isNodal flag
     int idof = isNodal ? (ncell - 1) : -1;
@@ -555,7 +555,7 @@ void CartBlock::processIblank(
 
                 if (donorList[idof] == nullptr) {
                     for (int h = 0; h < nmesh; h++) {
-                        if (holemap[h].existWall != 0u) {
+                        if (holemap[h].existWall != 0U) {
                             int const SB_val =
                                 checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
                             if (SB_val != OUTSIDE_SB) {
@@ -581,7 +581,7 @@ void CartBlock::processIblank(
                         temp = temp->next;
                     }
                     for (int h = 0; h < nmesh; h++) {
-                        if (holemap[h].existWall != 0u) {
+                        if (holemap[h].existWall != 0U) {
                             if (iflag[h] == 0) {
                                 int const SB_val =
                                     checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);

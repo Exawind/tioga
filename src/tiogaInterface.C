@@ -51,10 +51,10 @@ void tioga_init_f90_(int* scomm)
     MPI_Comm_size(tcomm, &nprocs);
     //
     tg->setCommunicator(tcomm, id_proc, nprocs);
-    for (int i = 0; i < MAXBLOCKS; i++) {
-        idata[i].nc = nullptr;
-        idata[i].nv = nullptr;
-        idata[i].vconn = nullptr;
+    for (auto& i : idata) {
+        i.nc = nullptr;
+        i.nv = nullptr;
+        i.vconn = nullptr;
     }
 }
 
@@ -73,10 +73,10 @@ void tioga_init_(MPI_Comm tcomm)
     MPI_Comm_size(tcomm, &nprocs);
     //
     tg->setCommunicator(tcomm, id_proc, nprocs);
-    for (int i = 0; i < MAXBLOCKS; i++) {
-        idata[i].nc = nullptr;
-        idata[i].nv = nullptr;
-        idata[i].vconn = nullptr;
+    for (auto& i : idata) {
+        i.nc = nullptr;
+        i.nv = nullptr;
+        i.vconn = nullptr;
     }
 }
 
@@ -328,10 +328,10 @@ void tioga_setmexclude_(int* mexclude) { tg->setMexclude(mexclude); }
 void tioga_delete_(void)
 {
     delete[] tg;
-    for (int i = 0; i < MAXBLOCKS; i++) {
-        if (idata[i].nc != nullptr) TIOGA_FREE(idata[i].nc);
-        if (idata[i].nv != nullptr) TIOGA_FREE(idata[i].nv);
-        if (idata[i].vconn != nullptr) TIOGA_FREE(idata[i].vconn);
+    for (auto& i : idata) {
+        if (i.nc != nullptr) TIOGA_FREE(i.nc);
+        if (i.nv != nullptr) TIOGA_FREE(i.nv);
+        if (i.vconn != nullptr) TIOGA_FREE(i.vconn);
     }
 }
 }

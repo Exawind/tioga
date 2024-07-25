@@ -107,7 +107,7 @@ void tioga::exchangeDonors()
     //
     std::vector<int> nrecords(nblocks, 0);
     int** donorRecords = (int**)malloc(sizeof(int*) * nblocks);
-    double** receptorResolution = (double**)malloc(sizeof(double*) * nblocks);
+    auto** receptorResolution = (double**)malloc(sizeof(double*) * nblocks);
     if (USE_ADAPTIVE_HOLEMAP != 0) {
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
