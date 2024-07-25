@@ -23,6 +23,7 @@ Checks: 'bugprone-*,
          -readability-isolate-declaration,
          -readability-avoid-const-params-in-decls,
          -readability-identifier-length,
+         -readability-convert-member-functions-to-static,
          -readability-function-cognitive-complexity'
 WarningsAsErrors: ''
 HeaderFilterRegex: '.*'
