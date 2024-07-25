@@ -1119,15 +1119,15 @@ void MeshBlock::writeBCnodes(char nodetype2tag, int bodyid)
     char filename[100];
     FILE* fp;
 
-    int sbuffer = 1;
+    const int sbuffer = 1;
     int rbuffer;
     int i, ii, i3;
 
     // set node type data
-    int nbc = (nodetype2tag == WALLNODETYPE) ? nwbc : nobc;
+    const int nbc = (nodetype2tag == WALLNODETYPE) ? nwbc : nobc;
     int* bcnode = (nodetype2tag == WALLNODETYPE) ? wbcnode : obcnode;
 
-    int allnbc = 0;
+    const int allnbc = 0;
     MPI_Reduce(&nbc, &allnbc, 1, MPI_INT, MPI_SUM, 0, blockcomm);
 
     static int step = 0;
@@ -1947,9 +1947,7 @@ MeshBlock::~MeshBlock()
     if (nodeRes != nullptr) TIOGA_FREE(nodeRes);
     if (elementBbox != nullptr) TIOGA_FREE(elementBbox);
     if (elementList != nullptr) TIOGA_FREE(elementList);
-    if (adt != nullptr) {
-        delete[] adt;
-    }
+    delete[] adt;
     if (donorList != nullptr) {
         for (i = 0; i < nnodes; i++) {
             deallocateLinkList(donorList[i]);
