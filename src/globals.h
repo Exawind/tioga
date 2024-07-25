@@ -27,7 +27,7 @@
 
 #include "tioga.h"
 using namespace TIOGA;
-#define MAXBLOCKS 100
+enum { MAXBLOCKS = 100 };
 tioga* tg;
 /*
 ** pointer storage for connectivity arrays that

@@ -41,9 +41,7 @@ class CartGrid;
  * 02/20/2014
  */
 
-#define FRINGE -1
-#define HOLE 0
-#define FIELD 1
+enum { FRINGE = -1, HOLE = 0, FIELD = 1 };
 
 class MeshBlock
 {

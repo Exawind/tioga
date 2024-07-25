@@ -1,8 +1,7 @@
 #include "kaiser.h"
 #include <cmath>
 
-#define NROWS 3
-#define NCOLS 3
+enum { NROWS = 3, NCOLS = 3 };
 
 // This functions expects a 3x3 matrix
 void kaiser(

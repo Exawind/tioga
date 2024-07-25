@@ -34,12 +34,12 @@
  *  meshes containing element and node IDs greater than what a 4-byte signed int
  *  can support
  */
-#define TIOGA_HAS_UINT64T 1
+enum { TIOGA_HAS_UINT64T = 1 };
 
 /** Define a macro entry flagging whether TIOGA has hetereogenous execution
  *  space support, and uses the new API for registering mesh/solution data
  */
-#define TIOGA_HAS_NGP_IFACE 1
+enum { TIOGA_HAS_NGP_IFACE = 1 };
 
 /**
  * Topology Independent Overset Grid Assembler (TIOGA)
