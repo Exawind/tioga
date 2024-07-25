@@ -221,15 +221,17 @@ void parallelComm::sendRecvPackets(PACKET* sndPack, PACKET* rcvPack)
     irnum = 0;
     tag = 1;
     //
-    for (i = 0; i < nrecv; i++)
+    for (i = 0; i < nrecv; i++) {
         MPI_Irecv(
             &(rcount[2 * i]), 2, MPI_INT, rcvMap[i], tag, scomm,
             &request[irnum++]);
+    }
     //
-    for (i = 0; i < nsend; i++)
+    for (i = 0; i < nsend; i++) {
         MPI_Isend(
             &(scount[2 * i]), 2, MPI_INT, sndMap[i], tag, scomm,
             &request[irnum++]);
+    }
     //
     MPI_Waitall(irnum, request, status);
     for (i = 0; i < nrecv; i++) {
@@ -299,15 +301,17 @@ void parallelComm::sendRecvPacketsCheck(PACKET* sndPack, PACKET* rcvPack)
     irnum = 0;
     tag = 1;
     //
-    for (i = 0; i < nrecv; i++)
+    for (i = 0; i < nrecv; i++) {
         MPI_Irecv(
             &(rcount[2 * i]), 2, MPI_INT, rcvMap[i], tag, scomm,
             &request[irnum++]);
+    }
     //
-    for (i = 0; i < nsend; i++)
+    for (i = 0; i < nsend; i++) {
         MPI_Isend(
             &(scount[2 * i]), 2, MPI_INT, sndMap[i], tag, scomm,
             &request[irnum++]);
+    }
     //
     MPI_Waitall(irnum, request, status);
 
@@ -380,8 +384,12 @@ void parallelComm::setMap(int ns, int nr, int* snd, int* rcv)
     sndMap = (int*)malloc(sizeof(int) * nsend);
     rcvMap = (int*)malloc(sizeof(int) * nrecv);
     //
-    for (i = 0; i < nsend; i++) sndMap[i] = snd[i];
-    for (i = 0; i < nrecv; i++) rcvMap[i] = rcv[i];
+    for (i = 0; i < nsend; i++) {
+        sndMap[i] = snd[i];
+    }
+    for (i = 0; i < nrecv; i++) {
+        rcvMap[i] = rcv[i];
+    }
 }
 
 void parallelComm::getMap(int* ns, int* nr, int** snd, int** rcv)

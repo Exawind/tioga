@@ -35,7 +35,9 @@ void tioga::exchangeDonors(void)
     // and receiving
     //
     pc->getMap(&nsend, &nrecv, &sndMap, &rcvMap);
-    if (nsend == 0) return;
+    if (nsend == 0) {
+        return;
+    }
     //
     // create packets to send and receive
     // and initialize them to zero
@@ -212,8 +214,9 @@ void tioga::exchangeDonors(void)
             sndPack[k].nints += 2;
         }
     }
-    for (int k = 0; k < nsend; k++)
+    for (int k = 0; k < nsend; k++) {
         sndPack[k].intData = (int*)malloc(sizeof(int) * sndPack[k].nints);
+    }
 
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
@@ -262,8 +265,9 @@ void tioga::exchangeDonors(void)
             sndPack[k].nints += 2;
         }
     }
-    for (int k = 0; k < nsend; k++)
+    for (int k = 0; k < nsend; k++) {
         sndPack[k].intData = (int*)malloc(sizeof(int) * sndPack[k].nints);
+    }
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
             int k = donorRecords[n][3 * i];
@@ -277,7 +281,9 @@ void tioga::exchangeDonors(void)
     //
     pc->sendRecvPackets(sndPack, rcvPack);
     //
-    for (int ib = 0; ib < nblocks; ib++) mblocks[ib]->clearIblanks();
+    for (int ib = 0; ib < nblocks; ib++) {
+        mblocks[ib]->clearIblanks();
+    }
 
     for (int k = 0; k < nrecv; k++) {
         int m = 0;

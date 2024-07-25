@@ -52,7 +52,9 @@ void MeshBlock::checkContainment(
         nvert = nv[n];
         for (m = 0; m < nvert; m++) {
             i3 = 3 * (vconn[n][nvert * i + m] - BASE);
-            for (j = 0; j < 3; j++) xv[m][j] = x[i3 + j];
+            for (j = 0; j < 3; j++) {
+                xv[m][j] = x[i3 + j];
+            }
         }
         //
         computeNodalWeights(xv, xsearch, frac, nvert);
@@ -69,8 +71,9 @@ void MeshBlock::checkContainment(
                 cellIndex[0] = -1;
                 return;
             }
-            if (fabs(frac[m]) < searchTol && cellRes[icell] == BIGVALUE)
+            if (fabs(frac[m]) < searchTol && cellRes[icell] == BIGVALUE) {
                 cellIndex[1] = 1;
+            }
         }
 
         return;
@@ -79,7 +82,9 @@ void MeshBlock::checkContainment(
         cellIndex[0] = -1;
         cellIndex[1] = 0;
         donor_inclusion_test(&icell1, xsearch, &passFlag, &(rst[ipoint]));
-        if (passFlag) cellIndex[0] = icell;
+        if (passFlag) {
+            cellIndex[0] = icell;
+        }
         return;
     }
 }

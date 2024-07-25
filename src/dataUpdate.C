@@ -47,7 +47,9 @@ void MeshBlock::getInterpolatedSolution(
             (*nreals) = (*nreals) + nvar;
         }
     }
-    if ((*nints) == 0) return;
+    if ((*nints) == 0) {
+        return;
+    }
     //
     qq = (double*)malloc(sizeof(double) * nvar);
     (*intData) = (int*)malloc(sizeof(int) * 3 * (*nints));
@@ -57,7 +59,9 @@ void MeshBlock::getInterpolatedSolution(
     if (interptype == ROW) {
         for (i = 0; i < ninterp; i++) {
             if (!interpList[i].cancel) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpList[i].nweights; m++) {
                     inode = interpList[i].inode[m];
                     weight = interpList[i].weights[m];
@@ -65,29 +69,37 @@ void MeshBlock::getInterpolatedSolution(
                         TRACED(weight);
                         printf("warning: weights are not convex 1\n");
                     }
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[inode * nvar + k] * weight;
+                    }
                 }
                 (*intData)[icount++] = interpList[i].receptorInfo[0];
                 (*intData)[icount++] = interpList[i].receptorInfo[1];
                 (*intData)[icount++] = interpList[i].receptorInfo[2];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
     } else if (interptype == COLUMN) {
         for (i = 0; i < ninterp; i++) {
             if (!interpList[i].cancel) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpList[i].nweights; m++) {
                     inode = interpList[i].inode[m];
                     weight = interpList[i].weights[m];
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[k * nnodes + inode] * weight;
+                    }
                 }
                 (*intData)[icount++] = interpList[i].receptorInfo[0];
                 (*intData)[icount++] = interpList[i].receptorInfo[1];
                 (*intData)[icount++] = interpList[i].receptorInfo[2];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
     }
@@ -105,10 +117,14 @@ void MeshBlock::updateSolnData(int inode, double* qvar, double* q)
             TRACEI(nnodes);
         }
         assert(inode < nnodes);
-        for (k = 0; k < nvar; k++) q[inode * nvar + k] = qvar[k];
+        for (k = 0; k < nvar; k++) {
+            q[inode * nvar + k] = qvar[k];
+        }
     }
     if (interptype == COLUMN) {
-        for (k = 0; k < nvar; k++) q[nnodes * k + inode] = qvar[k];
+        for (k = 0; k < nvar; k++) {
+            q[nnodes * k + inode] = qvar[k];
+        }
     }
 }
 
@@ -151,7 +167,9 @@ void MeshBlock::getReceptorInfo(int* receptors)
 {
     int k = 0;
     for (int i = 0; i < ninterp; i++) {
-        if (interpList[i].cancel) continue;
+        if (interpList[i].cancel) {
+            continue;
+        }
 
         receptors[k++] = interpList[i].receptorInfo[0];
         receptors[k++] = interpList[i].receptorInfo[1];

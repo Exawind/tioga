@@ -66,7 +66,9 @@ void solvec(double** a, double* b, int* iflag, int n)
 
     for (i = n - 1; i >= 0; i--) {
         sum = 0;
-        for (j = i + 1; j < n; j++) sum += a[i][j] * b[j];
+        for (j = i + 1; j < n; j++) {
+            sum += a[i][j] * b[j];
+        }
         b[i] = (b[i] - sum) / a[i][i];
     }
     *iflag = 1;
@@ -84,7 +86,9 @@ void newtonSolve(double f[7][3], double* u1, double* v1, double* w1)
     double alph;
     //
     lhs = (double**)malloc(sizeof(double) * 3);
-    for (i = 0; i < 3; i++) lhs[i] = (double*)malloc(sizeof(double) * 3);
+    for (i = 0; i < 3; i++) {
+        lhs[i] = (double*)malloc(sizeof(double) * 3);
+    }
     rhs = (double*)malloc(sizeof(double) * 3);
     //
     itmax = 500;
@@ -100,12 +104,15 @@ void newtonSolve(double f[7][3], double* u1, double* v1, double* w1)
         wu = w * u;
         uvw = u * v * w;
 
-        for (j = 0; j < 3; j++)
+        for (j = 0; j < 3; j++) {
             rhs[j] = f[0][j] + f[1][j] * u + f[2][j] * v + f[3][j] * w +
                      f[4][j] * uv + f[5][j] * vw + f[6][j] * wu + f[7][j] * uvw;
+        }
 
         norm = rhs[0] * rhs[0] + rhs[1] * rhs[1] + rhs[2] * rhs[2];
-        if (sqrt(norm) <= convergenceLimit) break;
+        if (sqrt(norm) <= convergenceLimit) {
+            break;
+        }
 
         for (j = 0; j < 3; j++) {
             lhs[j][0] = f[1][j] + f[4][j] * v + f[6][j] * w + f[7][j] * vw;
@@ -114,7 +121,9 @@ void newtonSolve(double f[7][3], double* u1, double* v1, double* w1)
         }
 
         solvec(lhs, rhs, &isolflag, 3);
-        if (isolflag == 0) break;
+        if (isolflag == 0) {
+            break;
+        }
 
         u -= (rhs[0] * alph);
         v -= (rhs[1] * alph);
@@ -152,10 +161,14 @@ void computeNodalWeights(double xv[8][3], double* xp, double frac[8], int nvert)
         // tetrahedron
         //
         lhs = (double**)malloc(sizeof(double) * 3);
-        for (i = 0; i < 3; i++) lhs[i] = (double*)malloc(sizeof(double) * 3);
+        for (i = 0; i < 3; i++) {
+            lhs[i] = (double*)malloc(sizeof(double) * 3);
+        }
         rhs = (double*)malloc(sizeof(double) * 3);
         for (k = 0; k < 3; k++) {
-            for (j = 0; j < 3; j++) lhs[j][k] = xv[k][j] - xv[3][j];
+            for (j = 0; j < 3; j++) {
+                lhs[j][k] = xv[k][j] - xv[3][j];
+            }
             rhs[k] = xp[k] - xv[3][k];
         }
         //
@@ -166,7 +179,9 @@ void computeNodalWeights(double xv[8][3], double* xp, double frac[8], int nvert)
         // check if the solution is not degenerate
         //
         if (isolflag) {
-            for (k = 0; k < 3; k++) frac[k] = rhs[k];
+            for (k = 0; k < 3; k++) {
+                frac[k] = rhs[k];
+            }
             frac[3] = 1. - frac[0] - frac[1] - frac[2];
         } else {
             frac[0] = 1.0;
@@ -318,6 +333,8 @@ double tdot_product(double a[3], double b[3], double c[3])
 {
     int k;
     double dp = 0.0;
-    for (k = 0; k < 3; k++) dp += ((a[k] - c[k]) * (b[k] - c[k]));
+    for (k = 0; k < 3; k++) {
+        dp += ((a[k] - c[k]) * (b[k] - c[k]));
+    }
     return dp;
 }

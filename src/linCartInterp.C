@@ -147,10 +147,11 @@ void linear_interpolation(
     // along z-axis
     create_donor_stencil(nf, ijk_cell, dims, ref_ratio, ijk_stencil, isNodal);
 
-    if (isNodal)
+    if (isNodal) {
         compute_ref_coords_node(ref_ratio, ref_coord);
-    else
+    } else {
         compute_ref_coords_cell(ref_ratio, ref_coord);
+    }
 
     compute_weights(ref_coord, weights);
 }

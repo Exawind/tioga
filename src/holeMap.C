@@ -63,7 +63,9 @@ void tioga::getHoleMap(void)
     for (int i = 0; i < nblocks; i++) {
         auto& mb = mblocks[i];
         mb->getWallBounds(&mtagtmp, &existWall[i], wbox[i].data());
-        if (mtagtmp > meshtag) meshtag = mtagtmp;
+        if (mtagtmp > meshtag) {
+            meshtag = mtagtmp;
+        }
     }
     MPI_Allreduce(&meshtag, &maxtag, 1, MPI_INT, MPI_MAX, scomm);
     //
@@ -77,7 +79,9 @@ void tioga::getHoleMap(void)
     existHoleLocal = (int*)malloc(sizeof(int) * maxtag);
     existHole = (int*)malloc(sizeof(int) * maxtag);
     //
-    for (i = 0; i < maxtag; i++) existHole[i] = existHoleLocal[i] = 0;
+    for (i = 0; i < maxtag; i++) {
+        existHole[i] = existHoleLocal[i] = 0;
+    }
     //
     for (int i = 0; i < nblocks; i++) {
         existHoleLocal[mtags[i] - 1] = existWall[i];
@@ -85,15 +89,25 @@ void tioga::getHoleMap(void)
     //
     MPI_Allreduce(existHoleLocal, existHole, maxtag, MPI_INT, MPI_MAX, scomm);
     //
-    for (i = 0; i < maxtag; i++) holeMap[i].existWall = existHole[i];
+    for (i = 0; i < maxtag; i++) {
+        holeMap[i].existWall = existHole[i];
+    }
     //
     bboxLocal = (double*)malloc(sizeof(double) * 6 * maxtag);
     bboxGlobal = (double*)malloc(sizeof(double) * 6 * maxtag);
     //
-    for (i = 0; i < 3 * maxtag; i++) bboxLocal[i] = BIGVALUE;
-    for (i = 0; i < 3 * maxtag; i++) bboxLocal[i + 3 * maxtag] = -BIGVALUE;
-    for (i = 0; i < 3 * maxtag; i++) bboxGlobal[i] = BIGVALUE;
-    for (i = 0; i < 3 * maxtag; i++) bboxGlobal[i + 3 * maxtag] = -BIGVALUE;
+    for (i = 0; i < 3 * maxtag; i++) {
+        bboxLocal[i] = BIGVALUE;
+    }
+    for (i = 0; i < 3 * maxtag; i++) {
+        bboxLocal[i + 3 * maxtag] = -BIGVALUE;
+    }
+    for (i = 0; i < 3 * maxtag; i++) {
+        bboxGlobal[i] = BIGVALUE;
+    }
+    for (i = 0; i < 3 * maxtag; i++) {
+        bboxGlobal[i + 3 * maxtag] = -BIGVALUE;
+    }
 
     //
     for (int n = 0; n < nblocks; n++) {
@@ -137,8 +151,9 @@ void tioga::getHoleMap(void)
             bufferSize = holeMap[i].nx[0] * holeMap[i].nx[1] * holeMap[i].nx[2];
             holeMap[i].sam = (int*)malloc(sizeof(int) * bufferSize);
             holeMap[i].samLocal = (int*)malloc(sizeof(int) * bufferSize);
-            for (j = 0; j < bufferSize; j++)
+            for (j = 0; j < bufferSize; j++) {
                 holeMap[i].sam[j] = holeMap[i].samLocal[j] = 0;
+            }
         }
     }
     //
@@ -174,9 +189,11 @@ void tioga::getHoleMap(void)
     //
     // now fill the holeMap
     //
-    for (i = 0; i < maxtag; i++)
-        if (holeMap[i].existWall)
+    for (i = 0; i < maxtag; i++) {
+        if (holeMap[i].existWall) {
             fillHoleMap(holeMap[i].sam, holeMap[i].nx, isym);
+        }
+    }
     //
     // output the hole map
     //
@@ -217,7 +234,9 @@ void tioga::getAdaptiveHoleMap(void)
     /* =============================== */
     /* B: reallocate adaptive hole map */
     /* =============================== */
-    if (adaptiveHoleMap) delete[] adaptiveHoleMap;
+    if (adaptiveHoleMap) {
+        delete[] adaptiveHoleMap;
+    }
     adaptiveHoleMap = new ADAPTIVE_HOLEMAP[maxtag];
     for (mi = 0; mi < maxtag; mi++) {
         adaptiveHoleMap[mi].meta.nlevel = 0;
@@ -228,8 +247,9 @@ void tioga::getAdaptiveHoleMap(void)
     ADAPTIVE_HOLEMAP_COMPOSITE* adaptiveHoleMapCOMPOSITE;
     if (ncomposite) {
         adaptiveHoleMapCOMPOSITE = new ADAPTIVE_HOLEMAP_COMPOSITE[maxtag];
-        for (mi = 0; mi < maxtag; mi++)
+        for (mi = 0; mi < maxtag; mi++) {
             adaptiveHoleMapCOMPOSITE[mi].meta.nlevel = 0;
+        }
     }
 
     /* ====================== */
@@ -248,8 +268,9 @@ void tioga::getAdaptiveHoleMap(void)
         MPI_IN_PLACE, existHole.data(), maxtag, MPI_UINT8_T, MPI_MAX, scomm);
 
     // set wall flags for all hole maps
-    for (mi = 0; mi < maxtag; mi++)
+    for (mi = 0; mi < maxtag; mi++) {
         adaptiveHoleMap[mi].existWall = existHole[mi];
+    }
 
     /* =============================== */
     /* D: construct Adaptive Hole Maps */
@@ -286,8 +307,12 @@ void tioga::getAdaptiveHoleMap(void)
             AHMOLocal.existWall = existHole[meshtag - BASE];
 
             // initialize global bounding box data
-            for (i = 0; i < 3; i++) bboxGlobal[i] = BIGVALUE;
-            for (i = 0; i < 3; i++) bboxGlobal[3 + i] = -BIGVALUE;
+            for (i = 0; i < 3; i++) {
+                bboxGlobal[i] = BIGVALUE;
+            }
+            for (i = 0; i < 3; i++) {
+                bboxGlobal[3 + i] = -BIGVALUE;
+            }
 
             // get the global bounding box info for this body (note the
             // communicator)
@@ -314,8 +339,12 @@ void tioga::getAdaptiveHoleMap(void)
                 dsmax = std::max(ds[0], ds[1]);
                 dsmax = std::max(dsmax, ds[2]);
                 dsbox = dsmax * 0.01;
-                for (j = 0; j < 3; j++) AHMOLocal.extents_lo[j] -= (dsbox);
-                for (j = 0; j < 3; j++) AHMOLocal.extents_hi[j] += (dsbox);
+                for (j = 0; j < 3; j++) {
+                    AHMOLocal.extents_lo[j] -= (dsbox);
+                }
+                for (j = 0; j < 3; j++) {
+                    AHMOLocal.extents_hi[j] += (dsbox);
+                }
 
                 // initialize map for this body
                 AHMOLocal.nlevel = 1;
@@ -348,7 +377,9 @@ void tioga::getAdaptiveHoleMap(void)
                 lvl->octants[0].refined = 0;
 
                 // set neighbor octants to NULL since Level 0
-                for (n = 0; n < 6; n++) lvl->octants[0].nhbr[n] = nullptr;
+                for (n = 0; n < 6; n++) {
+                    lvl->octants[0].nhbr[n] = nullptr;
+                }
 
                 // check if outer boundary exists
                 mb->markBoundaryMapSurface(
@@ -366,9 +397,10 @@ void tioga::getAdaptiveHoleMap(void)
                 &adaptMapLocal, &adaptMap, 1, MPI_INT, MPI_MAX, mb->blockcomm);
 
             // set all rank Outer flags
-            if (adaptMap)
+            if (adaptMap) {
                 AHMOLocal.levels[0].octants[0].refined = existOuter[0] =
                     existWall[0] = 1;
+            }
 
             // recursively refine adaptive map until no intersection of wall and
             // outer octants
@@ -389,7 +421,9 @@ void tioga::getAdaptiveHoleMap(void)
                 nrefine = 0;
                 for (i = 0; i < lvl->elem_count; i++) {
                     refineFlag[i] = existWall[i] && existOuter[i];
-                    if (refineFlag[i]) nrefine++;
+                    if (refineFlag[i]) {
+                        nrefine++;
+                    }
                 }
                 int nchildren = OCTANT_CHILDREN * nrefine;
 
@@ -591,8 +625,9 @@ void tioga::getAdaptiveHoleMap(void)
 
                         // allocate leaf octant data for level data (if not
                         // master rank)
-                        if (MBC.masterID != MBC.id)
+                        if (MBC.masterID != MBC.id) {
                             level->octants.resize(level->elem_count);
+                        }
                     }
 
                     // d. loop each level in adaptive hole map: communicate
@@ -645,8 +680,9 @@ void tioga::getAdaptiveHoleMap(void)
                             level_octant_t* new_lvl =
                                 &AHMOLocal.levels[level_id];
                             for (int ii = 0; ii < new_lvl->elem_count; ii++) {
-                                if (existWall[ii])
+                                if (existWall[ii]) {
                                     new_lvl->octants[ii].filltype = WALL_SB;
+                                }
                             }
                         }
                     }
@@ -665,8 +701,9 @@ void tioga::getAdaptiveHoleMap(void)
             ADAPTIVE_HOLEMAP_OCTANT& AHMOLocal = AHMO[mbi];
 
             if (AHMOLocal.existWall) {
-                for (l = 0; l < AHMOLocal.nlevel; l++)
+                for (l = 0; l < AHMOLocal.nlevel; l++) {
                     floodfill_level(&AHMOLocal.levels[l]);
+                }
             }
         }
 
@@ -718,9 +755,10 @@ void tioga::getAdaptiveHoleMap(void)
                         elvl->octants[j].filltype = lvl->octants[j].filltype;
                         elvl->octants[j].leafflag = !lvl->octants[j].refined;
                         if (lvl->octants[j].refined) {
-                            for (c = 0; c < OCTANT_CHILDREN; c++)
+                            for (c = 0; c < OCTANT_CHILDREN; c++) {
                                 elvl->octants[j].children[c] =
                                     lvl->octants[j].children[c]->id;
+                            }
                         }
 
                         // update leaf counter
@@ -767,8 +805,9 @@ void tioga::getAdaptiveHoleMap(void)
 
                     // allocate leaf octant data for level data (if not master
                     // rank)
-                    if (MBC.masterID != MBC.id)
+                    if (MBC.masterID != MBC.id) {
                         elvl->octants.resize(elvl->elem_count);
+                    }
 
                     // communicate leaf octant data on level
                     MPI_Bcast(
@@ -787,7 +826,9 @@ void tioga::getAdaptiveHoleMap(void)
     MPI_Barrier(scomm);
 
     // clean up memory
-    if (ncomposite) delete[] adaptiveHoleMapCOMPOSITE;
+    if (ncomposite) {
+        delete[] adaptiveHoleMapCOMPOSITE;
+    }
 
     // set the global number of meshes to maxtag
     nmesh = maxtag;
@@ -834,7 +875,7 @@ void tioga::outputHoleMap(void)
     char intstring[12];
     char fname[80];
 
-    for (i = 0; i < nmesh; i++)
+    for (i = 0; i < nmesh; i++) {
         if (holeMap[i].existWall) {
             snprintf(
                 intstring, sizeof(intstring), "%d", 100000 + i + 100 * myid);
@@ -852,35 +893,47 @@ void tioga::outputHoleMap(void)
             fprintf(
                 fp,
                 "VARLOCATION = (1=NODAL, 2=NODAL, 3=NODAL, 4=CELLCENTERED)\n");
-            for (k = 0; k < 3; k++)
+            for (k = 0; k < 3; k++) {
                 ds[k] = (holeMap[i].extents[k + 3] - holeMap[i].extents[k]) /
                         (holeMap[i].nx[k]);
+            }
             //
-            for (kk = 0; kk < holeMap[i].nx[2] + 1; kk++)
-                for (jj = 0; jj < holeMap[i].nx[1] + 1; jj++)
-                    for (ii = 0; ii < holeMap[i].nx[0] + 1; ii++)
+            for (kk = 0; kk < holeMap[i].nx[2] + 1; kk++) {
+                for (jj = 0; jj < holeMap[i].nx[1] + 1; jj++) {
+                    for (ii = 0; ii < holeMap[i].nx[0] + 1; ii++) {
                         fprintf(fp, "%.14e\n", ii * ds[0]);
-            for (kk = 0; kk < holeMap[i].nx[2] + 1; kk++)
-                for (jj = 0; jj < holeMap[i].nx[1] + 1; jj++)
-                    for (ii = 0; ii < holeMap[i].nx[0] + 1; ii++)
+                    }
+                }
+            }
+            for (kk = 0; kk < holeMap[i].nx[2] + 1; kk++) {
+                for (jj = 0; jj < holeMap[i].nx[1] + 1; jj++) {
+                    for (ii = 0; ii < holeMap[i].nx[0] + 1; ii++) {
                         fprintf(fp, "%.14e\n", jj * ds[1]);
-            for (kk = 0; kk < holeMap[i].nx[2] + 1; kk++)
-                for (jj = 0; jj < holeMap[i].nx[1] + 1; jj++)
-                    for (ii = 0; ii < holeMap[i].nx[0] + 1; ii++)
+                    }
+                }
+            }
+            for (kk = 0; kk < holeMap[i].nx[2] + 1; kk++) {
+                for (jj = 0; jj < holeMap[i].nx[1] + 1; jj++) {
+                    for (ii = 0; ii < holeMap[i].nx[0] + 1; ii++) {
                         fprintf(fp, "%.14e\n", kk * ds[2]);
+                    }
+                }
+            }
             m = 0;
-            for (kk = 0; kk < holeMap[i].nx[2]; kk++)
-                for (jj = 0; jj < holeMap[i].nx[1]; jj++)
+            for (kk = 0; kk < holeMap[i].nx[2]; kk++) {
+                for (jj = 0; jj < holeMap[i].nx[1]; jj++) {
                     for (ii = 0; ii < holeMap[i].nx[0]; ii++) {
                         fprintf(fp, "%f\n", (double)holeMap[i].sam[m]);
                         m++;
                     }
+                }
+            }
 
             m = 0;
             ns1 = holeMap[i].nx[0] + 1;
             ns2 = (holeMap[i].nx[1] + 1) * ns1;
-            for (kk = 0; kk < holeMap[i].nx[2]; kk++)
-                for (jj = 0; jj < holeMap[i].nx[1]; jj++)
+            for (kk = 0; kk < holeMap[i].nx[2]; kk++) {
+                for (jj = 0; jj < holeMap[i].nx[1]; jj++) {
                     for (ii = 0; ii < holeMap[i].nx[0]; ii++) {
                         m = kk * ns2 + jj * ns1 + ii + 1;
                         fprintf(
@@ -888,7 +941,10 @@ void tioga::outputHoleMap(void)
                             m + 1 + ns1, m + ns1, m + ns2, m + 1 + ns2,
                             m + ns2 + ns1 + 1, m + ns1 + ns2);
                     }
+                }
+            }
         }
+    }
     fclose(fp);
 }
 
@@ -1029,8 +1085,9 @@ void tioga::outputAdaptiveHoleMap(void)
                     dx[2] = ds[2] * INT2DBL * levelh;
 
                     for (e = 0; e < L.elem_count; e++) {
-                        if (L.octants[e].leafflag == 0)
+                        if (L.octants[e].leafflag == 0) {
                             continue; // skip to next element
+                        }
 
                         // compute physical coordinates
                         x[0] = meta.extents_lo[0] +

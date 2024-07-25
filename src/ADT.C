@@ -88,7 +88,9 @@ void ADT::buildADT(int d, int nelements, double* elementBbox)
     //
     // Build ADT using a recursive process now
     //
-    for (i = 0; i < nelem; i++) elementsAvailable[i] = i;
+    for (i = 0; i < nelem; i++) {
+        elementsAvailable[i] = i;
+    }
     //
     // set initialvalues
     //

@@ -53,8 +53,12 @@ public:
 
     ~parallelComm()
     {
-        if (sndMap) free(sndMap);
-        if (rcvMap) free(rcvMap);
+        if (sndMap) {
+            free(sndMap);
+        }
+        if (rcvMap) {
+            free(rcvMap);
+        }
     }
 
     void sendRecvPacketsAll(PACKET* sndPack, PACKET* rcvPack);

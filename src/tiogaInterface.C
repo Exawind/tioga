@@ -187,9 +187,10 @@ void tioga_preprocess_grids_(void)
 {
     if (tg->getHoleMapAlgorithm() == 1) {
         tg->assembleComplementComms(); // build complement rank communicators
-        if (tg->getNumCompositeBodies() > 0)
+        if (tg->getNumCompositeBodies() > 0) {
             tg->assembleCompositeMap(); // abutting meshes (AFTER
-                                        // assembleComplementComms)
+        }
+        // assembleComplementComms)
     }
     tg->profile();
 }

@@ -57,7 +57,9 @@ void tioga::exchangeBoxes(void)
     obSizePerProc[0] = nbPerProc[0] * 16;
     for (int i = 1; i <= numprocs; i++) {
         displs[i] = displs[i - 1] + nbPerProc[i - 1];
-        if (i < numprocs) obSizePerProc[i] = nbPerProc[i] * 16;
+        if (i < numprocs) {
+            obSizePerProc[i] = nbPerProc[i] * 16;
+        }
     }
 
     MPI_Allgatherv(
@@ -68,7 +70,9 @@ void tioga::exchangeBoxes(void)
     // for (auto itag: alltags)
     for (int i = 0; i < ntotalblks; i++) {
         int itag = abs(alltags[i]);
-        if (maxtag < itag) maxtag = itag;
+        if (maxtag < itag) {
+            maxtag = itag;
+        }
     }
     int mxtgsqr = maxtag * maxtag;
 
@@ -83,11 +87,17 @@ void tioga::exchangeBoxes(void)
     int m = 0;
     for (int ib = 0; ib < nblocks; ib++) {
         myOBBdata[m++] = (double)mytag[ib];
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 myOBBdata[m++] = mblocks[ib]->obb->vec[i][j];
-        for (int i = 0; i < 3; i++) myOBBdata[m++] = mblocks[ib]->obb->xc[i];
-        for (int i = 0; i < 3; i++) myOBBdata[m++] = mblocks[ib]->obb->dxc[i];
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            myOBBdata[m++] = mblocks[ib]->obb->xc[i];
+        }
+        for (int i = 0; i < 3; i++) {
+            myOBBdata[m++] = mblocks[ib]->obb->dxc[i];
+        }
     }
 
     MPI_Allgatherv(
@@ -106,13 +116,19 @@ void tioga::exchangeBoxes(void)
         for (int n = 0; n < nbPerProc[k]; n++) {
             obbProc[ix] = k;
             obbID[ix] = (int)(allOBBdata[m++] + 0.5);
-            for (int i = 0; i < 3; i++)
-                for (int j = 0; j < 3; j++)
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
                     obbRecv[ix].vec[i][j] = allOBBdata[m++];
+                }
+            }
 
-            for (int i = 0; i < 3; i++) obbRecv[ix].xc[i] = allOBBdata[m++];
+            for (int i = 0; i < 3; i++) {
+                obbRecv[ix].xc[i] = allOBBdata[m++];
+            }
 
-            for (int i = 0; i < 3; i++) obbRecv[ix].dxc[i] = allOBBdata[m++];
+            for (int i = 0; i < 3; i++) {
+                obbRecv[ix].dxc[i] = allOBBdata[m++];
+            }
 
             ix++;
         }
@@ -134,7 +150,9 @@ void tioga::exchangeBoxes(void)
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
             int meshtag = mb->getMeshTag();
-            if (abs(obbID[ob]) == meshtag) continue;
+            if (abs(obbID[ob]) == meshtag) {
+                continue;
+            }
 
             if (obbIntersectCheck(
                     mb->obb->vec, mb->obb->xc, mb->obb->dxc, obbRecv[ob].vec,
@@ -169,13 +187,14 @@ void tioga::exchangeBoxes(void)
     sndPack = (PACKET*)malloc(sizeof(PACKET) * nsend);
     rcvPack = (PACKET*)malloc(sizeof(PACKET) * nrecv);
 
-    for (int p = 0, ip = 0; p < numprocs; p++)
+    for (int p = 0, ip = 0; p < numprocs; p++) {
         if (sendFlag[p]) {
             sndMap[ip] = p;
             rcvMap[ip] = p;
             invMap[p] = ip;
             ip++;
         }
+    }
 
     // clear packets before nsend and nrecv are modified in pc->setMap
     pc->setMap(nsend, nrecv, sndMap, rcvMap);
@@ -232,9 +251,11 @@ void tioga::exchangeBoxes(void)
         // mb->getReducedOBB2(&obbRecv[ob], &(sndPack[k].realData[roff]));
         mb->getReducedOBB(&obbRecv[ob], &(sndPack[k].realData[roff]));
 
-        for (int ii = 0; ii < 3; ii++)
-            for (int j = 0; j < 3; j++)
+        for (int ii = 0; ii < 3; ii++) {
+            for (int j = 0; j < 3; j++) {
                 obblist[i].vec[ii][j] = obbRecv[ob].vec[ii][j];
+            }
+        }
 
         // Increment index offset for next fill
         idxOffset[k]++;
@@ -254,11 +275,13 @@ void tioga::exchangeBoxes(void)
             obblist[ii].iblk_remote = rcvPack[k].intData[n + 1];
             obblist[ii].tag_remote = rcvPack[k].intData[n + 2];
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++) {
                 obblist[ii].xc[i] = rcvPack[k].realData[m++];
+            }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++) {
                 obblist[ii].dxc[i] = rcvPack[k].realData[m++];
+            }
         }
     }
 

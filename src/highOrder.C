@@ -36,8 +36,9 @@ void MeshBlock::getCellIblanks2(void)
     int verbose;
 
     icell = 0;
-    if (iblank_cell == nullptr)
+    if (iblank_cell == nullptr) {
         iblank_cell = (int*)malloc(sizeof(int) * ncells);
+    }
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {
@@ -67,7 +68,9 @@ void MeshBlock::getCellIblanks2(void)
                 TRACEI(nvert);
             }
             if (flag) {
-                if (ncount == nvert) iblank_cell[icell] = -1;
+                if (ncount == nvert) {
+                    iblank_cell[icell] = -1;
+                }
                 //            if (ncount > 0)  iblank_cell[icell]=-1;
                 //            if (ncount >= nvert/2) iblank_cell[icell]=-1;
             }
@@ -93,8 +96,9 @@ void MeshBlock::getCellIblanks(void)
     }
 
     icell = 0;
-    if (iblank_cell == nullptr)
+    if (iblank_cell == nullptr) {
         iblank_cell = (int*)malloc(sizeof(int) * ncells);
+    }
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {
@@ -124,7 +128,9 @@ void MeshBlock::getCellIblanks(void)
                 TRACEI(nvert);
             }
             if (flag) {
-                if (ncount == nvert) iblank_cell[icell] = -1;
+                if (ncount == nvert) {
+                    iblank_cell[icell] = -1;
+                }
                 //	      if (ncount > 0)  iblank_cell[icell]=-1;
                 //	      if (ncount >= nvert/2) iblank_cell[icell]=-1;
             }
@@ -145,7 +151,7 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
             for (j = 0; j < pointsPerCell[i]; j++) {
                 if (itmp[m] == 0) {
                     reject = 2;
-                    for (k = 0; k < nmesh; k++)
+                    for (k = 0; k < nmesh; k++) {
                         if (k != (meshtag - BASE) && holemap[k].existWall) {
                             if (checkHoleMap(
                                     &rxyz[3 * m], holemap[k].nx, holemap[k].sam,
@@ -154,6 +160,7 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
                                 break;
                             }
                         }
+                    }
                 }
                 m++;
             }
@@ -170,10 +177,13 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
         for (i = 0; i < nnodes; i++) {
             if (picked[i]) {
                 reject = 0;
-                if (itmp[m] == 0) reject = 1;
-                if (reject)
+                if (itmp[m] == 0) {
+                    reject = 1;
+                }
+                if (reject) {
                     iblank[i] = 1; // changed to field for near-body
-                                   // perhaps not the right thing to do
+                }
+                // perhaps not the right thing to do
                 m++;
             }
         }
@@ -189,8 +199,11 @@ void MeshBlock::getInternalNodes(void)
     if (ctag != nullptr) TIOGA_FREE(ctag);
     ctag = (int*)malloc(sizeof(int) * ncells);
     //
-    for (i = 0; i < ncells; i++)
-        if (iblank_cell[i] == -1) ctag[nreceptorCells++] = i + BASE;
+    for (i = 0; i < ncells; i++) {
+        if (iblank_cell[i] == -1) {
+            ctag[nreceptorCells++] = i + BASE;
+        }
+    }
     //
     if (ihigh) {
         if (pointsPerCell != nullptr) TIOGA_FREE(pointsPerCell);
@@ -229,11 +242,14 @@ void MeshBlock::getInternalNodes(void)
         if (rxyz != nullptr) TIOGA_FREE(rxyz);
         rxyz = (double*)malloc(sizeof(double) * ntotalPoints * 3);
         m = 0;
-        for (i = 0; i < nnodes; i++)
+        for (i = 0; i < nnodes; i++) {
             if (picked[i]) {
                 i3 = 3 * i;
-                for (j = 0; j < 3; j++) rxyz[m++] = x[i3 + j];
+                for (j = 0; j < 3; j++) {
+                    rxyz[m++] = x[i3 + j];
+                }
             }
+        }
     }
 }
 
@@ -251,10 +267,14 @@ void MeshBlock::getExtraQueryPoints(
     *nints = *nreals = 0;
     for (i = 0; i < ntotalPoints; i++) {
         i3 = 3 * i;
-        for (j = 0; j < 3; j++) xd[j] = 0;
-        for (j = 0; j < 3; j++)
-            for (k = 0; k < 3; k++)
+        for (j = 0; j < 3; j++) {
+            xd[j] = 0;
+        }
+        for (j = 0; j < 3; j++) {
+            for (k = 0; k < 3; k++) {
                 xd[j] += (rxyz[i3 + k] - obc->xc[k]) * obc->vec[j][k];
+            }
+        }
 
         if (fabs(xd[0]) <= obc->dxc[0] && fabs(xd[1]) <= obc->dxc[1] &&
             fabs(xd[2]) <= obc->dxc[2]) {
@@ -297,8 +317,11 @@ void MeshBlock::processPointDonors(void)
     interp2ListSize = ninterp2;
     ninterp2 = 0;
     //
-    for (i = 0; i < nsearch; i++)
-        if (donorId[i] > -1 && iblank_cell[donorId[i]] == 1) ninterp2++;
+    for (i = 0; i < nsearch; i++) {
+        if (donorId[i] > -1 && iblank_cell[donorId[i]] == 1) {
+            ninterp2++;
+        }
+    }
     //
     if (interpList2) {
         for (i = 0; i < interp2ListSize; i++) {
@@ -327,8 +350,9 @@ void MeshBlock::processPointDonors(void)
                     &(interpList2[m].inode[0]), frac, &(rst[3 * i]), &ndim);
                 interpList2[m].weights =
                     (double*)malloc(sizeof(double) * interpList2[m].nweights);
-                for (j = 0; j < interpList2[m].nweights; j++)
+                for (j = 0; j < interpList2[m].nweights; j++) {
                     interpList2[m].weights[j] = frac[j];
+                }
                 interpList2[m].receptorInfo[0] = isearch[3 * i];
                 interpList2[m].receptorInfo[1] = isearch[3 * i + 1];
                 interpList2[m].receptorInfo[2] = isearch[3 * i + 2];
@@ -352,14 +376,17 @@ void MeshBlock::processPointDonors(void)
                     interpList2[m].inode[ivert] =
                         vconn[n][nvert * icell + ivert] - BASE;
                     i3 = 3 * interpList2[m].inode[ivert];
-                    for (j = 0; j < 3; j++) xv[ivert][j] = x[i3 + j];
+                    for (j = 0; j < 3; j++) {
+                        xv[ivert][j] = x[i3 + j];
+                    }
                 }
                 xp[0] = xsearch[3 * i];
                 xp[1] = xsearch[3 * i + 1];
                 xp[2] = xsearch[3 * i + 2];
                 computeNodalWeights(xv, xp, frac2, nvert);
-                for (j = 0; j < nvert; j++)
+                for (j = 0; j < nvert; j++) {
                     interpList2[m].weights[j] = frac2[j];
+                }
                 interpList2[m].receptorInfo[0] = isearch[3 * i];
                 interpList2[m].receptorInfo[1] = isearch[3 * i + 1];
                 interpList2[m].receptorInfo[2] = isearch[3 * i + 2];
@@ -401,7 +428,9 @@ void MeshBlock::getInterpolatedSolutionAtPoints(
     if (ihigh) {
         if (interptype == ROW) {
             for (i = 0; i < ninterp2; i++) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 inode = interpList2[i].inode[0] - BASE;
                 for (m = 0; m < interpList2[i].nweights; m++) {
                     weight = interpList2[i].weights[m];
@@ -409,19 +438,24 @@ void MeshBlock::getInterpolatedSolutionAtPoints(
                     //	TRACED(weight);
                     //	printf("warning: weights are not convex\n");
                     //     }
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[inode + m * nvar + k] * weight;
+                    }
                 }
                 (*intData)[icount++] = interpList2[i].receptorInfo[0];
                 (*intData)[icount++] = interpList2[i].receptorInfo[1];
                 (*intData)[icount++] = interpList2[i].receptorInfo[2];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
     } else {
         if (interptype == ROW) {
             for (i = 0; i < ninterp2; i++) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpList2[i].nweights; m++) {
                     inode = interpList2[i].inode[m];
                     weight = interpList2[i].weights[m];
@@ -429,27 +463,35 @@ void MeshBlock::getInterpolatedSolutionAtPoints(
                         TRACED(weight);
                         printf("warning: weights are not convex 2\n");
                     }
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[inode * nvar + k] * weight;
+                    }
                 }
                 (*intData)[icount++] = interpList2[i].receptorInfo[0];
                 (*intData)[icount++] = interpList2[i].receptorInfo[1];
                 (*intData)[icount++] = interpList2[i].receptorInfo[2];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         } else if (interptype == COLUMN) {
             for (i = 0; i < ninterp2; i++) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpList2[i].nweights; m++) {
                     inode = interpList2[i].inode[m];
                     weight = interpList2[i].weights[m];
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[k * nnodes + inode] * weight;
+                    }
                 }
                 (*intData)[icount++] = interpList2[i].receptorInfo[0];
                 (*intData)[icount++] = interpList2[i].receptorInfo[1];
                 (*intData)[icount++] = interpList2[i].receptorInfo[2];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
     }
@@ -479,11 +521,12 @@ void MeshBlock::updatePointData(
                     &index_out, qout);
                 index_out -= BASE;
                 k = 0;
-                for (j = 0; j < npts; j++)
+                for (j = 0; j < npts; j++) {
                     for (n = 0; n < nvar; n++) {
                         q[index_out + j * nvar + n] = qout[k];
                         k++;
                     }
+                }
             }
             m += (pointsPerCell[i] * nvar);
         }
