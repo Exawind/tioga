@@ -20,8 +20,9 @@
 /**
  * Build an alternating digital tree
  */
-#include <stdio.h>
-#include <stdlib.h>
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
 #include "codetypes.h"
 #include "ADT.h"
 #include "buildADTrecursion.h"

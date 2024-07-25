@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <utility>
 #include <cassert>
+#include <cstdlib>
+#include "mpi.h"
 #include "codetypes.h"
 #include "tioga.h"
 #include "tioga_utils.h"

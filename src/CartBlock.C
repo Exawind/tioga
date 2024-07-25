@@ -17,7 +17,11 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-#include <stdexcept>
+#include <cstdlib>
+#include <cstdio>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
 #include "TiogaMeshInfo.h"
 #include "codetypes.h"
 #include "CartBlock.h"

@@ -18,13 +18,15 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
-/* system header files */
-#include <limits>
 #include <vector>
 #include <array>
 #include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <cstdint>
+#include <algorithm>
 
-/* header files */
 #include "codetypes.h"
 #include "tioga.h"
 #include "tioga_utils.h"

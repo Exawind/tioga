@@ -35,8 +35,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
 
 #define X 0
 #define Y 1

@@ -22,6 +22,8 @@
 // have to unify both routines here
 // FIX later ...
 
+#include <cstdlib>
+#include <cmath>
 #include "codetypes.h"
 #include "MeshBlock.h"
 #include "parallelComm.h"
