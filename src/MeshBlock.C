@@ -1127,7 +1127,7 @@ void MeshBlock::writeBCnodes(char nodetype2tag, int bodyid)
     const int nbc = (nodetype2tag == WALLNODETYPE) ? nwbc : nobc;
     int* bcnode = (nodetype2tag == WALLNODETYPE) ? wbcnode : obcnode;
 
-    const int allnbc = 0;
+    int allnbc = 0;
     MPI_Reduce(&nbc, &allnbc, 1, MPI_INT, MPI_SUM, 0, blockcomm);
 
     static int step = 0;
