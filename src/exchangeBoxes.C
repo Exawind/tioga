@@ -95,10 +95,10 @@ void tioga::exchangeBoxes()
                 myOBBdata[m++] = i[j];
             }
         }
-        for (double i : mblocks[ib]->obb->xc) {
+        for (double const i : mblocks[ib]->obb->xc) {
             myOBBdata[m++] = i;
         }
-        for (double i : mblocks[ib]->obb->dxc) {
+        for (double const i : mblocks[ib]->obb->dxc) {
             myOBBdata[m++] = i;
         }
     }
