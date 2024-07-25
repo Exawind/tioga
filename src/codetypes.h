@@ -94,7 +94,7 @@ enum { OUTSIDE_SB = 0, INSIDE_SB = 1, WALL_SB = 2 };
 #define TIOGA_FREE(a1)                                                         \
     {                                                                          \
         free(a1);                                                              \
-        a1 = NULL;                                                             \
+        (a1) = NULL;                                                           \
     }
 // # define debug(x,y)  printf("#tioga:\t"#x"=%d,"#y"=%d\n",x,y);
 // # define stdwrite(x) if (myid==0) printf("#tioga:\t"#x"\n");

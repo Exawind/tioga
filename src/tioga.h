@@ -241,7 +241,7 @@ public:
         double* frac,
         const int* dcount);
 
-    void getReceptorInfo(std::vector<int>&);
+    void getReceptorInfo(std::vector<int>& /*receptors*/);
 
     /** set hole map algorithm: [0] original hole map, [1] adaptive hole map */
     void setHoleMapAlgorithm(int alg) { USE_ADAPTIVE_HOLEMAP = alg; };
@@ -327,14 +327,17 @@ public:
         cg->setcallback(f1);
     }
 
-    void register_amr_global_data(int, int*, double*, int);
-    void set_amr_patch_count(int);
-    void register_amr_local_data(int, int, int*, int*);
-    void register_amr_solution(int, double*, int, int);
+    void register_amr_global_data(
+        int /*nf*/, int* /*idata*/, double* /*rdata*/, int /*ngridsin*/);
+    void set_amr_patch_count(int /*npatchesin*/);
+    void register_amr_local_data(
+        int /*ipatch*/, int /*global_id*/, int* /*iblank*/, int* /*iblankn*/);
+    void register_amr_solution(
+        int /*ipatch*/, double* /*q*/, int /*nvar_cell*/, int /*nvar_node*/);
     void exchangeAMRDonors();
     void checkComm();
     void outputStatistics();
-    void myTimer(char const*, int);
+    void myTimer(char const* /*unused*/, int /*unused*/);
     void reduce_fringes();
 };
 } // namespace TIOGA

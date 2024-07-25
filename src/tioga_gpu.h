@@ -28,7 +28,7 @@ namespace gpu {
 #define TIOGA_GPU_CHECK_ERROR(call) (call)
 #endif
 
-#define TIOGA_FREE_DEVICE(dptr) TIOGA::gpu::deallocate_device(&dptr)
+#define TIOGA_FREE_DEVICE(dptr) TIOGA::gpu::deallocate_device(&(dptr))
 
 } // namespace gpu
 } // namespace TIOGA

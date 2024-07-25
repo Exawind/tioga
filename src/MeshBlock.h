@@ -332,7 +332,7 @@ public:
         int** intData,
         double** realData,
         const double* q,
-        const int*);
+        const int* /*sndMap*/);
 
     void checkContainment(int* cellIndex, int adtElement, double* xsearch);
 
@@ -414,7 +414,7 @@ public:
 
     void findInterpListCart();
 
-    void set_ninterp(int);
+    void set_ninterp(int /*ninterp_input*/);
 
     void getCancellationData(int* nints, int** intData);
 
@@ -434,8 +434,8 @@ public:
 
     void getReceptorInfo(int* receptors);
 
-    void getReducedOBB(OBB*, double*);
-    void getReducedOBB2(OBB*, double*);
+    void getReducedOBB(OBB* /*obc*/, double* /*realData*/);
+    void getReducedOBB2(OBB* /*obc*/, double* /*realData*/);
 
     void resetCoincident();
     //
@@ -475,7 +475,7 @@ public:
         dominanceFlag = dominanceflag;
     }
 
-    void writeCellFile(int);
+    void writeCellFile(int /*bid*/);
     void writeBCnodes(char nodetype2tag, int bodyid);
     void getInternalNodes();
     void getExtraQueryPoints(
@@ -521,9 +521,13 @@ public:
      * Get donor packet for multi-block/partition setups
      *
      */
-    void getMBDonorPktSizes(std::vector<int>&, std::vector<int>&) const;
+    void getMBDonorPktSizes(
+        std::vector<int>& /*nints*/, std::vector<int>& /*nreals*/) const;
 
-    void getMBDonorPackets(std::vector<int>&, std::vector<int>&, PACKET*) const;
+    void getMBDonorPackets(
+        std::vector<int>& /*ixOffset*/,
+        std::vector<int>& /*rxOffset*/,
+        PACKET* /*sndPack*/) const;
 
     /** Reset interpolation list data structure
      *

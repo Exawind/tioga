@@ -16,7 +16,7 @@ using gpuError_t = int;
 constexpr gpuError_t gpuSuccess = 0;
 
 inline gpuError_t gpuGetLastError() { return gpuSuccess; }
-inline const char* gpuGetErrorString(gpuError_t err) { return "Success"; }
+inline const char* gpuGetErrorString(gpuError_t /*err*/) { return "Success"; }
 
 template <typename T>
 inline T* allocate_on_device(const size_t size)

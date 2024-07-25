@@ -23,7 +23,7 @@ void cellVolume(
     const int numverts[6],
     int fconn[6][4],
     int nfaces,
-    int nvert)
+    int /*nvert*/)
 {
     *vol = 0.0;
     for (int iface = 1; iface <= nfaces; iface++) {

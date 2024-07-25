@@ -812,7 +812,6 @@ void MeshBlock::writeGridFile(int bid)
         }
     }
     fclose(fp);
-    return;
 }
 
 void MeshBlock::writeCellFile(int bid)
@@ -890,7 +889,6 @@ void MeshBlock::writeCellFile(int bid)
         }
     }
     fclose(fp);
-    return;
 }
 
 void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
@@ -1602,7 +1600,6 @@ void MeshBlock::getReducedOBB(OBB* obc, double* realData)
         }
         realData[j + 3] = (bbox[j + 3] - bbox[j]) * 0.51;
     }
-    return;
 }
 
 void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
@@ -1665,7 +1662,6 @@ void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
         }
         realData[j + 3] = (bbox[j + 3] - bbox[j]) * 0.5;
     }
-    return;
 }
 
 void MeshBlock::getQueryPoints(
@@ -2138,8 +2134,8 @@ void MeshBlock::check_for_uniform_hex()
         if (obh != nullptr) TIOGA_FREE(obh);
         obh = (OBB*)malloc(sizeof(OBB));
         for (auto& j : obh->vec) {
-            for (int k = 0; k < 3; k++) {
-                j[k] = 0;
+            for (double& k : j) {
+                k = 0;
             }
         }
         for (int k = 0; k < 3; k++) {
@@ -2198,7 +2194,6 @@ void MeshBlock::check_for_uniform_hex()
             }
         }
     }
-    return;
 }
 
 void MeshBlock::create_hex_cell_map()

@@ -91,8 +91,8 @@ void tioga::exchangeBoxes()
     for (int ib = 0; ib < nblocks; ib++) {
         myOBBdata[m++] = (double)mytag[ib];
         for (auto& i : mblocks[ib]->obb->vec) {
-            for (int j = 0; j < 3; j++) {
-                myOBBdata[m++] = i[j];
+            for (double j : i) {
+                myOBBdata[m++] = j;
             }
         }
         for (double const i : mblocks[ib]->obb->xc) {
@@ -120,8 +120,8 @@ void tioga::exchangeBoxes()
             obbProc[ix] = k;
             obbID[ix] = (int)(allOBBdata[m++] + 0.5);
             for (auto& i : obbRecv[ix].vec) {
-                for (int j = 0; j < 3; j++) {
-                    i[j] = allOBBdata[m++];
+                for (double& j : i) {
+                    j = allOBBdata[m++];
                 }
             }
 

@@ -46,8 +46,8 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
     //
     OBB* obcart = (OBB*)malloc(sizeof(OBB));
     for (auto& j : obcart->vec) {
-        for (int k = 0; k < 3; k++) {
-            j[k] = 0;
+        for (double& k : j) {
+            k = 0;
         }
     }
     obcart->vec[0][0] = obcart->vec[1][1] = obcart->vec[2][2] = 1.0;
@@ -170,7 +170,7 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
 
 void MeshBlock::fillReceptorDataPtr(
     CartGrid* cg,
-    int cell_count,
+    int /*cell_count*/,
     int c,
     int j,
     int k,

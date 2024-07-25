@@ -137,7 +137,7 @@ void linear_interpolation(
     int* ijk_cell,
     int* dims,
     double* ref_ratio,
-    int* nw,
+    int* /*nw*/,
     int* ijk_stencil,
     double* weights,
     bool isNodal)

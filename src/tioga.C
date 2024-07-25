@@ -1261,7 +1261,7 @@ void tioga::register_amr_solution(
 #ifdef TIOGA_ENABLE_TIMERS
 void tioga::myTimer(char const* info, int type)
 #else
-void tioga::myTimer(char const*, int)
+void tioga::myTimer(char const* /*unused*/, int /*unused*/)
 #endif
 {
 #ifdef TIOGA_ENABLE_TIMERS
