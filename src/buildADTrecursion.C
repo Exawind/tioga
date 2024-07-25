@@ -51,8 +51,9 @@ void buildADTrecursion(
         //
         // collect coordinates along the dimension dimcut
         //
-        for (i = 0; i < nav; i++)
+        for (i = 0; i < nav; i++) {
             adtWork[i] = coord[ndim * elementsAvailable[i] + dimcut];
+        }
         //
         // reorder elements with nleft elements to
         // the left of median of adtWork
@@ -83,7 +84,7 @@ void buildADTrecursion(
             adtReals[ndim * (*adtCount) + i + nd] = -BIGVALUE;
         }
         //
-        for (i = 0; i < nav; i++)
+        for (i = 0; i < nav; i++) {
             for (j = 0; j < nd; j++) {
                 ii = ndim * (*adtCount) + j;
                 iip = ii + nd;
@@ -93,6 +94,7 @@ void buildADTrecursion(
                 adtReals[ii] = std::min(adtReals[ii], coord[jj]);
                 adtReals[iip] = std::max(adtReals[iip], coord[jjp]);
             }
+        }
         //
         // specify that the new element is the child of parent
         // unless root
@@ -123,8 +125,9 @@ void buildADTrecursion(
         adtIntegers[ii + 1] = -1;
         adtIntegers[ii + 2] = -1;
         adtIntegers[ii + 3] = -1;
-        for (j = 0; j < ndim; j++)
+        for (j = 0; j < ndim; j++) {
             adtReals[jj + j] = coord[ndim * elementsAvailable[0] + j];
+        }
         if (side > 0) {
             adtIntegers[4 * parent + side] = elementsAvailable[0];
         }

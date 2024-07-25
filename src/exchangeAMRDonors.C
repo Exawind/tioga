@@ -71,7 +71,9 @@ void tioga::exchangeAMRDonors(void)
     //
     pc_cart->initPackets(sndPack, rcvPack);
     //
-    for (i = 0; i < nsend; i++) obdonors[i] = obreceptors[i] = 0;
+    for (i = 0; i < nsend; i++) {
+        obdonors[i] = obreceptors[i] = 0;
+    }
     //
     if (nblocks > 0) {
         //
@@ -224,9 +226,13 @@ void tioga::exchangeAMRDonors(void)
     }
 
     if (USE_ADAPTIVE_HOLEMAP) {
-        for (i = 0; i < ncart; i++) cb[i].processDonors(adaptiveHoleMap, nmesh);
+        for (i = 0; i < ncart; i++) {
+            cb[i].processDonors(adaptiveHoleMap, nmesh);
+        }
     } else {
-        for (i = 0; i < ncart; i++) cb[i].processDonors(holeMap, nmesh);
+        for (i = 0; i < ncart; i++) {
+            cb[i].processDonors(holeMap, nmesh);
+        }
     }
     pc_cart->clearPackets(sndPack, rcvPack);
     for (i = 0; i < nsend; i++) {
@@ -260,7 +266,9 @@ void tioga::exchangeAMRDonors(void)
             }
         }
     }
-    for (i = 0; i < nsend; i++) sndPack[i].nints = intcount[i];
+    for (i = 0; i < nsend; i++) {
+        sndPack[i].nints = intcount[i];
+    }
     //}
 
     pc_cart->sendRecvPacketsAll(sndPack, rcvPack);
@@ -280,10 +288,14 @@ void tioga::exchangeAMRDonors(void)
         }
     }
 
-    for (int ib = 0; ib < nblocks; ib++) mblocks[ib]->setCartIblanks();
+    for (int ib = 0; ib < nblocks; ib++) {
+        mblocks[ib]->setCartIblanks();
+    }
     pc_cart->clearPackets(sndPack, rcvPack);
     //
-    for (int ib = 0; ib < nblocks; ib++) mblocks[ib]->findInterpListCart();
+    for (int ib = 0; ib < nblocks; ib++) {
+        mblocks[ib]->findInterpListCart();
+    }
     if (cancelledData) TIOGA_FREE(cancelledData);
     // fclose(fp);
     TIOGA_FREE(bcount);

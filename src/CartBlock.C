@@ -67,8 +67,12 @@ void CartBlock::getInterpolatedData(
         if (nintold > 0) {
             tmpint = (int*)malloc(sizeof(int) * 3 * (*nints));
             tmpreal = (double*)malloc(sizeof(double) * (*nreals));
-            for (i = 0; i < (*nints) * 3; i++) tmpint[i] = (*intData)[i];
-            for (i = 0; i < (*nreals); i++) tmpreal[i] = (*realData)[i];
+            for (i = 0; i < (*nints) * 3; i++) {
+                tmpint[i] = (*intData)[i];
+            }
+            for (i = 0; i < (*nreals); i++) {
+                tmpreal[i] = (*realData)[i];
+            }
             //
             TIOGA_FREE((*intData));
             TIOGA_FREE((*realData)); // didn't free this before ??
@@ -79,8 +83,12 @@ void CartBlock::getInterpolatedData(
         (*intData) = (int*)malloc(sizeof(int) * 3 * (*nints));
         (*realData) = (double*)malloc(sizeof(double) * (*nreals));
         if (nintold > 0) {
-            for (i = 0; i < nintold * 3; i++) (*intData)[i] = tmpint[i];
-            for (i = 0; i < nrealold; i++) (*realData)[i] = tmpreal[i];
+            for (i = 0; i < nintold * 3; i++) {
+                (*intData)[i] = tmpint[i];
+            }
+            for (i = 0; i < nrealold; i++) {
+                (*realData)[i] = tmpreal[i];
+            }
             TIOGA_FREE(tmpint);
             TIOGA_FREE(tmpreal);
         }
@@ -93,8 +101,9 @@ void CartBlock::getInterpolatedData(
             (*intData)[icount++] = -1 - listptr->receptorInfo[2];
             (*intData)[icount++] = listptr->receptorInfo[1];
 
-            for (n = 0; n < (nvar_cell + nvar_node); n++)
+            for (n = 0; n < (nvar_cell + nvar_node); n++) {
                 qq[n] = 0; // zero out solution
+            }
 
             for (i = 0; i < listptr->nweights; i++) {
                 int cell_index = cart_utils::get_cell_index(
@@ -117,8 +126,9 @@ void CartBlock::getInterpolatedData(
                 }
             }
 
-            for (n = 0; n < (nvar_cell + nvar_node); n++)
+            for (n = 0; n < (nvar_cell + nvar_node); n++) {
                 (*realData)[dcount++] = qq[n]; // update solution
+            }
 
             listptr = listptr->next;
         }
@@ -129,21 +139,31 @@ void CartBlock::getInterpolatedData(
 void CartBlock::update(double* qval, int index)
 {
     if (index >= ncell_nf) {
-        if (nvar_node == 0) return;
-        for (int i = 0; i < nvar_node; i++)
+        if (nvar_node == 0) {
+            return;
+        }
+        for (int i = 0; i < nvar_node; i++) {
             qnode[index - ncell_nf + nnode_nf * i] = qval[nvar_cell + i];
+        }
     } else {
-        if (nvar_cell == 0) return;
-        for (int i = 0; i < nvar_cell; i++)
+        if (nvar_cell == 0) {
+            return;
+        }
+        for (int i = 0; i < nvar_cell; i++) {
             qcell[index + ncell_nf * i] = qval[i];
+        }
     }
 }
 
 void CartBlock::preprocess(CartGrid* cg)
 {
     int nfrac;
-    for (int n = 0; n < 3; n++) xlo[n] = cg->xlo[3 * global_id + n];
-    for (int n = 0; n < 3; n++) dx[n] = cg->dx[3 * global_id + n];
+    for (int n = 0; n < 3; n++) {
+        xlo[n] = cg->xlo[3 * global_id + n];
+    }
+    for (int n = 0; n < 3; n++) {
+        dx[n] = cg->dx[3 * global_id + n];
+    }
     dims[0] = cg->ihi[3 * global_id] - cg->ilo[3 * global_id] + 1;
     dims[1] = cg->ihi[3 * global_id + 1] - cg->ilo[3 * global_id + 1] + 1;
     dims[2] = cg->ihi[3 * global_id + 2] - cg->ilo[3 * global_id + 2] + 1;
@@ -160,7 +180,9 @@ void CartBlock::preprocess(CartGrid* cg)
 void CartBlock::initializeLists(void)
 {
     donorList = (DONORLIST**)malloc(sizeof(DONORLIST*) * (ncell + nnode));
-    for (int i = 0; i < (ncell + nnode); i++) donorList[i] = nullptr;
+    for (int i = 0; i < (ncell + nnode); i++) {
+        donorList[i] = nullptr;
+    }
 }
 
 void CartBlock::clearLists(void)
@@ -348,8 +370,8 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
     //
     // first mark hole points
     //
-    for (int k = 0; k < nZ; k++)
-        for (int j = 0; j < nY; j++)
+    for (int k = 0; k < nZ; k++) {
+        for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
                 idof++;
 
@@ -364,7 +386,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                 }
 
                 if (donorList[idof] == nullptr) {
-                    for (int h = 0; h < nmesh; h++)
+                    for (int h = 0; h < nmesh; h++) {
                         if (holemap[h].existWall) {
                             if (checkHoleMap(
                                     xtmp, holemap[h].nx, holemap[h].sam,
@@ -379,9 +401,12 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                                 break;
                             }
                         }
+                    }
                 } else {
                     temp = donorList[idof];
-                    for (int h = 0; h < nmesh; h++) iflag[h] = 0;
+                    for (int h = 0; h < nmesh; h++) {
+                        iflag[h] = 0;
+                    }
                     while (temp != nullptr) {
                         int meshtagdonor = temp->donorData[1] - BASE;
                         iflag[meshtagdonor] = 1;
@@ -389,7 +414,7 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                     }
                     for (int h = 0; h < nmesh; h++) {
                         if (holemap[h].existWall) {
-                            if (!iflag[h])
+                            if (!iflag[h]) {
                                 if (checkHoleMap(
                                         xtmp, holemap[h].nx, holemap[h].sam,
                                         holemap[h].extents)) {
@@ -403,17 +428,20 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                                     iblank[ibindex] = 0;
                                     break;
                                 }
+                            }
                         }
                     }
                 }
             }
+        }
+    }
 
     //
     // mark fringe points
     //
     idof = isNodal ? (ncell - 1) : -1;
-    for (int k = 0; k < nZ; k++)
-        for (int j = 0; j < nY; j++)
+    for (int k = 0; k < nZ; k++) {
+        for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
                 idof++;
                 int ibindex = isNodal ? cart_utils::get_node_index(
@@ -446,6 +474,8 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                     }
                 }
             }
+        }
+    }
 
     /* FIXME: this piece of code needs to be modified to account for isNodal
     for(k=0;k<dims[2];k++)
@@ -503,8 +533,8 @@ void CartBlock::processIblank(
     //
     // first mark hole points
     //
-    for (int k = 0; k < nZ; k++)
-        for (int j = 0; j < nY; j++)
+    for (int k = 0; k < nZ; k++) {
+        for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
                 idof++;
 
@@ -519,7 +549,7 @@ void CartBlock::processIblank(
                 }
 
                 if (donorList[idof] == nullptr) {
-                    for (int h = 0; h < nmesh; h++)
+                    for (int h = 0; h < nmesh; h++) {
                         if (holemap[h].existWall) {
                             int SB_val =
                                 checkAdaptiveHoleMap(&xtmp[0], &holemap[h]);
@@ -534,9 +564,12 @@ void CartBlock::processIblank(
                                 break;
                             }
                         }
+                    }
                 } else {
                     temp = donorList[idof];
-                    for (int h = 0; h < nmesh; h++) iflag[h] = 0;
+                    for (int h = 0; h < nmesh; h++) {
+                        iflag[h] = 0;
+                    }
                     while (temp != nullptr) {
                         int meshtagdonor = temp->donorData[1] - BASE;
                         iflag[meshtagdonor] = 1;
@@ -563,13 +596,15 @@ void CartBlock::processIblank(
                     }
                 }
             }
+        }
+    }
 
     //
     // mark fringe points
     //
     idof = isNodal ? (ncell - 1) : -1;
-    for (int k = 0; k < nZ; k++)
-        for (int j = 0; j < nY; j++)
+    for (int k = 0; k < nZ; k++) {
+        for (int j = 0; j < nY; j++) {
             for (int i = 0; i < nX; i++) {
                 idof++;
                 int ibindex = isNodal ? cart_utils::get_node_index(
@@ -602,6 +637,8 @@ void CartBlock::processIblank(
                     }
                 }
             }
+        }
+    }
 
     /* FIXME: this piece of code needs to be modified to account for isNodal
     for(k=0;k<dims[2];k++)
@@ -644,9 +681,9 @@ void CartBlock::getCancellationData(int* cancelledData, int* ncancel)
     idof = -1;
     m = 0;
     *ncancel = 0;
-    for (isNodal = 0; isNodal < 2; isNodal++)
-        for (k = 0; k < dims[2] + isNodal; k++)
-            for (j = 0; j < dims[1] + isNodal; j++)
+    for (isNodal = 0; isNodal < 2; isNodal++) {
+        for (k = 0; k < dims[2] + isNodal; k++) {
+            for (j = 0; j < dims[1] + isNodal; j++) {
                 for (i = 0; i < dims[0] + isNodal; i++) {
                     idof++;
                     if (donorList[idof] != nullptr) {
@@ -663,6 +700,9 @@ void CartBlock::getCancellationData(int* cancelledData, int* ncancel)
                         }
                     }
                 }
+            }
+        }
+    }
 }
 
 void CartBlock::writeCellFile(int bid)
@@ -701,21 +741,30 @@ void CartBlock::writeCellFile(int bid)
         ncells);
     fprintf(fp, "VARLOCATION =  (1=NODAL, 2=NODAL, 3=NODAL, 4=CELLCENTERED)\n");
 
-    for (k = 0; k < dims[2] + 1; k++)
-        for (j = 0; j < dims[1] + 1; j++)
-            for (i = 0; i < dims[0] + 1; i++)
+    for (k = 0; k < dims[2] + 1; k++) {
+        for (j = 0; j < dims[1] + 1; j++) {
+            for (i = 0; i < dims[0] + 1; i++) {
                 fprintf(fp, "%lf\n", xlo[0] + dx[0] * i);
-    for (k = 0; k < dims[2] + 1; k++)
-        for (j = 0; j < dims[1] + 1; j++)
-            for (i = 0; i < dims[0] + 1; i++)
+            }
+        }
+    }
+    for (k = 0; k < dims[2] + 1; k++) {
+        for (j = 0; j < dims[1] + 1; j++) {
+            for (i = 0; i < dims[0] + 1; i++) {
                 fprintf(fp, "%lf\n", xlo[1] + dx[1] * j);
-    for (k = 0; k < dims[2] + 1; k++)
-        for (j = 0; j < dims[1] + 1; j++)
-            for (i = 0; i < dims[0] + 1; i++)
+            }
+        }
+    }
+    for (k = 0; k < dims[2] + 1; k++) {
+        for (j = 0; j < dims[1] + 1; j++) {
+            for (i = 0; i < dims[0] + 1; i++) {
                 fprintf(fp, "%lf\n", xlo[2] + dx[2] * k);
+            }
+        }
+    }
 
-    for (k = 0; k < dims[2]; k++)
-        for (j = 0; j < dims[1]; j++)
+    for (k = 0; k < dims[2]; k++) {
+        for (j = 0; j < dims[1]; j++) {
             for (i = 0; i < dims[0]; i++) {
                 ibindex = (k + nf) * (dims[1] + 2 * nf) * (dims[0] + 2 * nf) +
                           (j + nf) * (dims[0] + 2 * nf) + (i + nf);
@@ -723,13 +772,15 @@ void CartBlock::writeCellFile(int bid)
                 ibmax = std::max(ibmax, ibl_cell[ibindex]);
                 fprintf(fp, "%d\n", ibl_cell[ibindex]);
             }
+        }
+    }
 
     // printf("proc %d , block %d, ibmin/ibmax=%d %d\n",myid,bid,ibmin,ibmax);
     id = 0;
     dd1 = (dims[0] + 1);
     dd2 = dd1 * (dims[1] + 1);
-    for (k = 0; k < dims[2]; k++)
-        for (j = 0; j < dims[1]; j++)
+    for (k = 0; k < dims[2]; k++) {
+        for (j = 0; j < dims[1]; j++) {
             for (i = 0; i < dims[0]; i++) {
                 id = k * dd2 + j * dd1 + i + 1;
                 fprintf(
@@ -737,6 +788,8 @@ void CartBlock::writeCellFile(int bid)
                     id + dd1, id + dd2, id + 1 + dd2, id + 1 + dd1 + dd2,
                     id + dd1 + dd2);
             }
+        }
+    }
 
     fclose(fp);
     return;

@@ -79,8 +79,12 @@ int planeBoxOverlap(double normal[3], double vert[3], double maxbox[3])
         }
     }
 
-    if (DOT(normal, vmin) > 0.0) return 0;
-    if (DOT(normal, vmax) >= 0.0) return 1;
+    if (DOT(normal, vmin) > 0.0) {
+        return 0;
+    }
+    if (DOT(normal, vmax) >= 0.0) {
+        return 1;
+    }
     return 0;
 }
 
@@ -226,21 +230,29 @@ int triBoxOverlap(
 
     /* test in X-direction */
     FINDMINMAX(v0[X], v1[X], v2[X], min, max);
-    if (min > boxhalfsize[X] || max < -boxhalfsize[X]) return 0;
+    if (min > boxhalfsize[X] || max < -boxhalfsize[X]) {
+        return 0;
+    }
 
     /* test in Y-direction */
     FINDMINMAX(v0[Y], v1[Y], v2[Y], min, max);
-    if (min > boxhalfsize[Y] || max < -boxhalfsize[Y]) return 0;
+    if (min > boxhalfsize[Y] || max < -boxhalfsize[Y]) {
+        return 0;
+    }
 
     /* test in Z-direction */
     FINDMINMAX(v0[Z], v1[Z], v2[Z], min, max);
-    if (min > boxhalfsize[Z] || max < -boxhalfsize[Z]) return 0;
+    if (min > boxhalfsize[Z] || max < -boxhalfsize[Z]) {
+        return 0;
+    }
 
     /* Bullet 2: */
     /*  test if the box intersects the plane of the triangle */
     /*  compute plane equation of triangle: normal*x+d=0 */
     CROSS(normal, e0, e1);
 
-    if (!planeBoxOverlap(normal, v0, boxhalfsize)) return 0;
+    if (!planeBoxOverlap(normal, v0, boxhalfsize)) {
+        return 0;
+    }
     return 1; /* box and triangle overlaps */
 }

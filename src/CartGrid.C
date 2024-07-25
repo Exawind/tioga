@@ -55,7 +55,9 @@ CartGrid::~CartGrid()
     if (lcount) TIOGA_FREE(lcount);
     if (dxlvl) TIOGA_FREE(dxlvl);
 
-    if (m_info_device != nullptr) TIOGA_FREE_DEVICE(m_info_device);
+    if (m_info_device != nullptr) {
+        TIOGA_FREE_DEVICE(m_info_device);
+    }
 };
 
 void CartGrid::registerData(TIOGA::AMRMeshInfo* minfo)
@@ -98,7 +100,9 @@ void CartGrid::registerData(int nfin, int* idata, double* rdata, int ngridsin)
     local_id = (int*)malloc(sizeof(int) * ngrids);
     dims = (int*)malloc(sizeof(dims) * 3 * ngrids);
     nf = nfin;
-    if (myid == 0) fp = fopen("cartGrid.dat", "w");
+    if (myid == 0) {
+        fp = fopen("cartGrid.dat", "w");
+    }
     for (i = 0; i < ngrids; i++) {
         i3 = 3 * i;
         i6 = 2 * i3;
@@ -119,12 +123,15 @@ void CartGrid::registerData(int nfin, int* idata, double* rdata, int ngridsin)
         dx[i3] = rdata[i6 + 3];
         dx[i3 + 1] = rdata[i6 + 4];
         dx[i3 + 2] = rdata[i6 + 5];
-        if (myid == 0)
+        if (myid == 0) {
             fprintf(
                 fp, "%d %d %d %d %f %f %f\n", global_id[i], level_num[i],
                 proc_id[i], local_id[i], dx[i3], dx[i3 + 1], dx[i3 + 2]);
+        }
     }
-    if (myid == 0) fclose(fp);
+    if (myid == 0) {
+        fclose(fp);
+    }
 
     // Create AMRMeshInfo object so that it can be accessed on device in future
     // create_mesh_info();
@@ -145,18 +152,23 @@ void CartGrid::preprocess(void)
     xlosup[0] = xlosup[1] = xlosup[2] = BIGVALUE;
     maxlevel = -1;
     for (i = 0; i < ngrids; i++) {
-        for (n = 0; n < 3; n++)
+        for (n = 0; n < 3; n++) {
             xlosup[n] =
                 ((xlosup[n] <= xlo[3 * i + n]) ? xlosup[n] : xlo[3 * i + n]);
+        }
         maxlevel = ((maxlevel >= level_num[i]) ? maxlevel : level_num[i]);
     }
     maxlevel++;
     lcount = (int*)malloc(sizeof(int) * maxlevel);
     dxlvl = (double*)malloc(sizeof(double) * 3 * maxlevel);
-    for (i = 0; i < maxlevel; i++) lcount[i] = 0;
+    for (i = 0; i < maxlevel; i++) {
+        lcount[i] = 0;
+    }
     for (i = 0; i < ngrids; i++) {
         lcount[level_num[i]]++;
-        for (n = 0; n < 3; n++) dxlvl[3 * level_num[i] + n] = dx[3 * i + n];
+        for (n = 0; n < 3; n++) {
+            dxlvl[3 * level_num[i] + n] = dx[3 * i + n];
+        }
     }
 }
 //
@@ -173,8 +185,9 @@ void CartGrid::search(double* x, int* donorid, int npts)
         flag = 0;
         donorid[i] = -1;
         for (l = maxlevel - 1; l >= 0 && flag == 0; l--) {
-            for (n = 0; n < 3; n++)
+            for (n = 0; n < 3; n++) {
                 il[n] = floor((x[3 * i + n] - xlosup[n]) / dxlvl[3 * l + n]);
+            }
             for (j = 0; j < ngrids && flag == 0; j++) {
                 if (level_num[j] == l) {
                     flag = 1;
@@ -183,13 +196,15 @@ void CartGrid::search(double* x, int* donorid, int npts)
                     //   			 dx[3*j+n]*(dims[3*j+n]));
                     // for(n=0;n<3;n++) flag = flag && (il[n] >=ilo[3*j+n]);
                     // for(n=0;n<3;n++) flag = flag && (il[n] <=ihi[3*j+n]);
-                    for (n = 0; n < 3; n++)
+                    for (n = 0; n < 3; n++) {
                         flag = flag && ((x[3 * i + n] - xlo[3 * j + n]) > -TOL);
-                    for (n = 0; n < 3; n++)
+                    }
+                    for (n = 0; n < 3; n++) {
                         flag = flag &&
                                ((x[3 * i + n] -
                                  (xlo[3 * j + n] +
                                   dx[3 * j + n] * (dims[3 * j + n]))) < TOL);
+                    }
                     if (flag) {
                         dcount++;
                         donorid[i] = j;
@@ -204,8 +219,9 @@ void CartGrid::search(double* x, int* donorid, int npts)
                 "%d %d %f %f %f %d\n", myid, i, x[3 * i], x[3 * i + 1],
                 x[3 * i + 2], donorid[i]);
         }
-        if (donorid[i] == -1)
+        if (donorid[i] == -1) {
             printf("%d %f %f %f\n", myid, x[3 * i], x[3 * i + 1], x[3 * i + 2]);
+        }
     }
     // printf("CartGrid::search Processor %d located %d of %d
     // points\n",myid,dcount,npts);
@@ -236,7 +252,9 @@ void CartGrid::create_mesh_info()
 {
     assert(proc_id != nullptr);
 
-    if (m_info == nullptr) m_info = new TIOGA::AMRMeshInfo;
+    if (m_info == nullptr) {
+        m_info = new TIOGA::AMRMeshInfo;
+    }
     m_info->ngrids_global = ngrids;
     m_info->num_ghost = nf;
     create_view(m_info->level, level_num, ngrids);

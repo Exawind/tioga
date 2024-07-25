@@ -32,16 +32,23 @@ void MeshBlock::setCartIblanks(void)
         //
         for (i = 0; i < nreceptorCellsCart; i++) {
             icount = 0;
-            for (j = 0; j < pointsPerCell[i]; j++)
-                if (donorIdCart[m++] != -1) icount++;
-            if (icount == pointsPerCell[i]) iblank_cell[ctag_cart[i]] = -1;
+            for (j = 0; j < pointsPerCell[i]; j++) {
+                if (donorIdCart[m++] != -1) {
+                    icount++;
+                }
+            }
+            if (icount == pointsPerCell[i]) {
+                iblank_cell[ctag_cart[i]] = -1;
+            }
         }
         //
     } else {
         m = 0;
         for (i = 0; i < nnodes; i++) {
             if (pickedCart[i] == 1) {
-                if (donorIdCart[m++] != -1) iblank[i] = -1;
+                if (donorIdCart[m++] != -1) {
+                    iblank[i] = -1;
+                }
             }
         }
     }
@@ -55,7 +62,9 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
     //
     if (ihigh) {
         iflag = (int*)malloc(sizeof(int) * ncells);
-        for (i = 0; i < ncells; i++) iflag[i] = 0;
+        for (i = 0; i < ncells; i++) {
+            iflag[i] = 0;
+        }
 
         k = 0;
         for (n = 0; n < ntypes; n++) {
@@ -64,7 +73,9 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
                 fcount = 0;
                 for (m = 0; m < nvert; m++) {
                     inode[m] = vconn[n][nvert * i + m] - BASE;
-                    if (nodeRes[inode[m]] >= BIGVALUE) fcount++;
+                    if (nodeRes[inode[m]] >= BIGVALUE) {
+                        fcount++;
+                    }
                 }
                 if (fcount == nvert && iblank_cell[k] == 1) {
                     iflag[k] = 1;
@@ -76,8 +87,11 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
         if (ctag_cart != nullptr) TIOGA_FREE(ctag_cart);
         ctag_cart = (int*)malloc(sizeof(int) * ncells);
         nreceptorCellsCart = 0;
-        for (i = 0; i < ncells; i++)
-            if (iflag[i] == -1) ctag_cart[nreceptorCellsCart++] = i + 1;
+        for (i = 0; i < ncells; i++) {
+            if (iflag[i] == -1) {
+                ctag_cart[nreceptorCellsCart++] = i + 1;
+            }
+        }
 
         if (pointsPerCell != nullptr) TIOGA_FREE(pointsPerCell);
         pointsPerCell = (int*)malloc(sizeof(int) * nreceptorCellsCart);
@@ -108,7 +122,9 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
     } else {
         if (pickedCart != nullptr) TIOGA_FREE(pickedCart);
         pickedCart = (int*)malloc(sizeof(int) * nnodes);
-        for (i = 0; i < nnodes; i++) pickedCart[i] = 0;
+        for (i = 0; i < nnodes; i++) {
+            pickedCart[i] = 0;
+        }
 
         ntotalPointsCart = 0;
         for (i = 0; i < nnodes; i++) {
@@ -125,12 +141,15 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
         receptorIdCart = (int*)malloc(sizeof(int) * ntotalPointsCart);
         m = 0;
         k = 0;
-        for (i = 0; i < nnodes; i++)
+        for (i = 0; i < nnodes; i++) {
             if (pickedCart[i]) {
                 receptorIdCart[k++] = i;
                 i3 = 3 * i;
-                for (j = 0; j < 3; j++) rxyzCart[m++] = x[i3 + j];
+                for (j = 0; j < 3; j++) {
+                    rxyzCart[m++] = x[i3 + j];
+                }
             }
+        }
     }
 }
 
@@ -156,19 +175,21 @@ void MeshBlock::writeOBB2(OBB* obc, int bid)
             for (j = 0; j < 2; j++) {
                 ij = 2 * (j % 2) - 1;
                 xx[0] = xx[1] = xx[2] = 0;
-                for (m = 0; m < 3; m++)
+                for (m = 0; m < 3; m++) {
                     xx[m] = obc->xc[m] + ij * obc->vec[0][m] * obc->dxc[0] +
                             ik * obc->vec[1][m] * obc->dxc[1] +
                             il * obc->vec[2][m] * obc->dxc[2];
+                }
                 fprintf(fp, "%f %f %f\n", xx[0], xx[1], xx[2]);
             }
         }
     }
     fprintf(fp, "1 2 4 3 5 6 8 7\n");
     fprintf(fp, "%e %e %e\n", obc->xc[0], obc->xc[1], obc->xc[2]);
-    for (k = 0; k < 3; k++)
+    for (k = 0; k < 3; k++) {
         fprintf(
             fp, "%e %e %e\n", obc->vec[0][k], obc->vec[1][k], obc->vec[2][k]);
+    }
     fprintf(fp, "%e %e %e\n", obc->dxc[0], obc->dxc[1], obc->dxc[2]);
     fclose(fp);
 }
@@ -193,12 +214,15 @@ void MeshBlock::findInterpListCart(void)
         TIOGA_FREE(interpListCart);
         interpListCartSize = 0;
     }
-    for (irecord = 0; irecord < nsearch; irecord++)
-        if (donorId[irecord] != -1) interpListCartSize++;
+    for (irecord = 0; irecord < nsearch; irecord++) {
+        if (donorId[irecord] != -1) {
+            interpListCartSize++;
+        }
+    }
     interpListCart =
         (INTERPLIST*)malloc(sizeof(INTERPLIST) * interpListCartSize);
     interpCount = 0;
-    for (irecord = 0; irecord < nsearch; irecord++)
+    for (irecord = 0; irecord < nsearch; irecord++) {
         if (donorId[irecord] != -1) {
             i3 = 3 * irecord;
             procid = isearch[i3];
@@ -220,7 +244,9 @@ void MeshBlock::findInterpListCart(void)
             for (m = 0; m < nvert; m++) {
                 inode[m] = vconn[n][nvert * i + m] - BASE;
                 i3 = 3 * inode[m];
-                for (j = 0; j < 3; j++) xv[m][j] = x[i3 + j];
+                for (j = 0; j < 3; j++) {
+                    xv[m][j] = x[i3 + j];
+                }
             }
             //
             computeNodalWeights(xv, xp, frac, nvert);
@@ -241,6 +267,7 @@ void MeshBlock::findInterpListCart(void)
             }
             interpCount++;
         }
+    }
     ninterpCart = interpCount;
     assert((ninterpCart == interpCount));
 }
@@ -285,8 +312,12 @@ void MeshBlock::getInterpolatedSolutionAMR(
     if (nintold > 0) {
         tmpint = (int*)malloc(sizeof(int) * 3 * (*nints));
         tmpreal = (double*)malloc(sizeof(double) * (*nreals));
-        for (i = 0; i < (*nints) * 3; i++) tmpint[i] = (*intData)[i];
-        for (i = 0; i < (*nreals); i++) tmpreal[i] = (*realData)[i];
+        for (i = 0; i < (*nints) * 3; i++) {
+            tmpint[i] = (*intData)[i];
+        }
+        for (i = 0; i < (*nreals); i++) {
+            tmpreal[i] = (*realData)[i];
+        }
         //
         TIOGA_FREE((*intData));
         TIOGA_FREE((*realData)); // didn't free this before ??
@@ -297,8 +328,12 @@ void MeshBlock::getInterpolatedSolutionAMR(
     (*intData) = (int*)malloc(sizeof(int) * 3 * (*nints));
     (*realData) = (double*)malloc(sizeof(double) * (*nreals));
     if (nintold > 0) {
-        for (i = 0; i < nintold * 3; i++) (*intData)[i] = tmpint[i];
-        for (i = 0; i < nrealold; i++) (*realData)[i] = tmpreal[i];
+        for (i = 0; i < nintold * 3; i++) {
+            (*intData)[i] = tmpint[i];
+        }
+        for (i = 0; i < nrealold; i++) {
+            (*realData)[i] = tmpreal[i];
+        }
         TIOGA_FREE(tmpint);
         TIOGA_FREE(tmpreal);
     }
@@ -310,7 +345,9 @@ void MeshBlock::getInterpolatedSolutionAMR(
     if (interptype == ROW) {
         for (i = 0; i < ninterp; i++) {
             if (!interpList[i].cancel) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpList[i].nweights; m++) {
                     inode = interpList[i].inode[m];
                     weight = interpList[i].weights[m];
@@ -318,18 +355,23 @@ void MeshBlock::getInterpolatedSolutionAMR(
                         TRACED(weight);
                         printf("warning: weights are not convex 3\n");
                     }
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[inode * nvar + k] * weight;
+                    }
                 }
                 (*intData)[icount++] = sndMap[interpList[i].receptorInfo[0]];
                 (*intData)[icount++] = -1 - interpList[i].receptorInfo[2];
                 (*intData)[icount++] = interpList[i].receptorInfo[1];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
         for (i = 0; i < ninterpCart; i++) {
             if (!interpListCart[i].cancel) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpListCart[i].nweights; m++) {
                     inode = interpListCart[i].inode[m];
                     weight = interpListCart[i].weights[m];
@@ -349,38 +391,50 @@ void MeshBlock::getInterpolatedSolutionAMR(
                 (*intData)[icount++] = interpListCart[i].receptorInfo[0];
                 (*intData)[icount++] = 1 + interpListCart[i].receptorInfo[2];
                 (*intData)[icount++] = interpListCart[i].receptorInfo[1];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
     } else if (interptype == COLUMN) {
         for (i = 0; i < ninterp; i++) {
             if (!interpList[i].cancel) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpList[i].nweights; m++) {
                     inode = interpList[i].inode[m];
                     weight = interpList[i].weights[m];
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[k * nnodes + inode] * weight;
+                    }
                 }
                 (*intData)[icount++] = sndMap[interpList[i].receptorInfo[0]];
                 (*intData)[icount++] = -1 - interpList[i].receptorInfo[2];
                 (*intData)[icount++] = interpList[i].receptorInfo[1];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
         for (i = 0; i < ninterpCart; i++) {
             if (!interpListCart[i].cancel) {
-                for (k = 0; k < nvar; k++) qq[k] = 0;
+                for (k = 0; k < nvar; k++) {
+                    qq[k] = 0;
+                }
                 for (m = 0; m < interpListCart[i].nweights; m++) {
                     inode = interpListCart[i].inode[m];
                     weight = interpListCart[i].weights[m];
-                    for (k = 0; k < nvar; k++)
+                    for (k = 0; k < nvar; k++) {
                         qq[k] += q[k * nnodes + inode] * weight;
+                    }
                 }
                 (*intData)[icount++] = interpListCart[i].receptorInfo[0];
                 (*intData)[icount++] = 1 + interpListCart[i].receptorInfo[2];
                 (*intData)[icount++] = interpListCart[i].receptorInfo[1];
-                for (k = 0; k < nvar; k++) (*realData)[dcount++] = qq[k];
+                for (k = 0; k < nvar; k++) {
+                    (*realData)[dcount++] = qq[k];
+                }
             }
         }
     }

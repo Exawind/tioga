@@ -144,7 +144,9 @@ public:
         int sflag;
         MPI_Finalized(&sflag);
         if (!sflag) {
-            if (comm != MPI_COMM_NULL) MPI_Comm_free(&comm);
+            if (comm != MPI_COMM_NULL) {
+                MPI_Comm_free(&comm);
+            }
         };
     };
 };

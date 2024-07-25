@@ -66,8 +66,9 @@ void findOBB(
         } else {
             for (i = 0; i < nnodes; i++) {
                 i3 = 3 * i;
-                for (j = 0; j < 3; j++)
+                for (j = 0; j < 3; j++) {
                     dxc[j] = std::max(1e-3, fabs(x[i3 + j] - x[0]));
+                }
             }
             return;
         }
@@ -77,7 +78,9 @@ void findOBB(
     // aa = [I11 I12 I13;I21 I22 I23;I31 I32 I33]
     //
     //
-    for (i = 0; i < 9; i++) aa[i] = 0;
+    for (i = 0; i < 9; i++) {
+        aa[i] = 0;
+    }
     //
     for (i = 0; i < nnodes; i++) {
         i3 = 3 * i;
@@ -102,10 +105,11 @@ void findOBB(
     // copy the eigen vector basis on to vec
     //
     m = 0;
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
             vec[i][j] = aa[m++];
         }
+    }
     //
     // find min and max bounds in the bounding box
     // vector basis
@@ -116,10 +120,15 @@ void findOBB(
     }
     for (i = 0; i < nnodes; i++) {
         i3 = 3 * i;
-        for (j = 0; j < 3; j++) xd[j] = 0;
+        for (j = 0; j < 3; j++) {
+            xd[j] = 0;
+        }
         //
-        for (j = 0; j < 3; j++)
-            for (k = 0; k < 3; k++) xd[j] += (x[i3 + k] - xc[k]) * vec[j][k];
+        for (j = 0; j < 3; j++) {
+            for (k = 0; k < 3; k++) {
+                xd[j] += (x[i3 + k] - xc[k]) * vec[j][k];
+            }
+        }
         //
         for (j = 0; j < 3; j++) {
             xmax[j] = std::max(xmax[j], xd[j]);
@@ -140,7 +149,9 @@ void findOBB(
     // actual cartesian coordinates
     //
     for (j = 0; j < 3; j++) {
-        for (k = 0; k < 3; k++) xc[j] += (xd[k] * vec[k][j]);
+        for (k = 0; k < 3; k++) {
+            xc[j] += (xd[k] * vec[k][j]);
+        }
     }
 }
 /**
@@ -154,10 +165,14 @@ int checkHoleMap(double* x, int* nx, int* sam, double* extents)
     double dx[3];
     int ix[3];
 
-    for (i = 0; i < 3; i++) dx[i] = (extents[i + 3] - extents[i]) / nx[i];
+    for (i = 0; i < 3; i++) {
+        dx[i] = (extents[i + 3] - extents[i]) / nx[i];
+    }
     for (i = 0; i < 3; i++) {
         ix[i] = (x[i] - extents[i]) / dx[i];
-        if (ix[i] < 0 || ix[i] > nx[i] - 1) return 0;
+        if (ix[i] < 0 || ix[i] > nx[i] - 1) {
+            return 0;
+        }
     }
     mm = ix[2] * nx[1] * nx[0] + ix[1] * nx[0] + ix[0];
     return sam[mm];
@@ -189,12 +204,24 @@ int search_octant(
 
     /* check intersection with box around each point */
     const double TOL2 = 0.0;
-    if (xpt[0] < xlo[0] + TOL2) return OUTSIDE_SB;
-    if (xpt[0] > xlo[0] + dx[0] - TOL2) return OUTSIDE_SB;
-    if (xpt[1] < xlo[1] + TOL2) return OUTSIDE_SB;
-    if (xpt[1] > xlo[1] + dx[1] - TOL2) return OUTSIDE_SB;
-    if (xpt[2] < xlo[2] + TOL2) return OUTSIDE_SB;
-    if (xpt[2] > xlo[2] + dx[2] - TOL2) return OUTSIDE_SB;
+    if (xpt[0] < xlo[0] + TOL2) {
+        return OUTSIDE_SB;
+    }
+    if (xpt[0] > xlo[0] + dx[0] - TOL2) {
+        return OUTSIDE_SB;
+    }
+    if (xpt[1] < xlo[1] + TOL2) {
+        return OUTSIDE_SB;
+    }
+    if (xpt[1] > xlo[1] + dx[1] - TOL2) {
+        return OUTSIDE_SB;
+    }
+    if (xpt[2] < xlo[2] + TOL2) {
+        return OUTSIDE_SB;
+    }
+    if (xpt[2] > xlo[2] + dx[2] - TOL2) {
+        return OUTSIDE_SB;
+    }
 
     // point exists inside this octant: need to check if leaf or parent
     // check if parent is refined: [yes] search children, [no] return filltype
@@ -255,29 +282,35 @@ void fillHoleMap(int* holeMap, int ix[3], int isym)
     //
     ns2 = ix[0] * ix[1];
     //
-    for (kk = 0; kk < ix[2]; kk += (ix[2] - 1))
-        for (jj = 0; jj < ix[1]; jj++)
+    for (kk = 0; kk < ix[2]; kk += (ix[2] - 1)) {
+        for (jj = 0; jj < ix[1]; jj++) {
             for (ii = 0; ii < ix[0]; ii++) {
                 mm = kk * ns2 + jj * ix[0] + ii;
                 holeMap[mm] = 1;
             }
-    for (kk = 0; kk < ix[2]; kk++)
-        for (jj = 0; jj < ix[1]; jj += (ix[1] - 1))
+        }
+    }
+    for (kk = 0; kk < ix[2]; kk++) {
+        for (jj = 0; jj < ix[1]; jj += (ix[1] - 1)) {
             for (ii = 0; ii < ix[0]; ii++) {
                 mm = kk * ns2 + jj * ix[0] + ii;
                 holeMap[mm] = 1;
             }
-    for (kk = 0; kk < ix[2]; kk++)
-        for (jj = 0; jj < ix[1]; jj++)
+        }
+    }
+    for (kk = 0; kk < ix[2]; kk++) {
+        for (jj = 0; jj < ix[1]; jj++) {
             for (ii = 0; ii < ix[0]; ii += (ix[0] - 1)) {
                 mm = kk * ns2 + jj * ix[0] + ii;
                 holeMap[mm] = 1;
             }
+        }
+    }
     npaint = ns2 * ix[2];
     while (npaint > 0) {
         npaint = 0;
-        for (k = 1; k < ix[2] - 1; k++)
-            for (j = 1; j < ix[1] - 1; j++)
+        for (k = 1; k < ix[2] - 1; k++) {
+            for (j = 1; j < ix[1] - 1; j++) {
                 for (i = 1; i < ix[0] - 1; i++) {
                     m = k * ns2 + j * ix[0] + i;
                     if (holeMap[m] == 0) {
@@ -324,6 +357,8 @@ void fillHoleMap(int* holeMap, int ix[3], int isym)
                         }
                     }
                 }
+            }
+        }
     }
     for (i = 0; i < ix[2] * ix[1] * ix[0]; i++) {
         holeMap[i] = (holeMap[i] == 0 || holeMap[i] == 2);
@@ -350,12 +385,17 @@ int obbIntersectCheck(
     // D=distance between centers
     // C=scalar product of axes
     //
-    for (i = 0; i < 3; i++) D[i] = xB[i] - xA[i];
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++) {
+        D[i] = xB[i] - xA[i];
+    }
+    for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
             c[i][j] = 0;
-            for (k = 0; k < 3; k++) c[i][j] = c[i][j] + vA[i][k] * vB[j][k];
+            for (k = 0; k < 3; k++) {
+                c[i][j] = c[i][j] + vA[i][k] * vB[j][k];
+            }
         }
+    }
     //
     // separating axes based on the faces of box A
     //
@@ -367,7 +407,9 @@ int obbIntersectCheck(
             r1 += dxB[j] * fabs(c[i][j]);
             r += fabs(vA[i][j]) * D[j];
         }
-        if (r > (r0 + r1 + eps)) return 0;
+        if (r > (r0 + r1 + eps)) {
+            return 0;
+        }
     }
     //
     // separating axes based on the faces of box B
@@ -380,7 +422,9 @@ int obbIntersectCheck(
             r0 += dxA[j] * fabs(c[j][i]);
             r += fabs(vB[i][j]) * D[j];
         }
-        if (r > (r0 + r1 + eps)) return 0;
+        if (r > (r0 + r1 + eps)) {
+            return 0;
+        }
     }
     //
     // cross products
@@ -420,10 +464,14 @@ void getobbcoords(
 {
     int i, j, k, ik;
     for (i = 0; i < 8; i++) {
-        for (k = 0; k < 3; k++) xv[i][k] = xc[k];
+        for (k = 0; k < 3; k++) {
+            xv[i][k] = xc[k];
+        }
         for (k = 0; k < 3; k++) {
             ik = (2 * ((i & (1 << k)) >> k) - 1);
-            for (j = 0; j < 3; j++) xv[i][j] += ik * dxc[k] * vec[k][j];
+            for (j = 0; j < 3; j++) {
+                xv[i][j] += ik * dxc[k] * vec[k][j];
+            }
         }
     }
 }
@@ -433,7 +481,9 @@ void transform2OBB(double xv[3], double xc[3], double vec[3][3], double xd[3])
     int j, k;
     for (j = 0; j < 3; j++) {
         xd[j] = 0;
-        for (k = 0; k < 3; k++) xd[j] += (xv[k] - xc[k]) * vec[j][k];
+        for (k = 0; k < 3; k++) {
+            xd[j] += (xv[k] - xc[k]) * vec[j][k];
+        }
     }
 }
 
@@ -459,10 +509,11 @@ void writebbox(OBB* obb, int bid)
             for (j = 0; j < 2; j++) {
                 ij = 2 * (j % 2) - 1;
                 xx[0] = xx[1] = xx[2] = 0;
-                for (m = 0; m < 3; m++)
+                for (m = 0; m < 3; m++) {
                     xx[m] = obb->xc[m] + ij * obb->vec[0][m] * obb->dxc[0] +
                             ik * obb->vec[1][m] * obb->dxc[1] +
                             il * obb->vec[2][m] * obb->dxc[2];
+                }
                 fprintf(fp, "%f %f %f\n", xx[0], xx[1], xx[2]);
             }
         }
@@ -500,23 +551,30 @@ void writebboxdiv(OBB* obb, int bid)
         ncells);
 
     getobbcoords(mx0, mdx, obb->vec, xv);
-    for (l = 0; l < mapdims[2]; l++)
-        for (k = 0; k < mapdims[1]; k++)
+    for (l = 0; l < mapdims[2]; l++) {
+        for (k = 0; k < mapdims[1]; k++) {
             for (j = 0; j < mapdims[0]; j++) {
                 xd[0] = -obb->dxc[0] + j * mapdx[0] + mapdx[0] * 0.5;
                 xd[1] = -obb->dxc[1] + k * mapdx[1] + mapdx[1] * 0.5;
                 xd[2] = -obb->dxc[2] + l * mapdx[2] + mapdx[2] * 0.5;
                 for (n = 0; n < 3; n++) {
                     xc[n] = obb->xc[n];
-                    for (m = 0; m < 3; m++) xc[n] += (xd[m] * obb->vec[m][n]);
+                    for (m = 0; m < 3; m++) {
+                        xc[n] += (xd[m] * obb->vec[m][n]);
+                    }
                 }
-                for (m = 0; m < 8; m++)
+                for (m = 0; m < 8; m++) {
                     fprintf(
                         fp, "%f %f %f\n", xc[0] + xv[m][0], xc[1] + xv[m][1],
                         xc[2] + xv[m][2]);
+                }
             }
+        }
+    }
     for (l = 0; l < ncells; l++) {
-        for (m = 0; m < 8; m++) fprintf(fp, "%d ", iorder[m] + l * 8);
+        for (m = 0; m < 8; m++) {
+            fprintf(fp, "%d ", iorder[m] + l * 8);
+        }
         fprintf(fp, "\n");
     }
 }
@@ -533,8 +591,9 @@ void writePoints(double* x, int nsearch, int bid)
     fp = fopen(fname, "w");
     fprintf(fp, "TITLE =\"Box file\"\n");
     fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\"\n");
-    for (i = 0; i < nsearch; i++)
+    for (i = 0; i < nsearch; i++) {
         fprintf(fp, "%f %f %f\n", x[3 * i], x[3 * i + 1], x[3 * i + 2]);
+    }
     fclose(fp);
 }
 /*
@@ -551,20 +610,29 @@ void uniquenodes(double* x, int* meshtag, double* rtag, int* itag, int* nn)
     int *cft, *numpts, *ilist;
     int nnodes = *nn;
 
-    for (j = 0; j < 3; j++) xmax[j] = -1E15;
-    for (j = 0; j < 3; j++) xmin[j] = 1E15;
+    for (j = 0; j < 3; j++) {
+        xmax[j] = -1E15;
+    }
+    for (j = 0; j < 3; j++) {
+        xmin[j] = 1E15;
+    }
 
-    for (i = 0; i < nnodes; i++)
+    for (i = 0; i < nnodes; i++) {
         for (j = 0; j < 3; j++) {
             xmax[j] = std::max(xmax[j], x[3 * i + j]);
             xmin[j] = std::min(xmin[j], x[3 * i + j]);
         }
+    }
 
     ds = (xmax[0] - xmin[0] + xmax[1] - xmin[1] + xmax[2] - xmin[2]) / 3.0 /
          NSUB;
     dsi = 1.0 / ds;
-    for (j = 0; j < 3; j++) xmax[j] += ds;
-    for (j = 0; j < 3; j++) xmin[j] -= ds;
+    for (j = 0; j < 3; j++) {
+        xmax[j] += ds;
+    }
+    for (j = 0; j < 3; j++) {
+        xmin[j] -= ds;
+    }
     jmax =
         std::min(round((xmax[0] - xmin[0]) * dsi), static_cast<double>(NSUB));
     jmax = std::max(jmax, 1);
@@ -586,7 +654,9 @@ void uniquenodes(double* x, int* meshtag, double* rtag, int* itag, int* nn)
     numpts = (int*)malloc(sizeof(int) * nsblks);
     ilist = (int*)malloc(sizeof(int) * nnodes);
 
-    for (i = 0; i < nsblks; i++) numpts[i] = 0;
+    for (i = 0; i < nsblks; i++) {
+        numpts[i] = 0;
+    }
     for (i = 0; i < nnodes; i++) {
         i3 = 3 * i;
         jj = (int)((x[i3] - xmin[0]) * dsxi);
@@ -597,7 +667,9 @@ void uniquenodes(double* x, int* meshtag, double* rtag, int* itag, int* nn)
     }
 
     cft[0] = 0;
-    for (i = 0; i < nsblks; i++) cft[i + 1] = cft[i] + numpts[i];
+    for (i = 0; i < nsblks; i++) {
+        cft[i + 1] = cft[i] + numpts[i];
+    }
 
     for (i = 0; i < nnodes; i++) {
         i3 = 3 * i;
@@ -610,7 +682,7 @@ void uniquenodes(double* x, int* meshtag, double* rtag, int* itag, int* nn)
         itag[i] = i;
     }
 
-    for (i = 0; i < nsblks; i++)
+    for (i = 0; i < nsblks; i++) {
         for (j = cft[i]; j < cft[i + 1]; j++) {
             p1 = ilist[j];
             for (k = j + 1; k < cft[i + 1]; k++) {
@@ -630,6 +702,7 @@ void uniquenodes(double* x, int* meshtag, double* rtag, int* itag, int* nn)
                 }
             }
         }
+    }
     /*
     m=0;
     for(i=0;i<nnodes;i++)
@@ -671,18 +744,21 @@ void uniqNodesTree(
         icheck = 0;
         xmin[0] = xmin[1] = xmin[2] = BIGVALUE;
         xmax[0] = xmax[1] = xmax[2] = -BIGVALUE;
-        for (i = 0; i < nav; i++)
+        for (i = 0; i < nav; i++) {
             for (j = 0; j < nd; j++) {
                 xmin[j] =
                     std::min(xmin[j], coord[ndim * elementsAvailable[i] + j]);
                 xmax[j] =
                     std::max(xmax[j], coord[ndim * elementsAvailable[i] + j]);
             }
+        }
         for (j = 0; j < nd; j++) {
             xmid[j] = (xmax[j] + xmin[j]) * 0.5;
             dx[j] = (xmax[j] - xmin[j]) * 0.5 + TOL;
         }
-        for (j = 0; j < 8; j++) npts[j] = 0;
+        for (j = 0; j < 8; j++) {
+            npts[j] = 0;
+        }
         for (i = 0; i < nav; i++) {
             for (j = 0; j < 3; j++) {
                 xp[j] = coord[ndim * elementsAvailable[i] + j] - xmid[j];
@@ -691,11 +767,16 @@ void uniqNodesTree(
             ibox = 4 * iv[0] + 2 * iv[1] + iv[2];
             npts[ibox]++;
         }
-        for (j = 0; j < 8; j++)
-            if (npts[j] == nav) icheck = 1;
+        for (j = 0; j < 8; j++) {
+            if (npts[j] == nav) {
+                icheck = 1;
+            }
+        }
         if (!icheck) {
             cft[0] = 0;
-            for (j = 0; j < 8; j++) cft[j + 1] = cft[j] + npts[j];
+            for (j = 0; j < 8; j++) {
+                cft[j + 1] = cft[j] + npts[j];
+            }
             tmpint = (int*)malloc(sizeof(int) * nav);
             for (i = 0; i < nav; i++) {
                 for (j = 0; j < 3; j++) {
@@ -706,14 +787,18 @@ void uniqNodesTree(
                 npts[ibox] = npts[ibox] - 1;
                 tmpint[npts[ibox] + cft[ibox]] = elementsAvailable[i];
             }
-            for (i = 0; i < nav; i++) elementsAvailable[i] = tmpint[i];
+            for (i = 0; i < nav; i++) {
+                elementsAvailable[i] = tmpint[i];
+            }
             TIOGA_FREE(tmpint);
-            for (j = 0; j < 8; j++)
-                if (cft[j + 1] > cft[j])
+            for (j = 0; j < 8; j++) {
+                if (cft[j + 1] > cft[j]) {
                     uniqNodesTree(
                         coord, itag, rtag, meshtag,
                         &(elementsAvailable[cft[j]]), ndim,
                         cft[j + 1] - cft[j]);
+                }
+            }
         }
     }
     if (icheck) {
@@ -1064,14 +1149,18 @@ void floodfill_octant(octant_full_t* o)
     int n;
 
     // return if outside or wall SB
-    if (o->filltype == OUTSIDE_SB || o->filltype == WALL_SB) return;
+    if (o->filltype == OUTSIDE_SB || o->filltype == WALL_SB) {
+        return;
+    }
 
     // INSIDE_SB: search neighbors
     ipaint = INSIDE_SB;
     for (n = 0; n < nneig && ipaint == INSIDE_SB; n++) {
         // search neighbor if it exists and is a leaf
         if (o->nhbr[n] && !o->nhbr[n]->refined) {
-            if (o->nhbr[n]->filltype == OUTSIDE_SB) ipaint = OUTSIDE_SB;
+            if (o->nhbr[n]->filltype == OUTSIDE_SB) {
+                ipaint = OUTSIDE_SB;
+            }
         }
     }
     o->filltype = ipaint;
@@ -1085,13 +1174,16 @@ void floodfill_level(level_octant_t* level)
 
     for (j = 0; j < level->elem_count; j++) {
         octant_full_t* o = &level->octants[j];
-        if (!o->refined) floodfill_octant(o);
+        if (!o->refined) {
+            floodfill_octant(o);
+        }
 
         // fill neighbors (required since we jump around mesh due to Morton
         // order)
         for (n = 0; n < nneig; n++) {
-            if (o->nhbr[n] && !o->nhbr[n]->refined)
+            if (o->nhbr[n] && !o->nhbr[n]->refined) {
                 floodfill_octant(o->nhbr[n]);
+            }
         }
     }
 }
@@ -1119,10 +1211,13 @@ char checkFaceBoundaryNodes(
             //   return 0;
             // }
         }
-        if (bcFlag == 0) return 0;
+        if (bcFlag == 0) {
+            return 0;
+        }
     }
 
-    for (v = 0; v < numfaceverts; v++)
+    for (v = 0; v < numfaceverts; v++) {
         bcFlag &= bcnodeflag[nodes[faceConn[v] - BASE]];
+    }
     return bcFlag;
 }

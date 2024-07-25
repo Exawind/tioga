@@ -52,18 +52,30 @@ public:
     };
     ~ADT()
     {
-        if (adtIntegers) free(adtIntegers);
-        if (adtReals) free(adtReals);
-        if (adtExtents) free(adtExtents);
+        if (adtIntegers) {
+            free(adtIntegers);
+        }
+        if (adtReals) {
+            free(adtReals);
+        }
+        if (adtExtents) {
+            free(adtExtents);
+        }
         adtIntegers = nullptr;
         adtReals = nullptr;
         adtExtents = nullptr;
     };
     void clearData(void)
     {
-        if (adtIntegers) free(adtIntegers);
-        if (adtReals) free(adtReals);
-        if (adtExtents) free(adtExtents);
+        if (adtIntegers) {
+            free(adtIntegers);
+        }
+        if (adtReals) {
+            free(adtReals);
+        }
+        if (adtExtents) {
+            free(adtExtents);
+        }
         adtIntegers = nullptr;
         adtReals = nullptr;
         adtExtents = nullptr;

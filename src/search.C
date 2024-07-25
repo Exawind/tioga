@@ -121,7 +121,9 @@ void uniquenode_map(uint64_t* node_ids, double* node_res, int* itag, int nnodes)
 
     // The max node resolution was stored off in the original node, propagate
     // this to all the duplicates
-    for (int i = 0; i < nnodes; i++) node_res[i] = node_res[itag[i]];
+    for (int i = 0; i < nnodes; i++) {
+        node_res[i] = node_res[itag[i]];
+    }
 }
 } // namespace
 
@@ -165,7 +167,9 @@ void MeshBlock::search(void)
     //  the OBB
     //
     icell = (int*)malloc(sizeof(int) * ncells);
-    for (i = 0; i < ncells; i++) icell[i] = -1;
+    for (i = 0; i < ncells; i++) {
+        icell[i] = -1;
+    }
     iptr = -1;
     cell_count = 0;
     p = 0;
@@ -182,8 +186,9 @@ void MeshBlock::search(void)
                 i3 = 3 * (vconn[n][nvert * i + m] - BASE);
                 for (j = 0; j < 3; j++) {
                     xd[j] = 0;
-                    for (k = 0; k < 3; k++)
+                    for (k = 0; k < 3; k++) {
                         xd[j] += (x[i3 + k] - obq->xc[k]) * obq->vec[j][k];
+                    }
                     xmin[j] = std::min(xmin[j], xd[j]);
                     xmax[j] = std::max(xmax[j], xd[j]);
                 }
@@ -364,9 +369,13 @@ void MeshBlock::search(void)
 
 void MeshBlock::search_uniform_hex(void)
 {
-    if (donorId) free(donorId);
+    if (donorId) {
+        free(donorId);
+    }
     donorId = (int*)malloc(sizeof(int) * nsearch);
-    if (xtag) free(xtag);
+    if (xtag) {
+        free(xtag);
+    }
     xtag = (int*)malloc(sizeof(int) * nsearch);
     //
 #ifdef TIOGA_HAS_NODEGID
@@ -382,9 +391,11 @@ void MeshBlock::search_uniform_hex(void)
     // corners of a cube with of side 4*TOL
     // with origin as the center
     //
-    for (int jj = 0; jj < 8; jj++)
-        for (int k = 0; k < 3; k++)
+    for (int jj = 0; jj < 8; jj++) {
+        for (int k = 0; k < 3; k++) {
             xvec[jj][k] = (2 * ((jj & (1 << k)) >> k) - 1) * 2 * TOL;
+        }
+    }
     //
     double xd[3];
     int dID[2];
@@ -393,22 +404,28 @@ void MeshBlock::search_uniform_hex(void)
         if (xtag[i] == i) {
             for (int j = 0; j < 3; j++) {
                 xd[j] = 0;
-                for (int k = 0; k < 3; k++)
+                for (int k = 0; k < 3; k++) {
                     xd[j] += (xsearch[3 * i + k] - xlow[k]) * obh->vec[j][k];
+                }
                 idx[j] = xd[j] / dx[j];
             }
             if (xd[0] > -TOL && xd[0] < idims[0] * dx[0] + TOL &&
                 xd[1] > -TOL && xd[1] < idims[1] * dx[1] + TOL &&
                 xd[2] > -TOL && xd[2] < idims[2] * dx[2] + TOL) {
-                for (int k = 0; k < 3; k++)
-                    if (idx[k] == idims[k]) idx[k]--;
+                for (int k = 0; k < 3; k++) {
+                    if (idx[k] == idims[k]) {
+                        idx[k]--;
+                    }
+                }
                 dID[0] = uindx
                     [idx[2] * idims[1] * idims[0] + idx[1] * idims[0] + idx[0]];
                 dID[1] = (dID[0] > -1) ? (cellRes[dID[0]] == BIGVALUE) : 1;
                 for (int jj = 0; jj < 8 && (dId[0] == -1 || dID[1]); jj++) {
                     for (int k = 0; k < 3; k++) {
                         idx[k] = (xd[k] + xvec[jj][k]) / dx[k];
-                        if (idx[k] == idims[k]) idx[k]--;
+                        if (idx[k] == idims[k]) {
+                            idx[k]--;
+                        }
                     }
                     int dtest = uindx
                         [idx[2] * idims[1] * idims[0] + idx[1] * idims[0] +

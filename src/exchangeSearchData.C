@@ -104,11 +104,13 @@ void tioga::exchangeSearchData(int at_points)
             sndPack[k].intData[n++] = nintsSend[ii];
             sndPack[k].intData[n++] = nrealsSend[ii];
 
-            for (int j = 0; j < nintsSend[ii]; j++)
+            for (int j = 0; j < nintsSend[ii]; j++) {
                 sndPack[k].intData[n++] = int_data[ii][j];
+            }
 
-            for (int j = 0; j < nrealsSend[ii]; j++)
+            for (int j = 0; j < nrealsSend[ii]; j++) {
                 sndPack[k].realData[m++] = real_data[ii][j];
+            }
         }
     }
     pc->sendRecvPackets(sndPack, rcvPack);
@@ -182,7 +184,9 @@ void tioga::exchangeSearchData(int at_points)
     // Resize MeshBlock array sizes
     for (int ib = 0; ib < nblocks; ib++) {
         auto& mb = mblocks[ib];
-        if (mb->nsearch < 1) continue;
+        if (mb->nsearch < 1) {
+            continue;
+        }
         mb->xsearch = (double*)malloc(sizeof(double) * 3 * mb->nsearch);
         mb->res_search = (double*)malloc(sizeof(double) * mb->nsearch);
         mb->isearch = (int*)malloc(3 * sizeof(int) * mb->nsearch);
@@ -191,8 +195,9 @@ void tioga::exchangeSearchData(int at_points)
 #ifdef TIOGA_HAS_NODEGID
         mb->gid_search.resize(mb->nsearch);
 #endif
-        if (at_points == 1)
+        if (at_points == 1) {
             mb->rst = (double*)malloc(sizeof(double) * 3 * mb->nsearch);
+        }
     }
 
     //
@@ -238,8 +243,9 @@ void tioga::exchangeSearchData(int at_points)
             }
 
             for (int j = 0; j < nrealsRecv[ii] / 4; j++) {
-                for (int mm = 0; mm < 3; mm++)
+                for (int mm = 0; mm < 3; mm++) {
                     mb->xsearch[doff++] = rcvPack[k].realData[l++];
+                }
                 mb->res_search[roff++] = rcvPack[k].realData[l++];
             }
 

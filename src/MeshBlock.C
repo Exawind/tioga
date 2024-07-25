@@ -67,11 +67,14 @@ void MeshBlock::setData(
     // TRACEI(nnodes);
     // for(i=0;i<ntypes;i++) TRACEI(nc[i]);
     ncells = 0;
-    for (i = 0; i < ntypes; i++) ncells += nc[i];
+    for (i = 0; i < ntypes; i++) {
+        ncells += nc[i];
+    }
 
 #ifdef TIOGA_HAS_NODEGID
-    if (nodeGID == nullptr)
+    if (nodeGID == nullptr) {
         throw std::runtime_error("#tioga: global IDs for nodes not provided");
+    }
 #endif
 }
 
@@ -95,7 +98,9 @@ void MeshBlock::setData(TIOGA::MeshBlockInfo* minfo)
     nc = m_info->num_cells_per_elem.hptr;
 
     ncells = 0;
-    for (int i = 0; i < ntypes; i++) ncells += nc[i];
+    for (int i = 0; i < ntypes; i++) {
+        ncells += nc[i];
+    }
 
     for (int i = 0; i < TIOGA::MeshBlockInfo::max_vertex_types; ++i) {
         vconn_ptrs[i] = m_info->vertex_conn[i].hptr;
@@ -111,8 +116,9 @@ void MeshBlock::setData(TIOGA::MeshBlockInfo* minfo)
     interptype = m_info->qtype;
 
 #ifdef TIOGA_HAS_NODEGID
-    if (nodeGID == nullptr)
+    if (nodeGID == nullptr) {
         throw std::runtime_error("#tioga: global IDs for nodes not provided");
+    }
 #endif
 
     if (m_info_device == nullptr) {
@@ -129,20 +135,25 @@ void MeshBlock::preprocess(int use_adaptholemap)
     //
     // set all iblanks = 1
     //
-    for (i = 0; i < nnodes; i++) iblank[i] = 1;
+    for (i = 0; i < nnodes; i++) {
+        iblank[i] = 1;
+    }
     //
     // find oriented bounding boxes
     //
     if (check_uniform_hex_flag) {
         check_for_uniform_hex();
-        if (uniform_hex) create_hex_cell_map();
+        if (uniform_hex) {
+            create_hex_cell_map();
+        }
     }
     if (obb) TIOGA_FREE(obb);
     obb = (OBB*)malloc(sizeof(OBB));
     findOBB(x, obb->xc, obb->dxc, obb->vec, nnodes);
-    if (use_adaptholemap == 1)
+    if (use_adaptholemap == 1) {
         tagBoundaryFaces(); // call before tagBoundary (may convert WBC nodes to
-                            // OBC)
+    }
+    // OBC)
     tagBoundary();
 }
 
@@ -199,7 +210,9 @@ void MeshBlock::tagBoundary(void)
 
     //
     if (userSpecifiedNodeRes == nullptr && userSpecifiedCellRes == nullptr) {
-        for (i = 0; i < nnodes; i++) nodeRes[i] = 0.0;
+        for (i = 0; i < nnodes; i++) {
+            nodeRes[i] = 0.0;
+        }
 
         if (!dominanceFlag) {
             k = 0;
@@ -209,7 +222,9 @@ void MeshBlock::tagBoundary(void)
                     for (m = 0; m < nvert; m++) {
                         inode[m] = vconn[n][nvert * i + m] - BASE;
                         i3 = 3 * inode[m];
-                        for (j = 0; j < 3; j++) xv[m][j] = x[i3 + j];
+                        for (j = 0; j < 3; j++) {
+                            xv[m][j] = x[i3 + j];
+                        }
                     }
                     vol = computeCellVolume(xv, nvert);
                     cellRes[k++] = (vol * resolutionScale);
@@ -221,7 +236,9 @@ void MeshBlock::tagBoundary(void)
             }
         } else {
             // fill dominant composite mesh body cellRes with small number
-            for (i = 0; i < ncells; i++) cellRes[i] = 0.0;
+            for (i = 0; i < ncells; i++) {
+                cellRes[i] = 0.0;
+            }
         }
     } else {
         k = 0;
@@ -231,7 +248,9 @@ void MeshBlock::tagBoundary(void)
                 k++;
             }
         }
-        for (k = 0; k < nnodes; k++) nodeRes[k] = userSpecifiedNodeRes[k];
+        for (k = 0; k < nnodes; k++) {
+            nodeRes[k] = userSpecifiedNodeRes[k];
+        }
         // int nmandatory=0;
         // int nman_global;
         // for(k=0;k<nnodes;k++) if (nodeRes[k]>=BIGVALUE) nmandatory++;
@@ -255,8 +274,9 @@ void MeshBlock::tagBoundary(void)
         (int*)malloc(sizeof(int) * (mapdims[2] * mapdims[1] * mapdims[0] + 1));
     if (invmap) TIOGA_FREE(invmap);
     invmap = (int*)malloc(sizeof(int) * nnodes);
-    for (int i = 0; i < mapdims[2] * mapdims[1] * mapdims[0] + 1; i++)
+    for (int i = 0; i < mapdims[2] * mapdims[1] * mapdims[0] + 1; i++) {
         icft[i] = -1;
+    }
     icft[0] = 0;
     int* iptr;
     iptr = (int*)malloc(sizeof(int) * nnodes);
@@ -264,14 +284,17 @@ void MeshBlock::tagBoundary(void)
     for (i = 0; i < nnodes; i++) {
         double xd[3];
         int idx[3];
-        if (iflag[i] != 0) nodeRes[i] /= iflag[i];
+        if (iflag[i] != 0) {
+            nodeRes[i] /= iflag[i];
+        }
         iflag[i] = 0;
         iextmp[i] = iextmp1[i] = 0;
 
         for (int j = 0; j < 3; j++) {
             xd[j] = obb->dxc[j];
-            for (int k = 0; k < 3; k++)
+            for (int k = 0; k < 3; k++) {
                 xd[j] += (x[3 * i + k] - obb->xc[k]) * obb->vec[j][k];
+            }
             idx[j] = xd[j] / mapdx[j];
         }
         int indx =
@@ -308,8 +331,9 @@ void MeshBlock::tagBoundary(void)
     // also make the inverse map mask
     if (mapmask) TIOGA_FREE(mapmask);
     mapmask = (int*)malloc(sizeof(int) * mapdims[2] * mapdims[1] * mapdims[0]);
-    for (int i = 0; i < mapdims[2] * mapdims[1] * mapdims[0]; i++)
+    for (int i = 0; i < mapdims[2] * mapdims[1] * mapdims[0]; i++) {
         mapmask[i] = 0;
+    }
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {
@@ -322,12 +346,15 @@ void MeshBlock::tagBoundary(void)
             }
             for (m = 0; m < nvert; m++) {
                 inode[m] = vconn[n][nvert * i + m] - BASE;
-                if (iflag[inode[m]]) itag = 1;
+                if (iflag[inode[m]]) {
+                    itag = 1;
+                }
                 for (int j = 0; j < 3; j++) {
                     xd[j] = obb->dxc[j];
-                    for (int k = 0; k < 3; k++)
+                    for (int k = 0; k < 3; k++) {
                         xd[j] +=
                             (x[3 * inode[m] + k] - obb->xc[k]) * obb->vec[j][k];
+                    }
                     xmin[j] = std::min(xd[j], xmin[j]);
                     xmax[j] = std::max(xd[j], xmax[j]);
                 }
@@ -336,8 +363,8 @@ void MeshBlock::tagBoundary(void)
                 xmin[j] -= TOL;
                 xmax[j] += TOL;
             }
-            for (int j = xmin[0] / mapdx[0]; j <= xmax[0] / mapdx[0]; j++)
-                for (int k = xmin[1] / mapdx[1]; k <= xmax[1] / mapdx[1]; k++)
+            for (int j = xmin[0] / mapdx[0]; j <= xmax[0] / mapdx[0]; j++) {
+                for (int k = xmin[1] / mapdx[1]; k <= xmax[1] / mapdx[1]; k++) {
                     for (int l = xmin[2] / mapdx[2]; l <= xmax[2] / mapdx[2];
                          l++) {
                         idx[0] = std::max(std::min(j, mapdims[0] - 1), 0);
@@ -347,6 +374,8 @@ void MeshBlock::tagBoundary(void)
                             [idx[2] * mapdims[1] * mapdims[0] +
                              idx[1] * mapdims[0] + idx[0]] = 1;
                     }
+                }
+            }
             if (itag) {
                 for (m = 0; m < nvert; m++) {
                     // iflag[inode[m]]=1;
@@ -390,13 +419,17 @@ void MeshBlock::tagBoundary(void)
                 if (cellRes[k] == BIGVALUE) {
                     for (m = 0; m < nvert; m++) {
                         inode[m] = vconn[n][nvert * i + m] - BASE;
-                        if (iextmp[inode[m]] != 1) iextmp1[inode[m]] = 1;
+                        if (iextmp[inode[m]] != 1) {
+                            iextmp1[inode[m]] = 1;
+                        }
                     }
                 }
                 k++;
             }
         }
-        for (i = 0; i < nnodes; i++) iextmp[i] = iextmp1[i];
+        for (i = 0; i < nnodes; i++) {
+            iextmp[i] = iextmp1[i];
+        }
     }
     TIOGA_FREE(iextmp);
     TIOGA_FREE(iextmp1);
@@ -451,8 +484,12 @@ void MeshBlock::tagBoundaryFaces(void)
     /*    near-by neighbor wbc and set to obc */
     /* ====================================== */
     // tag BC nodes
-    for (i = 0; i < nwbc; i++) iflagwbc[wbcnode[i] - BASE] = 1;
-    for (i = 0; i < nobc; i++) iflagobc[obcnode[i] - BASE] = 1;
+    for (i = 0; i < nwbc; i++) {
+        iflagwbc[wbcnode[i] - BASE] = 1;
+    }
+    for (i = 0; i < nobc; i++) {
+        iflagobc[obcnode[i] - BASE] = 1;
+    }
 
 #ifdef NON_UNIQUE_NODES
     // 1. make WBC hash set and track duplicate WBC nodes
@@ -540,15 +577,20 @@ void MeshBlock::tagBoundaryFaces(void)
             flagwbc = flagobc = 0;
             for (j = 0; j < nvert; j++) {
                 ii = vconn[n][nvert * i + j] - BASE;
-                if (iflagwbc[ii]) flagwbc = 1;
-                if (iflagobc[ii]) flagobc = 1;
+                if (iflagwbc[ii]) {
+                    flagwbc = 1;
+                }
+                if (iflagobc[ii]) {
+                    flagobc = 1;
+                }
             }
 
             // count faces
             if (flagwbc || flagobc) {
                 ctype = celltypes[nvert];
-                for (j = 0; j < nvert; j++)
+                for (j = 0; j < nvert; j++) {
                     inode[j] = vconn[n][nvert * i + j] - BASE;
+                }
 
                 for (f = 0; f < nfaces[ctype]; f++) {
                     const int nfacevert = numfaceverts[ctype][f];
@@ -556,12 +598,14 @@ void MeshBlock::tagBoundaryFaces(void)
 
                     if (flagwbc && checkFaceBoundaryNodes(
                                        inode, iflagwbc.data(), nfacevert,
-                                       faceNodes, nullptr))
+                                       faceNodes, nullptr)) {
                         nwbcface++;
+                    }
                     if (flagobc && checkFaceBoundaryNodes(
                                        inode, iflagobc.data(), nfacevert,
-                                       faceNodes, duplicateCheck))
+                                       faceNodes, duplicateCheck)) {
                         nobcface++;
+                    }
                 }
             }
         }
@@ -585,14 +629,19 @@ void MeshBlock::tagBoundaryFaces(void)
             flagwbc = flagobc = 0;
             for (j = 0; j < nvert; j++) {
                 ii = vconn[n][nvert * i + j] - BASE;
-                if (iflagwbc[ii]) flagwbc = 1;
-                if (iflagobc[ii]) flagobc = 1;
+                if (iflagwbc[ii]) {
+                    flagwbc = 1;
+                }
+                if (iflagobc[ii]) {
+                    flagobc = 1;
+                }
             }
             // count faces
             if (flagwbc || flagobc) {
                 ctype = celltypes[nvert];
-                for (j = 0; j < nvert; j++)
+                for (j = 0; j < nvert; j++) {
                     inode[j] = vconn[n][nvert * i + j] - BASE;
+                }
 
                 for (f = 0; f < nfaces[ctype]; f++) {
                     const int nfacevert = numfaceverts[ctype][f];
@@ -602,15 +651,20 @@ void MeshBlock::tagBoundaryFaces(void)
                     if (flagwbc && checkFaceBoundaryNodes(
                                        inode, iflagwbc.data(), nfacevert,
                                        faceNodes, nullptr)) {
-                        for (d = 0; d < 3; d++)
+                        for (d = 0; d < 3; d++) {
                             wbcfacenode[4 * nwbcface + d] =
                                 inode[faceNodes[d] - BASE];
+                        }
                         wbcfacenode[4 * nwbcface + 3] =
                             (nfacevert == 4) ? inode[faceNodes[3] - BASE] : -1;
 
                         // initialize cell bounding box data
-                        for (d = 0; d < 3; d++) bboxCell[d] = BIGVALUE;
-                        for (d = 0; d < 3; d++) bboxCell[3 + d] = -BIGVALUE;
+                        for (d = 0; d < 3; d++) {
+                            bboxCell[d] = BIGVALUE;
+                        }
+                        for (d = 0; d < 3; d++) {
+                            bboxCell[3 + d] = -BIGVALUE;
+                        }
 
                         // get node indices and coordinates for this boundary
                         // face
@@ -641,15 +695,20 @@ void MeshBlock::tagBoundaryFaces(void)
                     if (flagobc && checkFaceBoundaryNodes(
                                        inode, iflagobc.data(), nfacevert,
                                        faceNodes, duplicateCheck)) {
-                        for (d = 0; d < 3; d++)
+                        for (d = 0; d < 3; d++) {
                             obcfacenode[4 * nobcface + d] =
                                 inode[faceNodes[d] - BASE];
+                        }
                         obcfacenode[4 * nobcface + 3] =
                             (nfacevert == 4) ? inode[faceNodes[3] - BASE] : -1;
 
                         // initialize cell bounding box data
-                        for (d = 0; d < 3; d++) bboxCell[d] = BIGVALUE;
-                        for (d = 0; d < 3; d++) bboxCell[3 + d] = -BIGVALUE;
+                        for (d = 0; d < 3; d++) {
+                            bboxCell[d] = BIGVALUE;
+                        }
+                        for (d = 0; d < 3; d++) {
+                            bboxCell[3 + d] = -BIGVALUE;
+                        }
 
                         // get node indices and coordinates for this boundary
                         // face
@@ -769,11 +828,21 @@ void MeshBlock::writeCellFile(int bid)
     fprintf(
         fp,
         "VARLOCATION =  (1=NODAL, 2=NODAL, 3=NODAL, 4=NODAL,5=CELLCENTERED)\n");
-    for (i = 0; i < nnodes; i++) fprintf(fp, "%lf\n", x[3 * i]);
-    for (i = 0; i < nnodes; i++) fprintf(fp, "%lf\n", x[3 * i + 1]);
-    for (i = 0; i < nnodes; i++) fprintf(fp, "%lf\n", x[3 * i + 2]);
-    for (i = 0; i < nnodes; i++) fprintf(fp, "%d\n", iblank[i]);
-    for (i = 0; i < ncells; i++) fprintf(fp, "%d\n", iblank_cell[i]);
+    for (i = 0; i < nnodes; i++) {
+        fprintf(fp, "%lf\n", x[3 * i]);
+    }
+    for (i = 0; i < nnodes; i++) {
+        fprintf(fp, "%lf\n", x[3 * i + 1]);
+    }
+    for (i = 0; i < nnodes; i++) {
+        fprintf(fp, "%lf\n", x[3 * i + 2]);
+    }
+    for (i = 0; i < nnodes; i++) {
+        fprintf(fp, "%d\n", iblank[i]);
+    }
+    for (i = 0; i < ncells; i++) {
+        fprintf(fp, "%d\n", iblank_cell[i]);
+    }
     ba = 1 - BASE;
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
@@ -854,7 +923,9 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
             fprintf(
                 fp, "%lf %lf %lf %d %d ", x[3 * i], x[3 * i + 1], x[3 * i + 2],
                 ibl[i], meshtag);
-            for (j = 0; j < nvar; j++) fprintf(fp, "%lf ", q[i * nvar + j]);
+            for (j = 0; j < nvar; j++) {
+                fprintf(fp, "%lf ", q[i * nvar + j]);
+            }
             // for(j=0;j<nvar;j++)
             //   fprintf(fp,"%lf ", x[3*i]+x[3*i+1]+x[3*i+2]);
             fprintf(fp, "\n");
@@ -864,7 +935,9 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
             fprintf(
                 fp, "%lf %lf %lf %d %d ", x[3 * i], x[3 * i + 1], x[3 * i + 2],
                 ibl[i], meshtag);
-            for (j = 0; j < nvar; j++) fprintf(fp, "%lf ", q[j * nnodes + i]);
+            for (j = 0; j < nvar; j++) {
+                fprintf(fp, "%lf ", q[j * nnodes + i]);
+            }
             fprintf(fp, "\n");
         }
     }
@@ -987,7 +1060,9 @@ void MeshBlock::markWallBoundary(int* sam, int nx[3], double extents[6])
     //
     // find delta's in each directions
     //
-    for (k = 0; k < 3; k++) ds[k] = (extents[k + 3] - extents[k]) / nx[k];
+    for (k = 0; k < 3; k++) {
+        ds[k] = (extents[k + 3] - extents[k]) / nx[k];
+    }
     //
     // mark sam cells with wall boundary cells now
     //
@@ -1018,12 +1093,14 @@ void MeshBlock::markWallBoundary(int* sam, int nx[3], double extents[6])
                 //
                 // mark sam to 1
                 //
-                for (kk = imin[2]; kk < imax[2] + 1; kk++)
-                    for (jj = imin[1]; jj < imax[1] + 1; jj++)
+                for (kk = imin[2]; kk < imax[2] + 1; kk++) {
+                    for (jj = imin[1]; jj < imax[1] + 1; jj++) {
                         for (ii = imin[0]; ii < imax[0] + 1; ii++) {
                             mm = kk * nx[1] * nx[0] + jj * nx[0] + ii;
                             sam[mm] = 2;
                         }
+                    }
+                }
             }
             m++;
         }
@@ -1145,7 +1222,9 @@ void MeshBlock::markBoundaryAdaptiveMap(
             // check if tagged already OR
             // if taggedList provided, then octant must also be tagged in other
             // list
-            if (tagList[j] || (taggedList && taggedList[j] == 0)) continue;
+            if (tagList[j] || (taggedList && taggedList[j] == 0)) {
+                continue;
+            }
 
             octant_full_t& oct = level->octants[j];
 
@@ -1226,7 +1305,9 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     for (j = 0; j < noctants; j++) {
         // check if tagged already OR
         // if taggedList provided, then octant must also be tagged in other list
-        if (tagList[j] || (taggedList && taggedList[j] == 0)) continue;
+        if (tagList[j] || (taggedList && taggedList[j] == 0)) {
+            continue;
+        }
 
         // get octant since it hasn't been tagged
         octant_full_t& oct = level->octants[j];
@@ -1244,7 +1325,9 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
         box2.z.hi = xlo[2] + dx[2];
 
         // possible overlap: use face intersection test
-        for (d = 0; d < 3; d++) boxcenter[d] = xlo[d] + halfdx[d];
+        for (d = 0; d < 3; d++) {
+            boxcenter[d] = xlo[d] + halfdx[d];
+        }
 
         // loop all boundary faces
         for (i = 0; i < nbcface; i++) {
@@ -1339,7 +1422,9 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     for (j = 0; j < noctants; j++) {
         // check if tagged already OR
         // if taggedList provided, then octant must also be tagged in other list
-        if (tagList[j] || (taggedList && taggedList[j] == 0)) continue;
+        if (tagList[j] || (taggedList && taggedList[j] == 0)) {
+            continue;
+        }
 
         // get octant since it hasn't been tagged
         octant_coordinates_t& oct = octants[j];
@@ -1357,7 +1442,9 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
         box2.z.hi = xlo[2] + dx[2];
 
         // possible overlap: use face intersection test
-        for (d = 0; d < 3; d++) boxcenter[d] = xlo[d] + halfdx[d];
+        for (d = 0; d < 3; d++) {
+            boxcenter[d] = xlo[d] + halfdx[d];
+        }
 
         // loop all boundary faces
         for (i = 0; i < nbcface; i++) {
@@ -1443,39 +1530,62 @@ void MeshBlock::getReducedOBB(OBB* obc, double* realData)
 
             for (m = 0; m < nvert; m++) {
                 i3 = 3 * (vconn[n][nvert * i + m] - BASE);
-                for (j = 0; j < 3; j++) xd[j] = 0;
-                for (j = 0; j < 3; j++)
-                    for (k = 0; k < 3; k++)
+                for (j = 0; j < 3; j++) {
+                    xd[j] = 0;
+                }
+                for (j = 0; j < 3; j++) {
+                    for (k = 0; k < 3; k++) {
                         xd[j] += (x[i3 + k] - obc->xc[k]) * obc->vec[j][k];
-                for (j = 0; j < 3; j++) bbox[j] = std::min(bbox[j], xd[j]);
-                for (j = 0; j < 3; j++)
+                    }
+                }
+                for (j = 0; j < 3; j++) {
+                    bbox[j] = std::min(bbox[j], xd[j]);
+                }
+                for (j = 0; j < 3; j++) {
                     bbox[j + 3] = std::max(bbox[j + 3], xd[j]);
+                }
             }
             iflag = 0;
-            for (j = 0; j < 3; j++) iflag = (iflag || (bbox[j] > obc->dxc[j]));
-            if (iflag) continue;
+            for (j = 0; j < 3; j++) {
+                iflag = (iflag || (bbox[j] > obc->dxc[j]));
+            }
+            if (iflag) {
+                continue;
+            }
             iflag = 0;
-            for (j = 0; j < 3; j++)
+            for (j = 0; j < 3; j++) {
                 iflag = (iflag || (bbox[j + 3] < -obc->dxc[j]));
-            if (iflag) continue;
+            }
+            if (iflag) {
+                continue;
+            }
             for (m = 0; m < nvert; m++) {
                 i3 = 3 * (vconn[n][nvert * i + m] - BASE);
-                for (j = 0; j < 3; j++) xd[j] = 0;
-                for (j = 0; j < 3; j++)
-                    for (k = 0; k < 3; k++)
+                for (j = 0; j < 3; j++) {
+                    xd[j] = 0;
+                }
+                for (j = 0; j < 3; j++) {
+                    for (k = 0; k < 3; k++) {
                         xd[j] += (x[i3 + k] - obb->xc[k]) * obb->vec[j][k];
-                for (j = 0; j < 3; j++)
+                    }
+                }
+                for (j = 0; j < 3; j++) {
                     realData[j] = std::min(realData[j], xd[j]);
-                for (j = 0; j < 3; j++)
+                }
+                for (j = 0; j < 3; j++) {
                     realData[j + 3] = std::max(realData[j + 3], xd[j]);
+                }
             }
         }
     }
-    for (j = 0; j < 6; j++) bbox[j] = realData[j];
+    for (j = 0; j < 6; j++) {
+        bbox[j] = realData[j];
+    }
     for (j = 0; j < 3; j++) {
         realData[j] = obb->xc[j];
-        for (k = 0; k < 3; k++)
+        for (k = 0; k < 3; k++) {
             realData[j] += ((bbox[k] + bbox[k + 3]) * 0.5) * obb->vec[k][j];
+        }
         realData[j + 3] = (bbox[j + 3] - bbox[j]) * 0.51;
     }
     return;
@@ -1513,8 +1623,8 @@ void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
     kmin = mapdims[1] - 1;
     jmin = mapdims[0] - 1;
     lmax = kmax = jmax = 0;
-    for (l = imin[2]; l <= imax[2]; l++)
-        for (k = imin[1]; k <= imax[1]; k++)
+    for (l = imin[2]; l <= imax[2]; l++) {
+        for (k = imin[1]; k <= imax[1]; k++) {
             for (j = imin[0]; j <= imax[0]; j++) {
                 indx = l * mapdims[1] * mapdims[0] + k * mapdims[0] + j;
                 if (mapmask[indx]) {
@@ -1526,6 +1636,8 @@ void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
                     jmax = std::max(jmax, j);
                 }
             }
+        }
+    }
     bbox[0] = -obb->dxc[0] + jmin * mapdx[0];
     bbox[1] = -obb->dxc[1] + kmin * mapdx[1];
     bbox[2] = -obb->dxc[2] + lmin * mapdx[2];
@@ -1534,8 +1646,9 @@ void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
     bbox[5] = -obb->dxc[2] + (lmax + 1) * mapdx[2];
     for (j = 0; j < 3; j++) {
         realData[j] = obb->xc[j];
-        for (k = 0; k < 3; k++)
+        for (k = 0; k < 3; k++) {
             realData[j] += ((bbox[k] + bbox[k + 3]) * 0.5) * obb->vec[k][j];
+        }
         realData[j + 3] = (bbox[j + 3] - bbox[j]) * 0.5;
     }
     return;
@@ -1555,10 +1668,14 @@ void MeshBlock::getQueryPoints(
     *nints = *nreals = 0;
     for (i = 0; i < nnodes; i++) {
         i3 = 3 * i;
-        for (j = 0; j < 3; j++) xd[j] = 0;
-        for (j = 0; j < 3; j++)
-            for (k = 0; k < 3; k++)
+        for (j = 0; j < 3; j++) {
+            xd[j] = 0;
+        }
+        for (j = 0; j < 3; j++) {
+            for (k = 0; k < 3; k++) {
                 xd[j] += (x[i3 + k] - obc->xc[k]) * obc->vec[j][k];
+            }
+        }
 
         if (fabs(xd[0]) <= obc->dxc[0] && fabs(xd[1]) <= obc->dxc[1] &&
             fabs(xd[2]) <= obc->dxc[2]) {
@@ -1653,8 +1770,8 @@ void MeshBlock::getQueryPoints2(
     // fp2=fopen("v2.dat","w");
     // fp3=fopen("v3.dat","w");
     // fp4=fopen("v4.dat","w");
-    for (l = imin[2]; l <= imax[2]; l++)
-        for (k = imin[1]; k <= imax[1]; k++)
+    for (l = imin[2]; l <= imax[2]; l++) {
+        for (k = imin[1]; k <= imax[1]; k++) {
             for (j = imin[0]; j <= imax[0]; j++) {
                 //
                 // centroid of each sub-block
@@ -1665,8 +1782,9 @@ void MeshBlock::getQueryPoints2(
                 xd[2] = -obb->dxc[2] + l * mapdx[2] + mapdx[2] * 0.5;
                 for (n = 0; n < 3; n++) {
                     xc[n] = obb->xc[n];
-                    for (ij = 0; ij < 3; ij++)
+                    for (ij = 0; ij < 3; ij++) {
                         xc[n] += (xd[ij] * obb->vec[ij][n]);
+                    }
                 }
                 // if (j==0 && k==0 & l==0) {
                 // printf("%f %f
@@ -1690,13 +1808,19 @@ void MeshBlock::getQueryPoints2(
                 // check if this sub-block overlaps OBC
                 //
                 iflag = 0;
-                for (ij = 0; ij < 3 && !iflag; ij++)
+                for (ij = 0; ij < 3 && !iflag; ij++) {
                     iflag = (iflag || (xmin[ij] + xd[ij] > obc->dxc[ij]));
-                if (iflag) continue;
+                }
+                if (iflag) {
+                    continue;
+                }
                 iflag = 0;
-                for (ij = 0; ij < 3 && !iflag; ij++)
+                for (ij = 0; ij < 3 && !iflag; ij++) {
                     iflag = (iflag || (xmax[ij] + xd[ij] < -obc->dxc[ij]));
-                if (iflag) continue;
+                }
+                if (iflag) {
+                    continue;
+                }
                 // fprintf(fp4,"%f %f %f\n",xc[0],xc[1],xc[2]);
                 //
                 //  if there overlap
@@ -1706,7 +1830,9 @@ void MeshBlock::getQueryPoints2(
                 indx = l * mapdims[1] * mapdims[0] + k * mapdims[0] + j;
                 for (m = icft[indx]; m < icft[indx + 1]; m++) {
                     i3 = 3 * invmap[m];
-                    for (ik = 0; ik < 3; ik++) xc[ik] = x[i3 + ik];
+                    for (ik = 0; ik < 3; ik++) {
+                        xc[ik] = x[i3 + ik];
+                    }
                     transform2OBB(xc, obc->xc, obc->vec, xd);
                     if (fabs(xd[0]) <= obc->dxc[0] &&
                         fabs(xd[1]) <= obc->dxc[1] &&
@@ -1717,6 +1843,8 @@ void MeshBlock::getQueryPoints2(
                     }
                 }
             }
+        }
+    }
 //  TRACEI(*nints);
 //  fclose(fp);
 //  fclose(fp2);
@@ -1776,19 +1904,21 @@ void MeshBlock::writeOBB(int bid)
             for (j = 0; j < 2; j++) {
                 ij = 2 * (j % 2) - 1;
                 xx[0] = xx[1] = xx[2] = 0;
-                for (m = 0; m < 3; m++)
+                for (m = 0; m < 3; m++) {
                     xx[m] = obb->xc[m] + ij * obb->vec[0][m] * obb->dxc[0] +
                             ik * obb->vec[1][m] * obb->dxc[1] +
                             il * obb->vec[2][m] * obb->dxc[2];
+                }
                 fprintf(fp, "%f %f %f\n", xx[0], xx[1], xx[2]);
             }
         }
     }
     fprintf(fp, "1 2 4 3 5 6 8 7\n");
     fprintf(fp, "%e %e %e\n", obb->xc[0], obb->xc[1], obb->xc[2]);
-    for (k = 0; k < 3; k++)
+    for (k = 0; k < 3; k++) {
         fprintf(
             fp, "%e %e %e\n", obb->vec[0][k], obb->vec[1][k], obb->vec[2][k]);
+    }
     fprintf(fp, "%e %e %e\n", obb->dxc[0], obb->dxc[1], obb->dxc[2]);
     fclose(fp);
 }
@@ -1807,9 +1937,13 @@ MeshBlock::~MeshBlock()
     if (nodeRes) TIOGA_FREE(nodeRes);
     if (elementBbox) TIOGA_FREE(elementBbox);
     if (elementList) TIOGA_FREE(elementList);
-    if (adt) delete[] adt;
+    if (adt) {
+        delete[] adt;
+    }
     if (donorList) {
-        for (i = 0; i < nnodes; i++) deallocateLinkList(donorList[i]);
+        for (i = 0; i < nnodes; i++) {
+            deallocateLinkList(donorList[i]);
+        }
         TIOGA_FREE(donorList);
     }
     if (interpList) {
@@ -1846,7 +1980,9 @@ MeshBlock::~MeshBlock()
     if (xtag) TIOGA_FREE(xtag);
     if (rst) TIOGA_FREE(rst);
     if (interp2donor) TIOGA_FREE(interp2donor);
-    if (cancelList) deallocateLinkList2(cancelList);
+    if (cancelList) {
+        deallocateLinkList2(cancelList);
+    }
     if (ctag) TIOGA_FREE(ctag);
     if (pointsPerCell) TIOGA_FREE(pointsPerCell);
     if (rxyz) TIOGA_FREE(rxyz);
@@ -1866,10 +2002,14 @@ MeshBlock::~MeshBlock()
     int sflag;
     MPI_Finalized(&sflag);
     if (!sflag) {
-        if (blockcomm != MPI_COMM_NULL) MPI_Comm_free(&blockcomm);
+        if (blockcomm != MPI_COMM_NULL) {
+            MPI_Comm_free(&blockcomm);
+        }
     }
 
-    if (m_info_device) TIOGA_FREE_DEVICE(m_info_device);
+    if (m_info_device) {
+        TIOGA_FREE_DEVICE(m_info_device);
+    }
 
     // need to add code here for other objects as and
     // when they become part of MeshBlock object
@@ -1891,7 +2031,9 @@ void MeshBlock::check_for_uniform_hex(void)
 {
     double xv[8][3];
     int hex_present = 0;
-    if (ntypes > 1) return;
+    if (ntypes > 1) {
+        return;
+    }
     for (int n = 0; n < ntypes; n++) {
         int nvert = nv[n];
         if (nvert == 8) {
@@ -1899,11 +2041,14 @@ void MeshBlock::check_for_uniform_hex(void)
             for (int i = 0; i < nc[n]; i++) {
                 int vold = -1;
                 for (int m = 0; m < nvert; m++) {
-                    if (vconn[n][nvert * i + m] == vold)
+                    if (vconn[n][nvert * i + m] == vold) {
                         return; // degenerated hex are not uniform
+                    }
                     vold = vconn[n][nvert * i + m];
                     int i3 = 3 * (vconn[n][nvert * i + m] - BASE);
-                    for (int k = 0; k < 3; k++) xv[m][k] = x[i3 + k];
+                    for (int k = 0; k < 3; k++) {
+                        xv[m][k] = x[i3 + k];
+                    }
                 }
                 //
                 // check angles to see if sides are
@@ -1911,23 +2056,37 @@ void MeshBlock::check_for_uniform_hex(void)
                 //
                 // z=0 side
                 //
-                if (fabs(tdot_product(xv[1], xv[3], xv[0])) > TOL) return;
-                if (fabs(tdot_product(xv[1], xv[3], xv[2])) > TOL) return;
+                if (fabs(tdot_product(xv[1], xv[3], xv[0])) > TOL) {
+                    return;
+                }
+                if (fabs(tdot_product(xv[1], xv[3], xv[2])) > TOL) {
+                    return;
+                }
                 //
                 // x=0 side
                 //
-                if (fabs(tdot_product(xv[3], xv[4], xv[0])) > TOL) return;
-                if (fabs(tdot_product(xv[3], xv[4], xv[7])) > TOL) return;
+                if (fabs(tdot_product(xv[3], xv[4], xv[0])) > TOL) {
+                    return;
+                }
+                if (fabs(tdot_product(xv[3], xv[4], xv[7])) > TOL) {
+                    return;
+                }
                 //
                 // y=0 side
                 //
-                if (fabs(tdot_product(xv[4], xv[1], xv[0])) > TOL) return;
-                if (fabs(tdot_product(xv[4], xv[1], xv[5])) > TOL) return;
+                if (fabs(tdot_product(xv[4], xv[1], xv[0])) > TOL) {
+                    return;
+                }
+                if (fabs(tdot_product(xv[4], xv[1], xv[5])) > TOL) {
+                    return;
+                }
                 //
                 // need to check just one more angle on
                 // on the corner against 0 (6)
                 //
-                if (fabs(tdot_product(xv[5], xv[7], xv[6])) > TOL) return;
+                if (fabs(tdot_product(xv[5], xv[7], xv[6])) > TOL) {
+                    return;
+                }
                 //
                 // so this is a hex
                 // check if it has the same size as the previous hex
@@ -1938,29 +2097,40 @@ void MeshBlock::check_for_uniform_hex(void)
                     dx[1] = tdot_product(xv[3], xv[3], xv[0]);
                     dx[2] = tdot_product(xv[4], xv[4], xv[0]);
                 } else {
-                    if (fabs(dx[0] - tdot_product(xv[1], xv[1], xv[0])) > TOL)
+                    if (fabs(dx[0] - tdot_product(xv[1], xv[1], xv[0])) > TOL) {
                         return;
-                    if (fabs(dx[1] - tdot_product(xv[3], xv[3], xv[0])) > TOL)
+                    }
+                    if (fabs(dx[1] - tdot_product(xv[3], xv[3], xv[0])) > TOL) {
                         return;
-                    if (fabs(dx[2] - tdot_product(xv[4], xv[4], xv[0])) > TOL)
+                    }
+                    if (fabs(dx[2] - tdot_product(xv[4], xv[4], xv[0])) > TOL) {
                         return;
+                    }
                 }
             }
         }
     }
     if (hex_present) {
-        for (int j = 0; j < 3; j++) dx[j] = sqrt(dx[j]);
+        for (int j = 0; j < 3; j++) {
+            dx[j] = sqrt(dx[j]);
+        }
         uniform_hex = 1;
         if (obh) TIOGA_FREE(obh);
         obh = (OBB*)malloc(sizeof(OBB));
-        for (int j = 0; j < 3; j++)
-            for (int k = 0; k < 3; k++) obh->vec[j][k] = 0;
-        for (int k = 0; k < 3; k++)
+        for (int j = 0; j < 3; j++) {
+            for (int k = 0; k < 3; k++) {
+                obh->vec[j][k] = 0;
+            }
+        }
+        for (int k = 0; k < 3; k++) {
             obh->vec[0][k] = (xv[1][k] - xv[0][k]) / dx[0];
-        for (int k = 0; k < 3; k++)
+        }
+        for (int k = 0; k < 3; k++) {
             obh->vec[1][k] = (xv[3][k] - xv[0][k]) / dx[1];
-        for (int k = 0; k < 3; k++)
+        }
+        for (int k = 0; k < 3; k++) {
             obh->vec[2][k] = (xv[4][k] - xv[0][k]) / dx[2];
+        }
         // obh->vec[0][0]=obh->vec[1][1]=obh->vec[2][2]=1;
         //
         double xd[3];
@@ -1971,10 +2141,15 @@ void MeshBlock::check_for_uniform_hex(void)
         //
         for (int i = 0; i < nnodes; i++) {
             int i3 = 3 * i;
-            for (int j = 0; j < 3; j++) xd[j] = 0;
+            for (int j = 0; j < 3; j++) {
+                xd[j] = 0;
+            }
             //
-            for (int j = 0; j < 3; j++)
-                for (int k = 0; k < 3; k++) xd[j] += x[i3 + k] * obh->vec[j][k];
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 3; k++) {
+                    xd[j] += x[i3 + k] * obh->vec[j][k];
+                }
+            }
             //
             for (int j = 0; j < 3; j++) {
                 xmax[j] = std::max(xmax[j], xd[j]);
@@ -1998,7 +2173,9 @@ void MeshBlock::check_for_uniform_hex(void)
         //
         for (int j = 0; j < 3; j++) {
             obh->xc[j] = 0.0;
-            for (int k = 0; k < 3; k++) obh->xc[j] += (xd[k] * obh->vec[k][j]);
+            for (int k = 0; k < 3; k++) {
+                obh->xc[j] += (xd[k] * obh->vec[k][j]);
+            }
         }
     }
     return;
@@ -2008,15 +2185,18 @@ void MeshBlock::create_hex_cell_map(void)
 {
     for (int j = 0; j < 3; j++) {
         xlow[j] = obh->xc[j];
-        for (int k = 0; k < 3; k++) xlow[j] -= (obh->dxc[k] * obh->vec[k][j]);
+        for (int k = 0; k < 3; k++) {
+            xlow[j] -= (obh->dxc[k] * obh->vec[k][j]);
+        }
         idims[j] = round(2 * obh->dxc[j] / dx[j]);
         dx[j] = (2 * obh->dxc[j]) / idims[j];
     }
     //
     if (uindx) TIOGA_FREE(uindx);
     uindx = (int*)malloc(sizeof(int) * idims[0] * idims[1] * idims[2]);
-    for (int i = 0; i < idims[0] * idims[1] * idims[2]; uindx[i++] = -1)
+    for (int i = 0; i < idims[0] * idims[1] * idims[2]; uindx[i++] = -1) {
         ;
+    }
     //
     for (int i = 0; i < nc[0]; i++) {
         double xc[3];
@@ -2029,8 +2209,9 @@ void MeshBlock::create_hex_cell_map(void)
         }
         for (int j = 0; j < 3; j++) {
             xd[j] = 0;
-            for (int k = 0; k < 3; k++)
+            for (int k = 0; k < 3; k++) {
                 xd[j] += (xc[k] - xlow[k]) * obh->vec[j][k];
+            }
             idx[j] = xd[j] / dx[j];
         }
         uindx[idx[2] * idims[1] * idims[0] + idx[1] * idims[0] + idx[0]] = i;
