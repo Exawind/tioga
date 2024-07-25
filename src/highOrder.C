@@ -141,7 +141,7 @@ void MeshBlock::getCellIblanks()
     }
 }
 
-void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp)
+void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, const int* itmp)
 {
     int i, j, k, m;
     int reject;
@@ -407,7 +407,7 @@ void MeshBlock::getInterpolatedSolutionAtPoints(
     int* nreals,
     int** intData,
     double** realData,
-    double* q,
+    const double* q,
     int nvar,
     int interptype) const
 {

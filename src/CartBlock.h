@@ -98,7 +98,7 @@ public:
     void preprocess(CartGrid* cg);
     void getInterpolatedData(
         int* nints, int* nreals, int** intData, double** realData);
-    void update(double* qval, int index);
+    void update(const double* qval, int index);
     void getCancellationData(int* cancelledData, int* ncancel);
     void processDonors(HOLEMAP* holemap, int nmesh);
     void processDonors(ADAPTIVE_HOLEMAP* holemap, int nmesh);

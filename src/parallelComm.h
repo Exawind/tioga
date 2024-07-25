@@ -67,7 +67,7 @@ public:
 
     void sendRecvPacketsCheck(PACKET* sndPack, PACKET* rcvPack);
 
-    void setMap(int ns, int nr, int* snd, int* rcv);
+    void setMap(int ns, int nr, const int* snd, const int* rcv);
 
     void getMap(int* ns, int* nr, int** snd, int** rcv);
 

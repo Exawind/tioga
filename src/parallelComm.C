@@ -371,7 +371,7 @@ void parallelComm::sendRecvPacketsCheck(PACKET* sndPack, PACKET* rcvPack)
     TIOGA_FREE(status);
 }
 
-void parallelComm::setMap(int ns, int nr, int* snd, int* rcv)
+void parallelComm::setMap(int ns, int nr, const int* snd, const int* rcv)
 {
     int i;
     //

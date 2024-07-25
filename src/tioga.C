@@ -78,8 +78,8 @@ void tioga::setNumCompositeBodies(int ncomp)
 void tioga::registerCompositeBody(
     int compbodytag,
     int nbodytags,
-    int* meshtags,
-    int* dominancetags,
+    const int* meshtags,
+    const int* dominancetags,
     double searchTol)
 {
     // resize and fill composite body tag IDs
@@ -1034,7 +1034,7 @@ void tioga::getDonorCount(int btag, int* dcount, int* fcount)
 }
 
 void tioga::getDonorInfo(
-    int btag, int* receptors, int* indices, double* frac, int* dcount)
+    int btag, int* receptors, int* indices, double* frac, const int* dcount)
 {
     int nsend, nrecv;
     int *sndMap, *rcvMap;

@@ -88,7 +88,8 @@ void CartGrid::registerData(TIOGA::AMRMeshInfo* minfo)
         m_info_device, m_info, sizeof(TIOGA::AMRMeshInfo));
 }
 
-void CartGrid::registerData(int nfin, int* idata, double* rdata, int ngridsin)
+void CartGrid::registerData(
+    int nfin, const int* idata, const double* rdata, int ngridsin)
 {
     int i, i3, i6, iloc, n;
     FILE* fp;

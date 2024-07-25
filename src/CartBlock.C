@@ -140,7 +140,7 @@ void CartBlock::getInterpolatedData(
     }
 }
 
-void CartBlock::update(double* qval, int index)
+void CartBlock::update(const double* qval, int index)
 {
     if (index >= ncell_nf) {
         if (nvar_node == 0) {

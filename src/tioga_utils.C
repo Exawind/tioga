@@ -163,7 +163,8 @@ void findOBB(
  check if a point is inside the
  provided hole map
 */
-int checkHoleMap(double* x, int* nx, int* sam, double* extents)
+int checkHoleMap(
+    const double* x, const int* nx, int* sam, const double* extents)
 {
     int i;
     int mm;
@@ -273,7 +274,7 @@ int checkAdaptiveHoleMap(double* xpt, ADAPTIVE_HOLEMAP* AHM)
  flood fill from outside the marked boundary.
  boundary is marked by "2"
 */
-void fillHoleMap(int* holeMap, int ix[3], int isym)
+void fillHoleMap(int* holeMap, const int ix[3], int isym)
 {
     int m;
     int ii, jj, kk, mm;
@@ -373,11 +374,11 @@ void fillHoleMap(int* holeMap, int ix[3], int isym)
 
 int obbIntersectCheck(
     double vA[3][3],
-    double xA[3],
-    double dxA[3],
+    const double xA[3],
+    const double dxA[3],
     double vB[3][3],
-    double xB[3],
-    double dxB[3])
+    const double xB[3],
+    const double dxB[3])
 {
     int iflag;
     int i, j, k;
@@ -466,7 +467,7 @@ int obbIntersectCheck(
 }
 
 void getobbcoords(
-    double xc[3], double dxc[3], double vec[3][3], double xv[8][3])
+    const double xc[3], const double dxc[3], double vec[3][3], double xv[8][3])
 {
     int i, j, k, ik;
     for (i = 0; i < 8; i++) {
@@ -482,7 +483,8 @@ void getobbcoords(
     }
 }
 
-void transform2OBB(double xv[3], double xc[3], double vec[3][3], double xd[3])
+void transform2OBB(
+    const double xv[3], const double xc[3], double vec[3][3], double xd[3])
 {
     int j, k;
     for (j = 0; j < 3; j++) {
@@ -607,7 +609,8 @@ void writePoints(double* x, int nsearch, int bid)
  * them. Find the rtag as max of all duplicate samples. itag contains
  * the hash to the real point
  */
-void uniquenodes(double* x, int* meshtag, double* rtag, int* itag, int* nn)
+void uniquenodes(
+    double* x, const int* meshtag, double* rtag, int* itag, const int* nn)
 {
     int const NSUB = 101;
     int i, j, k, m, ij, i3, jj, kk, ll, p1, p2, indx, jmax, kmax, lmax, nsblks,
@@ -835,7 +838,7 @@ void uniqNodesTree(
  * the hash to the real point
  */
 void uniquenodes_octree(
-    double* x, int* meshtag, double* rtag, int* itag, int* nn)
+    double* x, int* meshtag, double* rtag, int* itag, const int* nn)
 {
     int const nelem = *nn;
     int* elementsAvailable;
@@ -853,7 +856,7 @@ void uniquenodes_octree(
 }
 
 void qcoord_to_vertex(
-    qcoord_t x, qcoord_t y, qcoord_t z, double* vertices, double vxyz[3])
+    qcoord_t x, qcoord_t y, qcoord_t z, const double* vertices, double vxyz[3])
 {
 
     int xi, yi, zi;
@@ -1195,7 +1198,7 @@ void floodfill_level(level_octant_t* level)
 }
 
 char checkFaceBoundaryNodes(
-    int* nodes,
+    const int* nodes,
     const char* bcnodeflag,
     const int numfaceverts,
     const int* faceConn,

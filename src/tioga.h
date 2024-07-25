@@ -162,8 +162,8 @@ public:
     void registerCompositeBody(
         int compbodytag,
         int nbodytags,
-        int* meshtags,
-        int* dominancetags,
+        const int* meshtags,
+        const int* dominancetags,
         double searchTol);
 
     /** registerGrid data */
@@ -235,7 +235,11 @@ public:
     void getDonorCount(int btag, int* dcount, int* fcount);
 
     void getDonorInfo(
-        int btag, int* receptors, int* indices, double* frac, int* dcount);
+        int btag,
+        int* receptors,
+        int* indices,
+        double* frac,
+        const int* dcount);
 
     void getReceptorInfo(std::vector<int>&);
 
@@ -259,9 +263,9 @@ public:
         mb->setResolutions(nres, cres);
     }
 
-    void setMexclude(int* mexclude_input) { mexclude = *mexclude_input; }
+    void setMexclude(const int* mexclude_input) { mexclude = *mexclude_input; }
 
-    void setNfringe(int* nfringe_input) { nfringe = *nfringe_input; }
+    void setNfringe(const int* nfringe_input) { nfringe = *nfringe_input; }
 
     void set_cell_iblank(int* iblank_cell)
     {

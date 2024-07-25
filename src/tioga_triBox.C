@@ -60,7 +60,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     if (x2 < min) min = x2;                                                    \
     if (x2 > max) max = x2;
 
-int planeBoxOverlap(double normal[3], double vert[3], double maxbox[3])
+int planeBoxOverlap(
+    const double normal[3], const double vert[3], const double maxbox[3])
 {
     double vmin[3], vmax[3];
     double v;
@@ -169,11 +170,11 @@ int planeBoxOverlap(double normal[3], double vert[3], double maxbox[3])
     if (min > rad || max < -rad) return 0;
 
 int triBoxOverlap(
-    double boxcenter[3],
+    const double boxcenter[3],
     double boxhalfsize[3],
-    double* pt1,
-    double* pt2,
-    double* pt3)
+    const double* pt1,
+    const double* pt2,
+    const double* pt3)
 {
     /*    use separating axis theorem to test overlap between triangle and box
      */

@@ -313,7 +313,7 @@ public:
 
     void writeOBB2(OBB* obc, int bid);
 
-    void updateSolnData(int inode, double* qvar, double* q) const;
+    void updateSolnData(int inode, const double* qvar, double* q) const;
 
     int getNinterp() const { return ninterp; };
 
@@ -322,7 +322,7 @@ public:
         int* nreals,
         int** intData,
         double** realData,
-        double* q,
+        const double* q,
         int nvar,
         int interptype);
 
@@ -331,39 +331,39 @@ public:
         int* nreals,
         int** intData,
         double** realData,
-        double* q,
-        int*);
+        const double* q,
+        const int*);
 
     void checkContainment(int* cellIndex, int adtElement, double* xsearch);
 
     void getWallBounds(int* mtag, int* existWall, double wbox[6]);
 
-    void markWallBoundary(int* sam, int nx[3], double extents[6]);
+    void markWallBoundary(int* sam, int nx[3], const double extents[6]);
 
     void markBoundaryAdaptiveMap(
         char nodetype2tag,
-        double extents_lo[3],
-        double extents_hi[3],
+        const double extents_lo[3],
+        const double extents_hi[3],
         level_octant_t* level,
-        uint8_t* taggedList,
+        const uint8_t* taggedList,
         uint8_t* tagList);
 
     void markBoundaryAdaptiveMapSurfaceIntersect(
         char nodetype2tag,
-        double extents_lo[3],
-        double extents_hi[3],
+        const double extents_lo[3],
+        const double extents_hi[3],
         level_octant_t* level,
-        uint8_t* taggedList,
+        const uint8_t* taggedList,
         uint8_t* tagList);
 
     void markBoundaryAdaptiveMapSurfaceIntersect(
         char nodetype2tag,
-        double extents_lo[3],
-        double extents_hi[3],
+        const double extents_lo[3],
+        const double extents_hi[3],
         uint8_t level_id,
         uint32_t noctants,
         octant_coordinates_t* octants,
-        uint8_t* taggedList,
+        const uint8_t* taggedList,
         uint8_t* tagList);
 
     void markBoundaryMapSurface(
@@ -486,7 +486,7 @@ public:
         int* nreals,
         int** intData,
         double** realData,
-        double* q,
+        const double* q,
         int nvar,
         int interptype) const;
     void updatePointData(double* q, double* qtmp, int nvar, int interptype);
@@ -495,7 +495,7 @@ public:
         fprintf(
             fp, "%f %f %f\n", rxyz[3 * i], rxyz[3 * i + 1], rxyz[3 * i + 2]);
     }
-    void clearOrphans(HOLEMAP* holemap, int nmesh, int* itmp);
+    void clearOrphans(HOLEMAP* holemap, int nmesh, const int* itmp);
     void clearOrphans(ADAPTIVE_HOLEMAP* holemap, int nmesh, int* itmp);
     void getUnresolvedMandatoryReceptors();
     void getCartReceptors(CartGrid* cg, parallelComm* pc);

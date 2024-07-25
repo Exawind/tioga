@@ -60,7 +60,8 @@ public:
     ~CartGrid();
 
     void registerData(TIOGA::AMRMeshInfo* m_info);
-    void registerData(int nf, int* idata, double* rdata, int ngridsin);
+    void
+    registerData(int nf, const int* idata, const double* rdata, int ngridsin);
     void preprocess();
     void search(double* x, int* donorid, int nsearch);
     void setcallback(void (*f1)(int*, double*, int*, double*))

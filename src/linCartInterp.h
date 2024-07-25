@@ -32,15 +32,17 @@ void compute_1d_bases(
 void compute_linear_weights(
     const std::vector<double>& ref_coord, double* weights);
 
-void compute_ref_coords_cell(double* ref_ratio, std::vector<double>& ref_coord);
+void compute_ref_coords_cell(
+    const double* ref_ratio, std::vector<double>& ref_coord);
 
-void compute_ref_coords_node(double* ref_ratio, std::vector<double>& ref_coord);
+void compute_ref_coords_node(
+    const double* ref_ratio, std::vector<double>& ref_coord);
 
 void create_donor_stencil(
     const int nf,
-    int* ijk_cell,
-    int* dims,
-    double* ref_ratio,
+    const int* ijk_cell,
+    const int* dims,
+    const double* ref_ratio,
     int* ijk_stencil,
     bool isNodal);
 

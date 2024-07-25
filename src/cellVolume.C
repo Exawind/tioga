@@ -20,7 +20,7 @@ double scalarProduct(
 void cellVolume(
     double* vol,
     double xc[8][3],
-    int numverts[6],
+    const int numverts[6],
     int fconn[6][4],
     int nfaces,
     int nvert)

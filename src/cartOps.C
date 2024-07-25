@@ -280,8 +280,8 @@ void MeshBlock::getInterpolatedSolutionAMR(
     int* nreals,
     int** intData,
     double** realData,
-    double* q,
-    int* sndMap)
+    const double* q,
+    const int* sndMap)
 {
     int i;
     int k, m, inode;

@@ -1023,7 +1023,7 @@ void MeshBlock::getWallBounds(int* mtag, int* existWall, double wbox[6])
     }
 }
 
-void MeshBlock::markWallBoundary(int* sam, int nx[3], double extents[6])
+void MeshBlock::markWallBoundary(int* sam, int nx[3], const double extents[6])
 {
     int i, j, k, m, n;
     int nvert;
@@ -1180,10 +1180,10 @@ void MeshBlock::writeBCnodes(char nodetype2tag, int bodyid)
 
 void MeshBlock::markBoundaryAdaptiveMap(
     char nodetype2tag,
-    double extents_lo[3],
-    double extents_hi[3],
+    const double extents_lo[3],
+    const double extents_hi[3],
     level_octant_t* level,
-    uint8_t* taggedList,
+    const uint8_t* taggedList,
     uint8_t* tagList)
 {
     int i, j;
@@ -1267,10 +1267,10 @@ void MeshBlock::markBoundaryAdaptiveMap(
 
 void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     char nodetype2tag,
-    double extents_lo[3],
-    double extents_hi[3],
+    const double extents_lo[3],
+    const double extents_hi[3],
     level_octant_t* level,
-    uint8_t* taggedList,
+    const uint8_t* taggedList,
     uint8_t* tagList)
 {
     int* inode;
@@ -1385,12 +1385,12 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
 
 void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
     char nodetype2tag,
-    double extents_lo[3],
-    double extents_hi[3],
+    const double extents_lo[3],
+    const double extents_hi[3],
     uint8_t level_id,
     uint32_t noctants,
     octant_coordinates_t* octants,
-    uint8_t* taggedList,
+    const uint8_t* taggedList,
     uint8_t* tagList)
 {
     int* inode;

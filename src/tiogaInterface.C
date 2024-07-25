@@ -36,7 +36,7 @@
 //
 extern "C" {
 
-void tioga_init_f90_(int* scomm)
+void tioga_init_f90_(const int* scomm)
 {
     int id_proc, nprocs;
     MPI_Comm tcomm;
@@ -81,12 +81,12 @@ void tioga_init_(MPI_Comm tcomm)
 }
 
 void tioga_registergrid_data_(
-    int* btag,
-    int* nnodes,
+    const int* btag,
+    const int* nnodes,
     double* xyz,
     int* ibl,
-    int* nwbc,
-    int* nobc,
+    const int* nwbc,
+    const int* nobc,
     int* wbcnode,
     int* obcnode,
     int* ntypes,
@@ -114,13 +114,13 @@ void tioga_registergrid_data_(
 }
 
 void tioga_registergrid_data_mb_(
-    int* bid,
-    int* btag,
-    int* nnodes,
+    const int* bid,
+    const int* btag,
+    const int* nnodes,
     double* xyz,
     int* ibl,
-    int* nwbc,
-    int* nobc,
+    const int* nwbc,
+    const int* nobc,
     int* wbcnode,
     int* obcnode,
     int* ntypes,
@@ -149,36 +149,39 @@ void tioga_registergrid_data_mb_(
 }
 
 void tioga_register_amr_global_data_(
-    int* nf, int* idata, double* rdata, int* ngridsin)
+    const int* nf, int* idata, double* rdata, const int* ngridsin)
 {
     tg->register_amr_global_data(*nf, idata, rdata, *ngridsin);
 }
 
-void tioga_register_amr_patch_count_(int* npatches)
+void tioga_register_amr_patch_count_(const int* npatches)
 {
     tg->set_amr_patch_count(*npatches);
 }
 
 void tioga_register_amr_local_data_(
-    int* ipatch, int* global_id, int* iblank, int* iblankn)
+    const int* ipatch, const int* global_id, int* iblank, int* iblankn)
 {
     tg->register_amr_local_data(*ipatch, *global_id, iblank, iblankn);
 }
 
 void tioga_register_amr_solution_(
-    int* ipatch, double* q, int nvar_cell, int nvar_node)
+    const int* ipatch, double* q, int nvar_cell, int nvar_node)
 {
     tg->register_amr_solution(*ipatch, q, nvar_cell, nvar_node);
 }
 
-void tioga_setcomposite_(int* ncomp) { tg->setNumCompositeBodies(*ncomp); }
+void tioga_setcomposite_(const int* ncomp)
+{
+    tg->setNumCompositeBodies(*ncomp);
+}
 
 void tioga_register_composite_body_(
-    int* compbodytag,
-    int* nbodytags,
+    const int* compbodytag,
+    const int* nbodytags,
     int* bodytags,
     int* dominancetags,
-    double* searchTol)
+    const double* searchTol)
 {
     tg->registerCompositeBody(
         *compbodytag, *nbodytags, bodytags, dominancetags, *searchTol);
@@ -205,12 +208,12 @@ void tioga_performconnectivity_highorder_(void)
 
 void tioga_performconnectivity_amr_(void) { tg->performConnectivityAMR(); }
 
-void tioga_registersolution_(int* bid, double* q)
+void tioga_registersolution_(const int* bid, double* q)
 {
     tg->registerSolution(*bid, q);
 }
 
-void tioga_dataupdate_mb_(int* nvar, char* itype)
+void tioga_dataupdate_mb_(const int* nvar, char* itype)
 {
     int interptype;
     if (strstr(itype, "row") != nullptr) {
@@ -249,7 +252,7 @@ void tioga_dataupdate_(double* q, int* nvar, char* itype)
     tioga_dataupdate_mb_(nvar, itype);
 }
 
-void tioga_writeoutputfiles_(int* nvar, char* itype)
+void tioga_writeoutputfiles_(const int* nvar, char* itype)
 {
     int interptype;
     if (strstr(itype, "row") != nullptr) {
@@ -262,26 +265,26 @@ void tioga_writeoutputfiles_(int* nvar, char* itype)
     }
     tg->writeData(*nvar, interptype);
 }
-void tioga_getdonorcount_(int* btag, int* dcount, int* fcount)
+void tioga_getdonorcount_(const int* btag, int* dcount, int* fcount)
 {
     tg->getDonorCount(*btag, dcount, fcount);
 }
 void tioga_getdonorinfo_(
-    int* btag, int* receptors, int* indices, double* frac, int* dcount)
+    const int* btag, int* receptors, int* indices, double* frac, int* dcount)
 {
     tg->getDonorInfo(*btag, receptors, indices, frac, dcount);
 }
 
-void tioga_setholemapalg_(int* alg) { tg->setHoleMapAlgorithm(*alg); }
+void tioga_setholemapalg_(const int* alg) { tg->setHoleMapAlgorithm(*alg); }
 
-void tioga_setsymmetry_(int* isym) { tg->setSymmetry(*isym); }
+void tioga_setsymmetry_(const int* isym) { tg->setSymmetry(*isym); }
 
 void tioga_setresolutions_(double* nres, double* cres)
 {
     tg->setResolutions(nres, cres);
 }
 
-void tioga_setresolutions_multi_(int* btag, double* nres, double* cres)
+void tioga_setresolutions_multi_(const int* btag, double* nres, double* cres)
 {
     tg->setResolutions(*btag, nres, cres);
 }

@@ -146,7 +146,8 @@ void newtonSolve(double f[7][3], double* u1, double* v1, double* w1)
     return;
 }
 
-void computeNodalWeights(double xv[8][3], double* xp, double frac[8], int nvert)
+void computeNodalWeights(
+    double xv[8][3], const double* xp, double frac[8], int nvert)
 {
     int i, j, k, isolflag;
     double** lhs;
@@ -291,7 +292,7 @@ void computeNodalWeights(double xv[8][3], double* xp, double frac[8], int nvert)
     }
 }
 
-void cellVolume(double*, double[8][3], int[6], int[6][4], int, int);
+// void cellVolume(double*, const double[8][3], int[6], int[6][4], int, int);
 
 double computeCellVolume(double xv[8][3], int nvert)
 {
@@ -329,7 +330,7 @@ double computeCellVolume(double xv[8][3], int nvert)
     return vol;
 }
 
-double tdot_product(double a[3], double b[3], double c[3])
+double tdot_product(const double a[3], const double b[3], const double c[3])
 {
     int k;
     double dp = 0.0;
