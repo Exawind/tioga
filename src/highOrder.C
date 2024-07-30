@@ -26,7 +26,9 @@
 #include "tioga_utils.h"
 #include "tioga_math.h"
 
-enum { ROW = 0, COLUMN = 1, NFRAC = 1331 };
+#define ROW 0
+#define COLUMN 1
+#define NFRAC 1331
 
 void MeshBlock::getCellIblanks2()
 {

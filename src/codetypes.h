@@ -37,7 +37,7 @@ typedef int32_t qcoord_t;
 /*====================================================================*/
 /*  Base for indexing (0 or 1) */
 /*====================================================================*/
-enum { BASE = 1 };
+#define BASE 1
 
 /*====================================================================*/
 /*  Define arithmetic constants                                       */
@@ -54,25 +54,23 @@ enum { BASE = 1 };
 // #define RAD2DEG            (180.0/PI)
 // #define DEG2RAD            (PI/180.0)
 #define BIGVALUE 1.0e+15
-enum { BIGINT = 2147483647 };
+#define BIGINT 2147483647
 #define TOL 1.0e-10
-enum {
-    HOLEMAPSIZE = 192,
-    // #define NFRINGE            3
-    // #define NVAR               6
-    WALLNODETYPE = 0,
-    OUTERNODETYPE = 1,
-    /*==================================================================*/
-    /* ADAPTIVE HOLE MAP OCTANT INFO                                    */
-    /*==================================================================*/
-    INTERSECT_ALG = 1 // [0] point-box inclusion only
-};
-// [1] face-box intersection (water-tight)
+#define HOLEMAPSIZE 192
+// #define NFRINGE            3
+// #define NVAR               6
+#define WALLNODETYPE 0
+#define OUTERNODETYPE 1
+/*==================================================================*/
+/* ADAPTIVE HOLE MAP OCTANT INFO                                    */
+/*==================================================================*/
+#define INTERSECT_ALG                                                          \
+    1 // [0] point-box inclusion only
+      // [1] face-box intersection (water-tight)
 
-enum {
-    NON_UNIQUE_NODES = 1 // [0] wbc nodes are NOT listed as obc nodes
-};
-// [1] wbc nodes may also be listed as obc nodes
+#define NON_UNIQUE_NODES                                                       \
+    1 // [0] wbc nodes are NOT listed as obc nodes
+      // [1] wbc nodes may also be listed as obc nodes
 
 /* Fixed Octree Constraints: Do Not Change */
 #define OCTANT_MAXLEVEL 30 // 32-bit integer
@@ -85,7 +83,9 @@ enum {
 /** Conversion from integer coordinates to double coordinates */
 #define INT2DBL ((double)1.0 / (double)OCTANT_ROOT_LEN)
 
-enum { OUTSIDE_SB = 0, INSIDE_SB = 1, WALL_SB = 2 };
+#define OUTSIDE_SB 0
+#define INSIDE_SB 1
+#define WALL_SB 2
 /*==================================================================*/
 /* inline debugging tools                                           */
 /*==================================================================*/
@@ -110,7 +110,12 @@ enum { OUTSIDE_SB = 0, INSIDE_SB = 1, WALL_SB = 2 };
 /*===================================================================*/
 /* Code specific types                                               */
 /*===================================================================*/
-enum { XLO = 0, XHI = 1, YLO = 2, YHI = 3, ZLO = 4, ZHI = 5 };
+#define XLO 0
+#define XHI 1
+#define YLO 2
+#define YHI 3
+#define ZLO 4
+#define ZHI 5
 
 /* Mesh Block Complement/Composite Rank Data */
 class meshblockCompInfo

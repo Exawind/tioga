@@ -25,7 +25,8 @@
 #include "codetypes.h"
 #include "MeshBlock.h"
 
-enum { ROW = 0, COLUMN = 1 };
+#define ROW 0
+#define COLUMN 1
 
 void MeshBlock::getInterpolatedSolution(
     int* nints,
