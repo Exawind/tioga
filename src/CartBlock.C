@@ -110,9 +110,10 @@ void CartBlock::getInterpolatedData(
             }
 
             for (i = 0; i < listptr->nweights; i++) {
-                int const cell_index = cart_utils::get_cell_index(
-                    dims[0], dims[1], nf, listptr->inode[3 * i],
-                    listptr->inode[3 * i + 1], listptr->inode[3 * i + 2]);
+                int const cell_index =
+                    static_cast<int>(cart_utils::get_cell_index(
+                        dims[0], dims[1], nf, listptr->inode[3 * i],
+                        listptr->inode[3 * i + 1], listptr->inode[3 * i + 2]));
                 for (n = 0; n < nvar_cell; n++) {
                     weight = listptr->weights[i];
                     qq[n] += qcell[cell_index + ncell_nf * n] * weight;

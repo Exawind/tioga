@@ -111,7 +111,7 @@ void ADT::buildADT(int d, int nelements, double* elementBbox)
     // fp=fopen("adtReals.dat","w");
     // fp1=fopen("adtInts.dat","w");
     for (i = 0; i < nelem; i++) {
-        i4 = 4 * adtIntegers[4 * i];
+        i4 = 4 * adtIntegers[static_cast<int>(4 * i)];
         adtIntegers[i4 + 3] = i;
     }
     // for(i=0;i<nelem;i++)
