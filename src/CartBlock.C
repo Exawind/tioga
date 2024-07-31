@@ -227,7 +227,7 @@ void CartBlock::insertInInterpList(
     listptr->receptorInfo[1] = remoteid;
     listptr->receptorInfo[2] = remoteblockid;
     for (n = 0; n < 3; n++) {
-        ix[n] = (xtmp[n] - xlo[n]) / dx[n];
+        ix[n] = static_cast<int>((xtmp[n] - xlo[n]) / dx[n]);
         rst[n] = (xtmp[n] - xlo[n] - ix[n] * dx[n]) / dx[n];
         if (ix[n] == dims[n]) {
             if (fabs(rst[n]) < TOL) {
