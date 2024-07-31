@@ -466,7 +466,8 @@ void CartBlock::processIblank(HOLEMAP* holemap, int nmesh, bool isNodal)
                         }
                     }
                 } else {
-                    if ((temp = donorList[idof]) != nullptr) {
+                    temp = donorList[idof];
+                    if (temp != nullptr) {
                         // simplify logic here: the first one on the list is the
                         // best donor anyway, accept it if its not a mandatory
                         // receptor on the donor side
@@ -630,7 +631,8 @@ void CartBlock::processIblank(
                         }
                     }
                 } else {
-                    if ((temp = donorList[idof]) != nullptr) {
+                    temp = donorList[idof];
+                    if (temp != nullptr) {
                         // simplify logic here: the first one on the list is the
                         // best donor anyway, accept it if its not a mandatory
                         // receptor on the donor side
