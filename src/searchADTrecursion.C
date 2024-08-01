@@ -47,7 +47,8 @@ void ADT::searchADT(MeshBlock* mb, int* cellIndex, double* xsearch)
     flag = 1;
     for (i = 0; i < ndim / 2; i++) {
         flag = static_cast<int>(
-            (flag != 0) && (xsearch[i] >= adtExtents[2 * i] - mb->searchTol));
+            (flag != 0) && (xsearch[i] >= adtExtents[static_cast<int>(2 * i)] -
+                                              mb->searchTol));
     }
     for (i = 0; i < ndim / 2; i++) {
         flag = static_cast<int>(
@@ -83,7 +84,8 @@ void searchIntersections(
     bool flag;
     //
     for (i = 0; i < ndim; i++) {
-        element[i] = coord[ndim * (adtIntegers[4 * node]) + i];
+        element[i] =
+            coord[ndim * (adtIntegers[static_cast<int>(4 * node)]) + i];
     }
     //
     flag = true;
@@ -95,7 +97,8 @@ void searchIntersections(
     }
     //
     if (flag) {
-        mb->checkContainment(cellIndex, adtIntegers[4 * node], xsearch);
+        mb->checkContainment(
+            cellIndex, adtIntegers[static_cast<int>(4 * node)], xsearch);
         if (cellIndex[0] > -1 && cellIndex[1] == 0) {
             return;
         }

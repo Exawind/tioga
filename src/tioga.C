@@ -741,7 +741,7 @@ void tioga::dataUpdate_AMR()
     // populate the packets
     //
     for (i = 0; i < nints; i++) {
-        k = integerRecords[3 * i];
+        k = integerRecords[static_cast<int>(3 * i)];
         if (k < 0 || k > nsend) {
             TRACEI(nsend);
             TRACEI(i);
@@ -762,7 +762,7 @@ void tioga::dataUpdate_AMR()
 
     m = 0;
     for (i = 0; i < nints; i++) {
-        k = integerRecords[3 * i];
+        k = integerRecords[static_cast<int>(3 * i)];
         sndPack[k].intData[icount[k]++] = integerRecords[3 * i + 1];
         sndPack[k].intData[icount[k]++] = integerRecords[3 * i + 2];
         for (j = 0; j < nvar; j++) {
@@ -781,7 +781,7 @@ void tioga::dataUpdate_AMR()
     for (k = 0; k < nrecv; k++) {
         m = 0;
         for (i = 0; i < rcvPack[k].nints / 2; i++) {
-            bid = rcvPack[k].intData[2 * i];
+            bid = rcvPack[k].intData[static_cast<int>(2 * i)];
             if (bid < 0) {
                 int const inode = rcvPack[k].intData[2 * i + 1];
                 mblocks[-(bid + 1)]->updateSolnData(
@@ -870,7 +870,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
         // populate the packets
         //
         for (int i = 0; i < nints[ib]; i++) {
-            int const k = integerRecords[ib][3 * i];
+            int const k = integerRecords[ib][static_cast<int>(3 * i)];
             sndPack[k].nints += 2;
             sndPack[k].nreals += nvar;
         }
@@ -886,7 +886,7 @@ void tioga::dataUpdate(int nvar, int interptype, int at_points)
     for (int ib = 0; ib < nblocks; ib++) {
         int m = 0;
         for (int i = 0; i < nints[ib]; i++) {
-            int const k = integerRecords[ib][3 * i];
+            int const k = integerRecords[ib][static_cast<int>(3 * i)];
             sndPack[k].intData[icount[k]++] = integerRecords[ib][3 * i + 1];
             sndPack[k].intData[icount[k]++] = integerRecords[ib][3 * i + 2];
             for (int j = 0; j < nvar; j++) {
@@ -1105,7 +1105,7 @@ void tioga::getReceptorInfo(std::vector<int>& receptors)
         // bytes through the int array. This makes total number of ints per
         // fringe data be (3 + 2) = 5
         //
-        fringeSend[ib].resize(5 * dcount[ib]);
+        fringeSend[ib].resize(static_cast<int>(5 * dcount[ib]));
         mblocks[ib]->getReceptorInfo(fringeSend[ib].data());
 
         std::vector<int>& fringeData = fringeSend[ib];
@@ -1331,7 +1331,7 @@ void tioga::reduce_fringes()
     //
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int const k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][static_cast<int>(3 * i)];
             sndPack[k].nints += 2;
         }
     }
@@ -1342,7 +1342,7 @@ void tioga::reduce_fringes()
     //
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int const k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][static_cast<int>(3 * i)];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 1];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 2];
         }
@@ -1382,7 +1382,7 @@ void tioga::reduce_fringes()
     std::fill(ixOffset.begin(), ixOffset.end(), 0);
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int const k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][static_cast<int>(3 * i)];
             sndPack[k].nints += 2;
         }
     }
@@ -1391,7 +1391,7 @@ void tioga::reduce_fringes()
     }
     for (int n = 0; n < nblocks; n++) {
         for (int i = 0; i < nrecords[n]; i++) {
-            int const k = donorRecords[n][3 * i];
+            int const k = donorRecords[n][static_cast<int>(3 * i)];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 1];
             sndPack[k].intData[ixOffset[k]++] = donorRecords[n][3 * i + 2];
         }
@@ -1477,7 +1477,7 @@ void tioga::preprocess_amr_data(int root)
     // an additional parameter at the end to exchange the number of ghosts per
     // patch.
     std::vector<int> idata(ngrids_global * nint_per_grid + 1);
-    std::vector<double> rdata(ngrids_global * nreal_per_grid);
+    std::vector<double> rdata(static_cast<int>(ngrids_global * nreal_per_grid));
 
     // On root MPI process for the AMR solver, populate the buffer for broadcast
     // to all processes.

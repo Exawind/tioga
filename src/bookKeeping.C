@@ -180,7 +180,9 @@ void MeshBlock::processDonors(
         if (verbose != 0) TRACEI(iblank[i]);
         if (verbose != 0) TRACED(nodeRes[i]);
         if (verbose != 0) {
-            printf("%f %f %f\n", x[static_cast<int>(3 * i)], x[3 * i + 1], x[3 * i + 2]);
+            printf(
+                "%f %f %f\n", x[static_cast<int>(3 * i)], x[3 * i + 1],
+                x[3 * i + 2]);
         }
         if (donorList[i] == nullptr) {
             if (verbose != 0) {
@@ -189,8 +191,8 @@ void MeshBlock::processDonors(
             for (j = 0; j < nmesh; j++) {
                 if (j != (meshtag - BASE) && (holemap[j].existWall != 0)) {
                     if (checkHoleMap(
-                            &x[static_cast<int>(3 * i)], holemap[j].nx, holemap[j].sam,
-                            holemap[j].extents) != 0) {
+                            &x[static_cast<int>(3 * i)], holemap[j].nx,
+                            holemap[j].sam, holemap[j].extents) != 0) {
                         iblank[i] = 0;
                         break;
                     }
@@ -218,8 +220,8 @@ void MeshBlock::processDonors(
                 if (j != (meshtag - BASE) && (holemap[j].existWall != 0)) {
                     if (iflag[j] == 0) {
                         if (checkHoleMap(
-                                &x[static_cast<int>(3 * i)], holemap[j].nx, holemap[j].sam,
-                                holemap[j].extents) != 0) {
+                                &x[static_cast<int>(3 * i)], holemap[j].nx,
+                                holemap[j].sam, holemap[j].extents) != 0) {
                             iblank[i] = 0;
                             break;
                         }
@@ -241,7 +243,8 @@ void MeshBlock::processDonors(
                     myid, wbcnode[i] - BASE, donorList[wbcnode[i] - BASE]);
                 ii = wbcnode[i] - BASE;
                 printf(
-                    "xloc=%e %e %e\n", x[static_cast<int>(3 * ii)], x[3 * ii + 1], x[3 * ii + 2]);
+                    "xloc=%e %e %e\n", x[static_cast<int>(3 * ii)],
+                    x[3 * ii + 1], x[3 * ii + 2]);
                 printf(
                     "Computations will continue, but may suffer from accuracy "
                     "problems\n");
@@ -405,8 +408,8 @@ void MeshBlock::processDonors(
 
             for (j = 0; j < nmesh; j++) {
                 if (j != (meshtag - BASE) && (holemap[j].existWall != 0U)) {
-                    int const SB_val =
-                        checkAdaptiveHoleMap(&x[static_cast<int>(3 * i)], &holemap[j]);
+                    int const SB_val = checkAdaptiveHoleMap(
+                        &x[static_cast<int>(3 * i)], &holemap[j]);
                     if (SB_val != OUTSIDE_SB) {
                         iblank[i] = 0;
                         break;
@@ -443,8 +446,8 @@ void MeshBlock::processDonors(
                     if (iflag[j] == 0) {
                         // body{j} does NOT have candidate so check if point is
                         // INSIDE SB
-                        int const SB_val =
-                            checkAdaptiveHoleMap(&x[static_cast<int>(3 * i)], &holemap[j]);
+                        int const SB_val = checkAdaptiveHoleMap(
+                            &x[static_cast<int>(3 * i)], &holemap[j]);
                         if (SB_val != OUTSIDE_SB) {
                             iblank[i] = 0;
                             break;
@@ -469,8 +472,8 @@ void MeshBlock::processDonors(
                     myid, wbcnode[i] - BASE, donorList[wbcnode[i] - BASE]);
                 ii = wbcnode[i] - BASE;
                 fprintf(
-                    stderr, "xloc=%e %e %e\n", x[static_cast<int>(3 * ii)], x[3 * ii + 1],
-                    x[3 * ii + 2]);
+                    stderr, "xloc=%e %e %e\n", x[static_cast<int>(3 * ii)],
+                    x[3 * ii + 1], x[3 * ii + 2]);
                 fprintf(
                     stderr,
                     "Computations will continue, but may suffer from accuracy "
