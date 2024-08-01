@@ -349,7 +349,7 @@ void MeshBlock::search()
     for (i = 0; i < nsearch; i++) {
         if (xtag[i] == i) {
             // adt->searchADT(this,&(donorId[i]),&(xsearch[3*i]));
-            adt->searchADT(this, dId, &(xsearch[3 * i]));
+            adt->searchADT(this, dId, &(xsearch[static_cast<int>(3 * i)]));
             // std::cout << "ADT -> (" << dId[0] << "," << dId[1] << ")\n";
             donorId[i] = dId[0];
         } else {
