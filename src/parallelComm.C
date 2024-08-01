@@ -215,7 +215,7 @@ void parallelComm::sendRecvPackets(PACKET* sndPack, PACKET* rcvPack)
     status = (MPI_Status*)malloc(sizeof(MPI_Status) * 2 * (nsend + nrecv));
     //
     for (i = 0; i < nsend; i++) {
-        scount[2 * i] = sndPack[i].nints;
+        scount[static_cast<int>(2 * i)] = sndPack[i].nints;
         scount[2 * i + 1] = sndPack[i].nreals;
     }
     //
@@ -224,19 +224,19 @@ void parallelComm::sendRecvPackets(PACKET* sndPack, PACKET* rcvPack)
     //
     for (i = 0; i < nrecv; i++) {
         MPI_Irecv(
-            &(rcount[2 * i]), 2, MPI_INT, rcvMap[i], tag, scomm,
-            &request[irnum++]);
+            &(rcount[static_cast<int>(2 * i)]), 2, MPI_INT, rcvMap[i], tag,
+            scomm, &request[irnum++]);
     }
     //
     for (i = 0; i < nsend; i++) {
         MPI_Isend(
-            &(scount[2 * i]), 2, MPI_INT, sndMap[i], tag, scomm,
-            &request[irnum++]);
+            &(scount[static_cast<int>(2 * i)]), 2, MPI_INT, sndMap[i], tag,
+            scomm, &request[irnum++]);
     }
     //
     MPI_Waitall(irnum, request, status);
     for (i = 0; i < nrecv; i++) {
-        rcvPack[i].nints = rcount[2 * i];
+        rcvPack[i].nints = rcount[static_cast<int>(2 * i)];
         rcvPack[i].nreals = rcount[2 * i + 1];
     }
     //
@@ -295,7 +295,7 @@ void parallelComm::sendRecvPacketsCheck(PACKET* sndPack, PACKET* rcvPack)
     status = (MPI_Status*)malloc(sizeof(MPI_Status) * 2 * (nsend + nrecv));
     //
     for (i = 0; i < nsend; i++) {
-        scount[2 * i] = sndPack[i].nints;
+        scount[static_cast<int>(2 * i)] = sndPack[i].nints;
         scount[2 * i + 1] = sndPack[i].nreals;
     }
     //
@@ -304,20 +304,20 @@ void parallelComm::sendRecvPacketsCheck(PACKET* sndPack, PACKET* rcvPack)
     //
     for (i = 0; i < nrecv; i++) {
         MPI_Irecv(
-            &(rcount[2 * i]), 2, MPI_INT, rcvMap[i], tag, scomm,
-            &request[irnum++]);
+            &(rcount[static_cast<int>(2 * i)]), 2, MPI_INT, rcvMap[i], tag,
+            scomm, &request[irnum++]);
     }
     //
     for (i = 0; i < nsend; i++) {
         MPI_Isend(
-            &(scount[2 * i]), 2, MPI_INT, sndMap[i], tag, scomm,
-            &request[irnum++]);
+            &(scount[static_cast<int>(2 * i)]), 2, MPI_INT, sndMap[i], tag,
+            scomm, &request[irnum++]);
     }
     //
     MPI_Waitall(irnum, request, status);
 
     for (i = 0; i < nrecv; i++) {
-        rcvPack[i].nints = rcount[2 * i];
+        rcvPack[i].nints = rcount[static_cast<int>(2 * i)];
         rcvPack[i].nreals = rcount[2 * i + 1];
     }
 
