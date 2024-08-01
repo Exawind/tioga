@@ -507,7 +507,8 @@ void MeshBlock::tagBoundaryFaces()
         int nodei = wbcnode[i] - BASE;
         WBC_unique_map[i] = nodei;
 
-        auto node_found = WBC_nodes.insert(Node(nodei, &x[3 * nodei]));
+        auto node_found =
+            WBC_nodes.insert(Node(nodei, &x[static_cast<int>(3 * nodei)]));
         if (node_found.second == false) {
             // duplicates exist
             const Node n = *node_found.first;
@@ -520,7 +521,8 @@ void MeshBlock::tagBoundaryFaces()
     flagduplicate = 0;
     for (i = 0; i < nobc; i++) {
         int nodei = obcnode[i] - BASE;
-        auto node_found = WBC_nodes.find(Node(nodei, &x[3 * nodei]));
+        auto node_found =
+            WBC_nodes.find(Node(nodei, &x[static_cast<int>(3 * nodei)]));
 
         if (node_found != WBC_nodes.end()) {
             // duplicates exit
@@ -620,11 +622,11 @@ void MeshBlock::tagBoundaryFaces()
     }
 
     // allocate wall face node list
-    wbcfacenode.resize(4 * nwbcface);
+    wbcfacenode.resize(static_cast<int>(4 * nwbcface));
     wbcfacebox.resize(nwbcface);
 
     // allocate outer face node list
-    obcfacenode.resize(4 * nobcface);
+    obcfacenode.resize(static_cast<int>(4 * nobcface));
     obcfacebox.resize(nobcface);
 
     /* ====================== */
@@ -771,8 +773,8 @@ void MeshBlock::writeGridFile(int bid)
         ncells);
     for (i = 0; i < nnodes; i++) {
         fprintf(
-            fp, "%.14e %.14e %.14e %d\n", x[3 * i], x[3 * i + 1], x[3 * i + 2],
-            iblank[i]);
+            fp, "%.14e %.14e %.14e %d\n", x[static_cast<int>(3 * i)],
+            x[3 * i + 1], x[3 * i + 2], iblank[i]);
     }
 
     ba = 1 - BASE;
@@ -781,28 +783,32 @@ void MeshBlock::writeGridFile(int bid)
         for (i = 0; i < nc[n]; i++) {
             if (nvert == 4) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 2] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 3] + ba);
             } else if (nvert == 5) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 4] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 4] + ba);
             } else if (nvert == 6) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 2] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 4] + ba, vconn[n][nvert * i + 5] + ba,
                     vconn[n][nvert * i + 5] + ba);
             } else if (nvert == 8) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 5] + ba, vconn[n][nvert * i + 6] + ba,
@@ -838,7 +844,7 @@ void MeshBlock::writeCellFile(int bid)
         fp,
         "VARLOCATION =  (1=NODAL, 2=NODAL, 3=NODAL, 4=NODAL,5=CELLCENTERED)\n");
     for (i = 0; i < nnodes; i++) {
-        fprintf(fp, "%lf\n", x[3 * i]);
+        fprintf(fp, "%lf\n", x[static_cast<int>(3 * i)]);
     }
     for (i = 0; i < nnodes; i++) {
         fprintf(fp, "%lf\n", x[3 * i + 1]);
@@ -858,28 +864,32 @@ void MeshBlock::writeCellFile(int bid)
         for (i = 0; i < nc[n]; i++) {
             if (nvert == 4) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 2] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 3] + ba);
             } else if (nvert == 5) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 4] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 4] + ba);
             } else if (nvert == 6) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 2] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 4] + ba, vconn[n][nvert * i + 5] + ba,
                     vconn[n][nvert * i + 5] + ba);
             } else if (nvert == 8) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 5] + ba, vconn[n][nvert * i + 6] + ba,
@@ -929,8 +939,8 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
     if (type == 0) {
         for (i = 0; i < nnodes; i++) {
             fprintf(
-                fp, "%lf %lf %lf %d %d ", x[3 * i], x[3 * i + 1], x[3 * i + 2],
-                ibl[i], meshtag);
+                fp, "%lf %lf %lf %d %d ", x[static_cast<int>(3 * i)],
+                x[3 * i + 1], x[3 * i + 2], ibl[i], meshtag);
             for (j = 0; j < nvar; j++) {
                 fprintf(fp, "%lf ", q[i * nvar + j]);
             }
@@ -941,8 +951,8 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
     } else {
         for (i = 0; i < nnodes; i++) {
             fprintf(
-                fp, "%lf %lf %lf %d %d ", x[3 * i], x[3 * i + 1], x[3 * i + 2],
-                ibl[i], meshtag);
+                fp, "%lf %lf %lf %d %d ", x[static_cast<int>(3 * i)],
+                x[3 * i + 1], x[3 * i + 2], ibl[i], meshtag);
             for (j = 0; j < nvar; j++) {
                 fprintf(fp, "%lf ", q[j * nnodes + i]);
             }
@@ -955,28 +965,32 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
         for (i = 0; i < nc[n]; i++) {
             if (nvert == 4) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 2] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 3] + ba);
             } else if (nvert == 5) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 4] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 4] + ba);
             } else if (nvert == 6) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 2] + ba, vconn[n][nvert * i + 3] + ba,
                     vconn[n][nvert * i + 4] + ba, vconn[n][nvert * i + 5] + ba,
                     vconn[n][nvert * i + 5] + ba);
             } else if (nvert == 8) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<int>(nvert * i)] + ba,
                     vconn[n][nvert * i + 1] + ba, vconn[n][nvert * i + 2] + ba,
                     vconn[n][nvert * i + 3] + ba, vconn[n][nvert * i + 4] + ba,
                     vconn[n][nvert * i + 5] + ba, vconn[n][nvert * i + 6] + ba,
@@ -1351,13 +1365,14 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 /* possible overlap: use face intersection test */
 
                 // load face boundary nodes: set pointer to nodes
-                inode = &bcfacenode[4 * i]; // last node may be -1
+                inode =
+                    &bcfacenode[static_cast<int>(4 * i)]; // last node may be -1
 
                 // get node indices and coordinates for this boundary face
                 // load 1st three nodes
-                double* pt1 = &x[3 * inode[0]];
-                double* pt2 = &x[3 * inode[1]];
-                double* pt3 = &x[3 * inode[2]];
+                double* pt1 = &x[static_cast<int>(3 * inode[0])];
+                double* pt2 = &x[static_cast<int>(3 * inode[1])];
+                double* pt3 = &x[static_cast<int>(3 * inode[2])];
 
                 // test triangle 1: pass first 3 triangles
                 if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt3) != 0) {
@@ -1368,7 +1383,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 // if quad, test second triangle using last node
                 nvert = (inode[3] == -1) ? 3 : 4; // number of face vertices
                 if (nvert == 4) {
-                    double* pt4 = &x[3 * inode[3]];
+                    double* pt4 = &x[static_cast<int>(3 * inode[3])];
                     if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt4) != 0) {
                         tagList[j] = 1;
                         break; // jump to next octant (break from inner BC loop)
@@ -1469,13 +1484,14 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 /* possible overlap: use face intersection test */
 
                 // load face boundary nodes: set pointer to nodes
-                inode = &bcfacenode[4 * i]; // last node may be -1
+                inode =
+                    &bcfacenode[static_cast<int>(4 * i)]; // last node may be -1
 
                 // get node indices and coordinates for this boundary face
                 // load 1st three nodes
-                double* pt1 = &x[3 * inode[0]];
-                double* pt2 = &x[3 * inode[1]];
-                double* pt3 = &x[3 * inode[2]];
+                double* pt1 = &x[static_cast<int>(3 * inode[0])];
+                double* pt2 = &x[static_cast<int>(3 * inode[1])];
+                double* pt3 = &x[static_cast<int>(3 * inode[2])];
 
                 // test triangle 1: pass first 3 triangles
                 if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt3) != 0) {
@@ -1486,7 +1502,7 @@ void MeshBlock::markBoundaryAdaptiveMapSurfaceIntersect(
                 // if quad, test second triangle using last node
                 nvert = (inode[3] == -1) ? 3 : 4; // number of face vertices
                 if (nvert == 4) {
-                    double* pt4 = &x[3 * inode[3]];
+                    double* pt4 = &x[static_cast<int>(3 * inode[3])];
                     if (triBoxOverlap(boxcenter, halfdx, pt1, pt2, pt4) != 0) {
                         tagList[j] = 1;
                         break; // jump to next octant (break from inner BC loop)
@@ -2214,7 +2230,7 @@ void MeshBlock::create_hex_cell_map()
         double xd[3];
         int idx[3];
         for (int j = 0; j < 3; j++) {
-            int const lnode = vconn[0][8 * i] - BASE;
+            int const lnode = vconn[0][static_cast<int>(8 * i)] - BASE;
             int const tnode = vconn[0][8 * i + 6] - BASE;
             xc[j] = 0.5 * (x[3 * lnode + j] + x[3 * tnode + j]);
         }
@@ -2260,8 +2276,8 @@ void MeshBlock::checkOrphans()
             if (nodeRes[i] >= BIGVALUE) {
                 if (iblank[i] == 1) {
                     fprintf(
-                        fp, "%f %f %f %f\n", x[3 * i], x[3 * i + 1],
-                        x[3 * i + 2], nodeRes[i]);
+                        fp, "%f %f %f %f\n", x[static_cast<int>(3 * i)],
+                        x[3 * i + 1], x[3 * i + 2], nodeRes[i]);
                     norphan++;
                 }
             }
