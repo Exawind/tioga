@@ -159,7 +159,8 @@ void MeshBlock::clearOrphans(HOLEMAP* holemap, int nmesh, const int* itmp)
                         if (k != (meshtag - BASE) &&
                             (holemap[k].existWall != 0)) {
                             if (checkHoleMap(
-                                    &rxyz[3 * m], holemap[k].nx, holemap[k].sam,
+                                    &rxyz[static_cast<int>(3 * m)],
+                                    holemap[k].nx, holemap[k].sam,
                                     holemap[k].extents) != 0) {
                                 reject = 1;
                                 break;
@@ -353,14 +354,16 @@ void MeshBlock::processPointDonors()
                 interpList2[m].inode = (int*)malloc(sizeof(int));
                 interpList2[m].nweights = 0;
                 donor_frac(
-                    &(icell), &(xsearch[3 * i]), &(interpList2[m].nweights),
-                    &(interpList2[m].inode[0]), frac, &(rst[3 * i]), &ndim);
+                    &(icell), &(xsearch[static_cast<int>(3 * i)]),
+                    &(interpList2[m].nweights), &(interpList2[m].inode[0]),
+                    frac, &(rst[static_cast<int>(3 * i)]), &ndim);
                 interpList2[m].weights =
                     (double*)malloc(sizeof(double) * interpList2[m].nweights);
                 for (j = 0; j < interpList2[m].nweights; j++) {
                     interpList2[m].weights[j] = frac[j];
                 }
-                interpList2[m].receptorInfo[0] = isearch[3 * i];
+                interpList2[m].receptorInfo[0] =
+                    isearch[static_cast<int>(3 * i)];
                 interpList2[m].receptorInfo[1] = isearch[3 * i + 1];
                 interpList2[m].receptorInfo[2] = isearch[3 * i + 2];
                 m++;
@@ -387,14 +390,15 @@ void MeshBlock::processPointDonors()
                         xv[ivert][j] = x[i3 + j];
                     }
                 }
-                xp[0] = xsearch[3 * i];
+                xp[0] = xsearch[static_cast<int>(3 * i)];
                 xp[1] = xsearch[3 * i + 1];
                 xp[2] = xsearch[3 * i + 2];
                 computeNodalWeights(xv, xp, frac2, nvert);
                 for (j = 0; j < nvert; j++) {
                     interpList2[m].weights[j] = frac2[j];
                 }
-                interpList2[m].receptorInfo[0] = isearch[3 * i];
+                interpList2[m].receptorInfo[0] =
+                    isearch[static_cast<int>(3 * i)];
                 interpList2[m].receptorInfo[1] = isearch[3 * i + 1];
                 interpList2[m].receptorInfo[2] = isearch[3 * i + 2];
                 m++;
