@@ -126,8 +126,9 @@ void tioga::getHoleMap()
     MPI_Allreduce(
         bboxLocal, bboxGlobal, 3 * maxtag, MPI_DOUBLE, MPI_MIN, scomm);
     MPI_Allreduce(
-        &(bboxLocal[3 * maxtag]), &(bboxGlobal[3 * maxtag]), 3 * maxtag,
-        MPI_DOUBLE, MPI_MAX, scomm);
+        &(bboxLocal[static_cast<int>(3 * maxtag)]),
+        &(bboxGlobal[static_cast<int>(3 * maxtag)]), 3 * maxtag, MPI_DOUBLE,
+        MPI_MAX, scomm);
     //
     // find the bounding box for each mesh
     // from the globally reduced data
@@ -975,7 +976,7 @@ void writePointsVolume(
     for (pt = 0, k = 0; k < npts1d; ++k) {
         for (j = 0; j < npts1d; ++j) {
             for (i = 0; i < npts1d; ++i) {
-                double* co = &x[3 * pt];
+                double* co = &x[static_cast<int>(3 * pt)];
                 fprintf(
                     fp, "%f %f %f %d %d %d\n", co[0], co[1], co[2], type, level,
                     id);
@@ -1002,7 +1003,7 @@ void writePointsVolumeBrick(
     for (pt = 0, k = 0; k < npts1d; ++k) {
         for (j = 0; j < npts1d; ++j) {
             for (i = 0; i < npts1d; ++i) {
-                double* co = &x[3 * pt];
+                double* co = &x[static_cast<int>(3 * pt)];
                 fprintf(fp, "%f ", co[0]);
                 pt++;
             }
@@ -1014,7 +1015,7 @@ void writePointsVolumeBrick(
     for (pt = 0, k = 0; k < npts1d; ++k) {
         for (j = 0; j < npts1d; ++j) {
             for (i = 0; i < npts1d; ++i) {
-                double* co = &x[3 * pt];
+                double* co = &x[static_cast<int>(3 * pt)];
                 fprintf(fp, "%f ", co[1]);
                 pt++;
             }
@@ -1026,7 +1027,7 @@ void writePointsVolumeBrick(
     for (pt = 0, k = 0; k < npts1d; ++k) {
         for (j = 0; j < npts1d; ++j) {
             for (i = 0; i < npts1d; ++i) {
-                double* co = &x[3 * pt];
+                double* co = &x[static_cast<int>(3 * pt)];
                 fprintf(fp, "%f ", co[2]);
                 pt++;
             }
