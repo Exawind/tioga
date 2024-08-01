@@ -94,12 +94,12 @@ void MeshBlock::setData(TIOGA::MeshBlockInfo* minfo)
     x = m_info->xyz.hptr;
     iblank = m_info->iblank_node.hptr;
     iblank_cell = m_info->iblank_cell.hptr;
-    nwbc = m_info->wall_ids.sz;
-    nobc = m_info->overset_ids.sz;
+    nwbc = static_cast<int>(m_info->wall_ids.sz);
+    nobc = static_cast<int>(m_info->overset_ids.sz);
     wbcnode = m_info->wall_ids.hptr;
     obcnode = m_info->overset_ids.hptr;
 
-    ntypes = m_info->num_vert_per_elem.sz;
+    ntypes = static_cast<int>(m_info->num_vert_per_elem.sz);
     nv = m_info->num_vert_per_elem.hptr;
     nc = m_info->num_cells_per_elem.hptr;
 
@@ -301,7 +301,7 @@ void MeshBlock::tagBoundary()
             for (int k = 0; k < 3; k++) {
                 xd[j] += (x[3 * i + k] - obb->xc[k]) * obb->vec[j][k];
             }
-            idx[j] = xd[j] / mapdx[j];
+            idx[j] = static_cast<int>(xd[j] / mapdx[j]);
         }
         int const indx =
             idx[2] * mapdims[1] * mapdims[0] + idx[1] * mapdims[0] + idx[0];
@@ -369,10 +369,12 @@ void MeshBlock::tagBoundary()
                 xmin[j] -= TOL;
                 xmax[j] += TOL;
             }
-            for (int j = xmin[0] / mapdx[0]; j <= xmax[0] / mapdx[0]; j++) {
-                for (int k = xmin[1] / mapdx[1]; k <= xmax[1] / mapdx[1]; k++) {
-                    for (int l = xmin[2] / mapdx[2]; l <= xmax[2] / mapdx[2];
-                         l++) {
+            for (int j = static_cast<int>(xmin[0] / mapdx[0]);
+                 j <= xmax[0] / mapdx[0]; j++) {
+                for (int k = static_cast<int>(xmin[1] / mapdx[1]);
+                     k <= xmax[1] / mapdx[1]; k++) {
+                    for (int l = static_cast<int>(xmin[2] / mapdx[2]);
+                         l <= xmax[2] / mapdx[2]; l++) {
                         idx[0] = std::max(std::min(j, mapdims[0] - 1), 0);
                         idx[1] = std::max(std::min(k, mapdims[1] - 1), 0);
                         idx[2] = std::max(std::min(l, mapdims[2] - 1), 0);
@@ -1640,9 +1642,9 @@ void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
         delta = 0.01 * (xmax[j] - xmin[j]);
         xmin[j] -= delta;
         xmax[j] += delta;
-        imin[j] = std::max(xmin[j] / mapdx[j], 0.0);
-        imax[j] =
-            std::min(xmax[j] / mapdx[j], static_cast<double>(mapdims[j] - 1));
+        imin[j] = static_cast<int>(std::max(xmin[j] / mapdx[j], 0.0));
+        imax[j] = static_cast<int>(
+            std::min(xmax[j] / mapdx[j], static_cast<double>(mapdims[j] - 1)));
     }
     lmin = mapdims[2] - 1;
     kmin = mapdims[1] - 1;
@@ -1761,9 +1763,9 @@ void MeshBlock::getQueryPoints2(
         delta = 0.01 * (xmax[j] - xmin[j]);
         xmin[j] -= delta;
         xmax[j] += delta;
-        imin[j] = std::max(xmin[j] / mapdx[j], 0.0);
-        imax[j] =
-            std::min(xmax[j] / mapdx[j], static_cast<double>(mapdims[j] - 1));
+        imin[j] = static_cast<int>(std::max(xmin[j] / mapdx[j], 0.0));
+        imax[j] = static_cast<int>(
+            std::min(xmax[j] / mapdx[j], static_cast<double>(mapdims[j] - 1)));
         mdx[j] = 0.5 * mapdx[j];
     }
     //
@@ -2215,7 +2217,7 @@ void MeshBlock::create_hex_cell_map()
         for (int k = 0; k < 3; k++) {
             xlow[j] -= (obh->dxc[k] * obh->vec[k][j]);
         }
-        idims[j] = round(2 * obh->dxc[j] / dx[j]);
+        idims[j] = static_cast<int>(round(2 * obh->dxc[j] / dx[j]));
         dx[j] = (2 * obh->dxc[j]) / idims[j];
     }
     //
@@ -2239,7 +2241,7 @@ void MeshBlock::create_hex_cell_map()
             for (int k = 0; k < 3; k++) {
                 xd[j] += (xc[k] - xlow[k]) * obh->vec[j][k];
             }
-            idx[j] = xd[j] / dx[j];
+            idx[j] = static_cast<int>(xd[j] / dx[j]);
         }
         uindx[idx[2] * idims[1] * idims[0] + idx[1] * idims[0] + idx[0]] = i;
     }
