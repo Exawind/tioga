@@ -61,11 +61,13 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
     nsearch = 0;
     //
     for (int c = 0; c < cg->ngrids; c++) {
-        int const cell_count = (cg->dims[3 * c] + 2 * cg->nf) *
-                               (cg->dims[3 * c + 1] + 2 * cg->nf) *
-                               (cg->dims[3 * c + 2] + 2 * cg->nf);
+        int const cell_count =
+            (cg->dims[static_cast<int>(3 * c)] + 2 * cg->nf) *
+            (cg->dims[3 * c + 1] + 2 * cg->nf) *
+            (cg->dims[3 * c + 2] + 2 * cg->nf);
 
-        int const vol = cg->dx[3 * c] * cg->dx[3 * c + 1] * cg->dx[3 * c + 2];
+        int const vol = cg->dx[static_cast<int>(3 * c)] * cg->dx[3 * c + 1] *
+                        cg->dx[3 * c + 2];
 
         for (int n = 0; n < 3; n++) {
             obcart->dxc[n] = cg->dx[3 * c + n] * (cg->dims[3 * c + n]) * 0.5;
@@ -83,7 +85,7 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
 
             auto* xtm = (double*)malloc(sizeof(double) * 3);
 
-            for (int j = 0; j < cg->dims[3 * c]; j++) {
+            for (int j = 0; j < cg->dims[static_cast<int>(3 * c)]; j++) {
                 for (int k = 0; k < cg->dims[3 * c + 1]; k++) {
                     for (int l = 0; l < cg->dims[3 * c + 2]; l++) {
                         fillReceptorDataPtr(
@@ -93,7 +95,7 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
                 }
             }
 
-            for (int j = 0; j < cg->dims[3 * c] + 1; j++) {
+            for (int j = 0; j < cg->dims[static_cast<int>(3 * c)] + 1; j++) {
                 for (int k = 0; k < cg->dims[3 * c + 1] + 1; k++) {
                     for (int l = 0; l < cg->dims[3 * c + 2] + 1; l++) {
                         fillReceptorDataPtr(
@@ -184,17 +186,20 @@ void MeshBlock::fillReceptorDataPtr(
     int itm = -1;
     if (isNodal) {
         itm = cart_utils::get_concatenated_node_index(
-            cg->dims[3 * c], cg->dims[3 * c + 1], cg->dims[3 * c + 2], cg->nf,
-            j, k, l);
+            cg->dims[static_cast<int>(3 * c)], cg->dims[3 * c + 1],
+            cg->dims[3 * c + 2], cg->nf, j, k, l);
 
-        xtm[0] = cg->xlo[3 * c] + j * cg->dx[3 * c];
+        xtm[0] = cg->xlo[static_cast<int>(3 * c)] +
+                 j * cg->dx[static_cast<int>(3 * c)];
         xtm[1] = cg->xlo[3 * c + 1] + k * cg->dx[3 * c + 1];
         xtm[2] = cg->xlo[3 * c + 2] + l * cg->dx[3 * c + 2];
     } else {
         itm = cart_utils::get_cell_index(
-            cg->dims[3 * c], cg->dims[3 * c + 1], cg->nf, j, k, l);
+            cg->dims[static_cast<int>(3 * c)], cg->dims[3 * c + 1], cg->nf, j,
+            k, l);
 
-        xtm[0] = cg->xlo[3 * c] + (j + 0.5) * cg->dx[3 * c];
+        xtm[0] = cg->xlo[static_cast<int>(3 * c)] +
+                 (j + 0.5) * cg->dx[static_cast<int>(3 * c)];
         xtm[1] = cg->xlo[3 * c + 1] + (k + 0.5) * cg->dx[3 * c + 1];
         xtm[2] = cg->xlo[3 * c + 2] + (l + 0.5) * cg->dx[3 * c + 2];
     }
