@@ -92,9 +92,10 @@ void tioga::exchangeAMRDonors()
             }
             for (i = 0; i < mb->nsearch; i++) {
                 if (mb->donorId[i] != -1) {
-                    assert((
-                        mb->isearch[3 * i] < nsend && mb->isearch[3 * i] >= 0));
-                    obreceptors[imap[mb->isearch[3 * i]]]++;
+                    assert(
+                        (mb->isearch[static_cast<int>(3 * i)] < nsend &&
+                         mb->isearch[static_cast<int>(3 * i)] >= 0));
+                    obreceptors[imap[mb->isearch[static_cast<int>(3 * i)]]]++;
                 }
             }
         }
@@ -133,7 +134,7 @@ void tioga::exchangeAMRDonors()
                         mb->receptorIdCart[i];
                     sndPack[procid].intData[intcount[procid]++] = ib;
                     sndPack[procid].realData[realcount[procid]++] =
-                        mb->rxyzCart[3 * i];
+                        mb->rxyzCart[static_cast<int>(3 * i)];
                     sndPack[procid].realData[realcount[procid]++] =
                         mb->rxyzCart[3 * i + 1];
                     sndPack[procid].realData[realcount[procid]++] =
@@ -145,7 +146,7 @@ void tioga::exchangeAMRDonors()
             auto& mb = mblocks[ib];
             for (i = 0; i < mb->nsearch; i++) {
                 if (mb->donorId[i] != -1) {
-                    procid = imap[mb->isearch[3 * i]];
+                    procid = imap[mb->isearch[static_cast<int>(3 * i)]];
                     sndPack[procid].intData[intcount[procid]++] =
                         mb->isearch[3 * i + 1];
                     sndPack[procid].intData[intcount[procid]++] =
@@ -256,7 +257,7 @@ void tioga::exchangeAMRDonors()
             cancelledData = (int*)malloc(sizeof(int) * 4 * ncancel);
             cb[i].getCancellationData(cancelledData, &ncancel);
             for (j = 0; j < ncancel; j++) {
-                procid = cancelledData[4 * j];
+                procid = cancelledData[static_cast<int>(4 * j)];
                 ctype = cancelledData[4 * j + 1];
                 remoteid = cancelledData[4 * j + 2];
                 remoteblockid = cancelledData[4 * j + 3];
