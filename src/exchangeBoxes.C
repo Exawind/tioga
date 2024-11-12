@@ -25,6 +25,7 @@
 #include <utility>
 #include <cassert>
 #include <cstdlib>
+#include <cmath>
 #include "mpi.h"
 #include "codetypes.h"
 #include "tioga.h"
@@ -118,7 +119,7 @@ void tioga::exchangeBoxes()
     for (int k = 0, ix = 0; k < numprocs; k++) {
         for (int n = 0; n < nbPerProc[k]; n++) {
             obbProc[ix] = k;
-            obbID[ix] = (int)(allOBBdata[m++] + 0.5);
+            obbID[ix] = static_cast<int>(lround((allOBBdata[m++] + 0.5)));
             for (auto& i : obbRecv[ix].vec) {
                 for (double& j : i) {
                     j = allOBBdata[m++];
@@ -148,7 +149,6 @@ void tioga::exchangeBoxes()
     //
     // Check for intersection of OBBs
     //
-    nsend = nrecv = numprocs;
     for (int ob = 0; ob < nobb; ob++) {
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
@@ -178,7 +178,8 @@ void tioga::exchangeBoxes()
             }
         }
     }
-    int const new_send = std::count(sendFlag.begin(), sendFlag.end(), true);
+    int const new_send =
+        static_cast<int>(std::count(sendFlag.begin(), sendFlag.end(), true));
     assert(new_send <= nsend);
     // Populate send and recv maps
     std::map<int, int> invMap;
@@ -241,8 +242,8 @@ void tioga::exchangeBoxes()
             mxtgsqr * ip + maxtag * (mtags[ib] - 1) + obbID[ob] - 1;
         int const key_send =
             mxtgsqr * myid + maxtag * (obbID[ob] - 1) + (mtags[ib] - 1);
-        intBoxMap[key_recv] = i;
-        ibProcMap[k][ioff] = i;
+        intBoxMap[key_recv] = static_cast<int>(i);
+        ibProcMap[k][ioff] = static_cast<int>(i);
         obblist[i].comm_idx = k;
         obblist[i].iblk_local = ib;
         // obblist[i].iblk_remote = obbID[ob];
