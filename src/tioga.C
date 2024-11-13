@@ -111,7 +111,7 @@ void tioga::assembleCompositeMap()
             for (int cb = 0; cb < ncomposite; cb++) {
                 CompositeBody& Composite = compositeBody[cb];
 
-                int const nbodies = Composite.bodyids.size();
+                int const nbodies = static_cast<int>(Composite.bodyids.size());
                 for (i = 0; i < nbodies; i++) {
                     bodyi = Composite.bodyids[i] - BASE;
                     if (bodyi == mbtag) {
@@ -149,7 +149,7 @@ void tioga::assembleCompositeMap()
                 compositeBodyMap[cb][i].resize(maxtag, 0); // fill 0
             }
 
-            int const nbodies = Composite.bodyids.size();
+            int const nbodies = static_cast<int>(Composite.bodyids.size());
             for (i = 0; i < nbodies; i++) {
                 bodyi = Composite.bodyids[i] - BASE;
                 for (j = i + 1; j < nbodies; j++) {
@@ -208,7 +208,7 @@ void tioga::assembleCompositeComms()
     /* ========================================= */
     for (int cb = 0; cb < ncomposite; cb++) {
         CompositeBody& Composite = compositeBody[cb];
-        int const nbodies = Composite.bodyids.size();
+        int const nbodies = static_cast<int>(Composite.bodyids.size());
 
         for (int i = 0; i < nbodies; i++) {
             int const bodyi = Composite.bodyids[i] - BASE;
@@ -454,7 +454,7 @@ void tioga::registerGridData(
         mtags.push_back(btag);
         mytag.push_back(btag);
         mblocks.push_back(std::unique_ptr<MeshBlock>(new MeshBlock));
-        nblocks = mblocks.size();
+        nblocks = static_cast<int>(mblocks.size());
         iblk = nblocks - 1;
         tag_iblk_map[btag] = iblk;
     } else {
@@ -481,7 +481,7 @@ void tioga::register_unstructured_grid(TIOGA::MeshBlockInfo* minfo)
         mtags.push_back(btag);
         mytag.push_back(btag);
         mblocks.push_back(std::unique_ptr<MeshBlock>(new MeshBlock));
-        nblocks = mblocks.size();
+        nblocks = static_cast<int>(mblocks.size());
         iblk = nblocks - 1;
         tag_iblk_map[btag] = iblk;
     } else {
@@ -1507,8 +1507,10 @@ void tioga::preprocess_amr_data(int root)
     }
 
     // Broadcast from AMR solver root MPI proc to all ranks
-    MPI_Bcast(idata.data(), idata.size(), MPI_INT, root, scomm);
-    MPI_Bcast(rdata.data(), rdata.size(), MPI_DOUBLE, root, scomm);
+    MPI_Bcast(
+        idata.data(), static_cast<int>(idata.size()), MPI_INT, root, scomm);
+    MPI_Bcast(
+        rdata.data(), static_cast<int>(rdata.size()), MPI_DOUBLE, root, scomm);
 
     // For MPI ranks that already have a valid AMR grid registered, do nothing
     // and return early.
