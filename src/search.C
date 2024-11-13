@@ -409,7 +409,7 @@ void MeshBlock::search_uniform_hex()
                 for (int k = 0; k < 3; k++) {
                     xd[j] += (xsearch[3 * i + k] - xlow[k]) * obh->vec[j][k];
                 }
-                idx[j] = xd[j] / dx[j];
+                idx[j] = static_cast<int>(xd[j] / dx[j]);
             }
             if (xd[0] > -TOL && xd[0] < idims[0] * dx[0] + TOL &&
                 xd[1] > -TOL && xd[1] < idims[1] * dx[1] + TOL &&
@@ -427,7 +427,8 @@ void MeshBlock::search_uniform_hex()
                 for (int jj = 0; jj < 8 && (dId[0] == -1 || (dID[1] != 0));
                      jj++) {
                     for (int k = 0; k < 3; k++) {
-                        idx[k] = (xd[k] + xvec[jj][k]) / dx[k];
+                        idx[k] =
+                            static_cast<int>((xd[k] + xvec[jj][k]) / dx[k]);
                         if (idx[k] == idims[k]) {
                             idx[k]--;
                         }
