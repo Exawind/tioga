@@ -66,8 +66,9 @@ void MeshBlock::getCartReceptors(CartGrid* cg, parallelComm* pc)
             (cg->dims[3 * c + 1] + 2 * cg->nf) *
             (cg->dims[3 * c + 2] + 2 * cg->nf);
 
-        int const vol = cg->dx[static_cast<int>(3 * c)] * cg->dx[3 * c + 1] *
-                        cg->dx[3 * c + 2];
+        int const vol = static_cast<int>(
+            cg->dx[static_cast<int>(3 * c)] * cg->dx[3 * c + 1] *
+            cg->dx[3 * c + 2]);
 
         for (int n = 0; n < 3; n++) {
             obcart->dxc[n] = cg->dx[3 * c + n] * (cg->dims[3 * c + n]) * 0.5;
