@@ -175,7 +175,7 @@ int checkHoleMap(
         dx[i] = (extents[i + 3] - extents[i]) / nx[i];
     }
     for (i = 0; i < 3; i++) {
-        ix[i] = (x[i] - extents[i]) / dx[i];
+        ix[i] = static_cast<int>((x[i] - extents[i]) / dx[i]);
         if (ix[i] < 0 || ix[i] > nx[i] - 1) {
             return 0;
         }
@@ -547,7 +547,7 @@ void writebboxdiv(OBB* obb, int bid)
         mdx[j] = 0.5 * mapdx[j];
         mx0[j] = 0;
     }
-    ncells = mapdims[2] * mapdims[1] * mapdims[0];
+    ncells = static_cast<int>(mapdims[2] * mapdims[1] * mapdims[0]);
     npts = ncells * 8;
     snprintf(intstring, sizeof(intstring), "%d", 100000 + bid);
     snprintf(fname, sizeof(fname), "dbox%s.dat", &(intstring[1]));
@@ -600,7 +600,9 @@ void writePoints(double* x, int nsearch, int bid)
     fprintf(fp, "TITLE =\"Box file\"\n");
     fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\"\n");
     for (i = 0; i < nsearch; i++) {
-        fprintf(fp, "%f %f %f\n", x[3 * i], x[3 * i + 1], x[3 * i + 2]);
+        fprintf(
+            fp, "%f %f %f\n", x[static_cast<ptrdiff_t>(3 * i)], x[3 * i + 1],
+            x[3 * i + 2]);
     }
     fclose(fp);
 }
@@ -642,18 +644,18 @@ void uniquenodes(
     for (j = 0; j < 3; j++) {
         xmin[j] -= ds;
     }
-    jmax =
-        std::min(round((xmax[0] - xmin[0]) * dsi), static_cast<double>(NSUB));
+    jmax = static_cast<int>(
+        std::min(round((xmax[0] - xmin[0]) * dsi), static_cast<double>(NSUB)));
     jmax = std::max(jmax, 1);
     dsx = (xmax[0] - xmin[0] + TOL) / jmax;
     dsxi = 1. / dsx;
-    kmax =
-        std::min(round((xmax[1] - xmin[1]) * dsi), static_cast<double>(NSUB));
+    kmax = static_cast<int>(
+        std::min(round((xmax[1] - xmin[1]) * dsi), static_cast<double>(NSUB)));
     kmax = std::max(kmax, 1);
     dsy = (xmax[1] - xmin[1] + TOL) / kmax;
     dsyi = 1. / dsy;
-    lmax =
-        std::min(round((xmax[2] - xmin[2]) * dsi), static_cast<double>(NSUB));
+    lmax = static_cast<int>(
+        std::min(round((xmax[2] - xmin[2]) * dsi), static_cast<double>(NSUB)));
     lmax = std::max(lmax, 1);
     dsz = (xmax[2] - xmin[2] + TOL) / lmax;
     dszi = 1. / dsz;
@@ -696,7 +698,9 @@ void uniquenodes(
             p1 = ilist[j];
             for (k = j + 1; k < cft[i + 1]; k++) {
                 p2 = ilist[k];
-                if (fabs(x[3 * p1] - x[3 * p2]) +
+                if (fabs(
+                        x[static_cast<int>(3 * p1)] -
+                        x[static_cast<int>(3 * p2)]) +
                             fabs(x[3 * p1 + 1] - x[3 * p2 + 1]) +
                             fabs(x[3 * p1 + 2] - x[3 * p2 + 2]) <
                         TOL &&
@@ -771,7 +775,7 @@ void uniqNodesTree(
         for (i = 0; i < nav; i++) {
             for (j = 0; j < 3; j++) {
                 xp[j] = coord[ndim * elementsAvailable[i] + j] - xmid[j];
-                iv[j] = floor(xp[j] / dx[j]) + 1;
+                iv[j] = static_cast<int>(floor(xp[j] / dx[j])) + 1;
             }
             ibox = 4 * iv[0] + 2 * iv[1] + iv[2];
             npts[ibox]++;
@@ -790,7 +794,7 @@ void uniqNodesTree(
             for (i = 0; i < nav; i++) {
                 for (j = 0; j < 3; j++) {
                     xp[j] = coord[ndim * elementsAvailable[i] + j] - xmid[j];
-                    iv[j] = floor(xp[j] / dx[j]) + 1;
+                    iv[j] = static_cast<int>(floor(xp[j] / dx[j])) + 1;
                 }
                 ibox = 4 * iv[0] + 2 * iv[1] + iv[2];
                 npts[ibox] = npts[ibox] - 1;
@@ -815,7 +819,9 @@ void uniqNodesTree(
             p1 = elementsAvailable[i];
             for (j = i + 1; j < nav; j++) {
                 p2 = elementsAvailable[j];
-                if (fabs(coord[3 * p1] - coord[3 * p2]) +
+                if (fabs(
+                        coord[static_cast<ptrdiff_t>(3 * p1)] -
+                        coord[static_cast<ptrdiff_t>(3 * p2)]) +
                             fabs(coord[3 * p1 + 1] - coord[3 * p2 + 1]) +
                             fabs(coord[3 * p1 + 2] - coord[3 * p2 + 2]) <
                         TOL &&
@@ -1205,7 +1211,7 @@ char checkFaceBoundaryNodes(
     const char* duplicatenodeflag)
 {
     /* NOTE: faceConn is base 1 but nodes is base 0 */
-    char bcFlag = 1;
+    int bcFlag = 1;
     int v;
 
     // if any node on face is duplicate tag (wall + outer bc), return 0 (false)
@@ -1229,5 +1235,5 @@ char checkFaceBoundaryNodes(
     for (v = 0; v < numfaceverts; v++) {
         bcFlag &= bcnodeflag[nodes[faceConn[v] - BASE]];
     }
-    return bcFlag;
+    return static_cast<char>(bcFlag);
 }
