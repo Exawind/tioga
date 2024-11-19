@@ -119,7 +119,7 @@ void tioga::exchangeBoxes()
     for (int k = 0, ix = 0; k < numprocs; k++) {
         for (int n = 0; n < nbPerProc[k]; n++) {
             obbProc[ix] = k;
-            obbID[ix] = (int)(allOBBdata[m++] + 0.5);
+            obbID[ix] = static_cast<int>(std::round(allOBBdata[m++]));
             for (auto& i : obbRecv[ix].vec) {
                 for (double& j : i) {
                     j = allOBBdata[m++];
