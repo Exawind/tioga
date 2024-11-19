@@ -80,7 +80,7 @@ void searchIntersections(
 {
     int i;
     int d, nodeChild, dimcut;
-    double element[ndim];
+    std::vector<double> element(ndim);
     bool flag;
     //
     for (i = 0; i < ndim; i++) {

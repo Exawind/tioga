@@ -280,7 +280,7 @@ void tioga::getAdaptiveHoleMap()
     /* =============================== */
     { // using encapsulation for clean up
         /* local variables */
-        ADAPTIVE_HOLEMAP_OCTANT AHMO[nblocks];
+        std::vector<ADAPTIVE_HOLEMAP_OCTANT> AHMO(nblocks);
         int i, j, l, c, n;
 
         for (mbi = 0; mbi < nblocks; mbi++) {
