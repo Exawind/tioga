@@ -52,10 +52,10 @@ void tioga::exchangeSearchData(int at_points)
         sndPack[i].realData = nullptr;
     }
     //
-    for (int i = 0; i < nrecv; i++) {
-        rcvPack[i].nints = rcvPack[i].nreals = 0;
-        rcvPack[i].intData = nullptr;
-        rcvPack[i].realData = nullptr;
+    for (int ii = 0; ii < nrecv; ii++) {
+        rcvPack[ii].nints = rcvPack[ii].nreals = 0;
+        rcvPack[ii].intData = nullptr;
+        rcvPack[ii].realData = nullptr;
     }
 
     // Process each intersection pair and determine the total data that needs to
