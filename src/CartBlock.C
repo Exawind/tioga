@@ -99,7 +99,7 @@ void CartBlock::getInterpolatedData(
         listptr = interpList;
         icount = 3 * nintold;
         dcount = nrealold;
-        qq = (double*)malloc(sizeof(double) * (nvar_cell + nvar_node));
+        qq = (double*)calloc((nvar_cell + nvar_node), sizeof(double));
         while (listptr != nullptr) {
             (*intData)[icount++] = listptr->receptorInfo[0];
             (*intData)[icount++] = -1 - listptr->receptorInfo[2];
