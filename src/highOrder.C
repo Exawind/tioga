@@ -300,7 +300,7 @@ void MeshBlock::getExtraQueryPoints(
         (*realData)[m++] = rxyz[i3];
         (*realData)[m++] = rxyz[i3 + 1];
         (*realData)[m++] = rxyz[i3 + 2];
-        (*realData)[m++] = BIGVALUE;
+        (*realData)[m++] = std::numeric_limits<double>::max();
     }
     //
     TIOGA_FREE(inode);

@@ -120,8 +120,8 @@ void findOBB(
     // vector basis
     //
     for (j = 0; j < 3; j++) {
-        xmax[j] = -BIGVALUE;
-        xmin[j] = BIGVALUE;
+        xmax[j] = std::numeric_limits<double>::lowest();
+        xmin[j] = std::numeric_limits<double>::max();
     }
     for (i = 0; i < nnodes; i++) {
         i3 = 3 * i;
@@ -755,8 +755,8 @@ void uniqNodesTree(
         // find the bound of the boxes
         //
         icheck = 0;
-        xmin[0] = xmin[1] = xmin[2] = BIGVALUE;
-        xmax[0] = xmax[1] = xmax[2] = -BIGVALUE;
+        xmin[0] = xmin[1] = xmin[2] = std::numeric_limits<double>::max();
+        xmax[0] = xmax[1] = xmax[2] = std::numeric_limits<double>::lowest();
         for (i = 0; i < nav; i++) {
             for (j = 0; j < nd; j++) {
                 xmin[j] =

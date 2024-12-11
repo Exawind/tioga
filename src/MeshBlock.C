@@ -32,6 +32,7 @@
 #include "linklist.h"
 #include "tioga_math.h"
 #include "tioga_utils.h"
+#include <limits>
 
 void MeshBlock::setData(
     int btag,
@@ -347,8 +348,8 @@ void MeshBlock::tagBoundary()
             int idx[3];
             itag = 0;
             for (int j = 0; j < 3; j++) {
-                xmin[j] = BIGVALUE;
-                xmax[j] = -BIGVALUE;
+                xmin[j] = std::numeric_limits<double>::max();
+                xmax[j] = std::numeric_limits<double>::lowest();
             }
             for (m = 0; m < nvert; m++) {
                 inode[m] = vconn[n][nvert * i + m] - BASE;
@@ -387,7 +388,7 @@ void MeshBlock::tagBoundary()
             if (itag != 0) {
                 for (m = 0; m < nvert; m++) {
                     // iflag[inode[m]]=1;
-                    nodeRes[inode[m]] = BIGVALUE;
+                    nodeRes[inode[m]] = std::numeric_limits<double>::max();
                     iextmp[inode[m]] = iextmp1[inode[m]] = 1;
                 }
             }
@@ -420,11 +421,11 @@ void MeshBlock::tagBoundary()
                     inode[m] = vconn[n][nvert * i + m] - BASE;
                     if (iextmp[inode[m]] == 1) //(iflag[inode[m]])
                     {
-                        cellRes[k] = BIGVALUE;
+                        cellRes[k] = std::numeric_limits<double>::max();
                         break;
                     }
                 }
-                if (cellRes[k] == BIGVALUE) {
+                if (cellRes[k] == std::numeric_limits<double>::max()) {
                     for (m = 0; m < nvert; m++) {
                         inode[m] = vconn[n][nvert * i + m] - BASE;
                         if (iextmp[inode[m]] != 1) {
@@ -563,8 +564,10 @@ void MeshBlock::tagBoundaryFaces()
     /* 2. COMPUTE LOCAL BOUNDING BOX (after adjusting iflagwbc) */
     /* ======================================================== */
     // bounding box of non-duplicate wall nodes
-    bboxLocalAHM[0] = bboxLocalAHM[1] = bboxLocalAHM[2] = BIGVALUE;
-    bboxLocalAHM[3] = bboxLocalAHM[4] = bboxLocalAHM[5] = -BIGVALUE;
+    bboxLocalAHM[0] = bboxLocalAHM[1] = bboxLocalAHM[2] =
+        std::numeric_limits<double>::max();
+    bboxLocalAHM[3] = bboxLocalAHM[4] = bboxLocalAHM[5] =
+        std::numeric_limits<double>::lowest();
 
     for (i = 0; i < nwbc; i++) {
         node = wbcnode[i] - BASE;
@@ -673,10 +676,11 @@ void MeshBlock::tagBoundaryFaces()
 
                         // initialize cell bounding box data
                         for (d = 0; d < 3; d++) {
-                            bboxCell[d] = BIGVALUE;
+                            bboxCell[d] = std::numeric_limits<double>::max();
                         }
                         for (d = 0; d < 3; d++) {
-                            bboxCell[3 + d] = -BIGVALUE;
+                            bboxCell[3 + d] =
+                                std::numeric_limits<double>::lowest();
                         }
 
                         // get node indices and coordinates for this boundary
@@ -718,10 +722,11 @@ void MeshBlock::tagBoundaryFaces()
 
                         // initialize cell bounding box data
                         for (d = 0; d < 3; d++) {
-                            bboxCell[d] = BIGVALUE;
+                            bboxCell[d] = std::numeric_limits<double>::max();
                         }
                         for (d = 0; d < 3; d++) {
-                            bboxCell[3 + d] = -BIGVALUE;
+                            bboxCell[3 + d] =
+                                std::numeric_limits<double>::lowest();
                         }
 
                         // get node indices and coordinates for this boundary
@@ -1015,8 +1020,8 @@ void MeshBlock::getWallBounds(int* mtag, int* existWall, double wbox[6])
     int inode;
 
     *mtag = meshtag + (1 - BASE);
-    wbox[0] = wbox[1] = wbox[2] = BIGVALUE;
-    wbox[3] = wbox[4] = wbox[5] = -BIGVALUE;
+    wbox[0] = wbox[1] = wbox[2] = std::numeric_limits<double>::max();
+    wbox[3] = wbox[4] = wbox[5] = std::numeric_limits<double>::lowest();
 
     if (nwbc <= 0) {
         *existWall = 0;
@@ -1098,8 +1103,9 @@ void MeshBlock::markWallBoundary(int* sam, int nx[3], const double extents[6])
                 // find the index bounds of each wall boundary cell
                 // bounding box
                 //
-                imin[0] = imin[1] = imin[2] = BIGINT;
-                imax[0] = imax[1] = imax[2] = -BIGINT;
+                imin[0] = imin[1] = imin[2] = std::numeric_limits<int>::max();
+                imax[0] = imax[1] = imax[2] =
+                    std::numeric_limits<int>::lowest();
                 for (j = 0; j < nvert; j++) {
                     i3 = 3 * (vconn[n][nvert * i + j] - BASE);
                     for (k = 0; k < 3; k++) {
@@ -1547,14 +1553,14 @@ void MeshBlock::getReducedOBB(OBB* obc, double* realData)
     return;
     */
     for (j = 0; j < 3; j++) {
-        realData[j] = BIGVALUE;
-        realData[j + 3] = -BIGVALUE;
+        realData[j] = std::numeric_limits<double>::max();
+        realData[j + 3] = std::numeric_limits<double>::lowest();
     }
     for (n = 0; n < ntypes; n++) {
         nvert = nv[n];
         for (i = 0; i < nc[n]; i++) {
-            bbox[0] = bbox[1] = bbox[2] = BIGVALUE;
-            bbox[3] = bbox[4] = bbox[5] = -BIGVALUE;
+            bbox[0] = bbox[1] = bbox[2] = std::numeric_limits<double>::max();
+            bbox[3] = bbox[4] = bbox[5] = std::numeric_limits<double>::lowest();
 
             for (m = 0; m < nvert; m++) {
                 i3 = 3 * (vconn[n][nvert * i + m] - BASE);
@@ -1628,8 +1634,8 @@ void MeshBlock::getReducedOBB2(OBB* obc, double* realData)
 
     getobbcoords(obc->xc, obc->dxc, obc->vec, xv);
     for (j = 0; j < 3; j++) {
-        xmin[j] = BIGVALUE;
-        xmax[j] = -BIGVALUE;
+        xmin[j] = std::numeric_limits<double>::max();
+        xmax[j] = std::numeric_limits<double>::lowest();
     };
     for (n = 0; n < 8; n++) {
         transform2OBB(xv[n], obb->xc, obb->vec, xd);
@@ -1744,8 +1750,8 @@ void MeshBlock::getQueryPoints2(
     *nints = *nreals = 0;
     getobbcoords(obc->xc, obc->dxc, obc->vec, xv);
     for (j = 0; j < 3; j++) {
-        xmin[j] = BIGVALUE;
-        xmax[j] = -BIGVALUE;
+        xmin[j] = std::numeric_limits<double>::max();
+        xmax[j] = std::numeric_limits<double>::lowest();
     };
     // writebbox(obc,1);
     // writebbox(obb,2);
@@ -1774,8 +1780,8 @@ void MeshBlock::getQueryPoints2(
     //
     getobbcoords(obc->xc, mdx, obb->vec, xv);
     for (j = 0; j < 3; j++) {
-        xmin[j] = BIGVALUE;
-        xmax[j] = -BIGVALUE;
+        xmin[j] = std::numeric_limits<double>::max();
+        xmax[j] = std::numeric_limits<double>::lowest();
     }
     for (m = 0; m < 8; m++) {
         transform2OBB(xv[m], obc->xc, obc->vec, xd);
@@ -2166,8 +2172,8 @@ void MeshBlock::check_for_uniform_hex()
         double xd[3];
         double xmax[3];
         double xmin[3];
-        xmax[0] = xmax[1] = xmax[2] = -BIGVALUE;
-        xmin[0] = xmin[1] = xmin[2] = BIGVALUE;
+        xmax[0] = xmax[1] = xmax[2] = std::numeric_limits<double>::lowest();
+        xmin[0] = xmin[1] = xmin[2] = std::numeric_limits<double>::max();
         //
         for (int i = 0; i < nnodes; i++) {
             int const i3 = 3 * i;
@@ -2254,7 +2260,7 @@ void MeshBlock::checkOrphans()
     // sprintf(fname,"nodeRes%d.dat",myid);
     // FILE *fp=fopen(fname,"w");
     for (int i = 0; i < nnodes; i++) {
-        if (nodeRes[i] >= BIGVALUE) {
+        if (nodeRes[i] >= std::numeric_limits<double>::max()) {
             if (iblank[i] == 1) {
                 norphan++;
             }
@@ -2275,7 +2281,7 @@ void MeshBlock::checkOrphans()
         snprintf(fname, sizeof(fname), "orphan%s.dat", &(intstring[1]));
         FILE* fp = fopen(fname, "w");
         for (int i = 0; i < nnodes; i++) {
-            if (nodeRes[i] >= BIGVALUE) {
+            if (nodeRes[i] >= std::numeric_limits<double>::max()) {
                 if (iblank[i] == 1) {
                     fprintf(
                         fp, "%f %f %f %f\n", x[static_cast<int>(3 * i)],

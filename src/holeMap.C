@@ -61,7 +61,7 @@ void tioga::getHoleMap()
     //
     // get the local bounding box
     //
-    meshtag = -BIGINT; // std::numeric_limits<int>::lowest();
+    meshtag = std::numeric_limits<int>::lowest();
     for (int i = 0; i < nblocks; i++) {
         auto& mb = mblocks[i];
         mb->getWallBounds(&mtagtmp, &existWall[i], wbox[i].data());
@@ -99,16 +99,16 @@ void tioga::getHoleMap()
     bboxGlobal = (double*)malloc(sizeof(double) * 6 * maxtag);
     //
     for (i = 0; i < 3 * maxtag; i++) {
-        bboxLocal[i] = BIGVALUE;
+        bboxLocal[i] = std::numeric_limits<double>::max();
     }
     for (i = 0; i < 3 * maxtag; i++) {
-        bboxLocal[i + 3 * maxtag] = -BIGVALUE;
+        bboxLocal[i + 3 * maxtag] = std::numeric_limits<double>::lowest();
     }
     for (i = 0; i < 3 * maxtag; i++) {
-        bboxGlobal[i] = BIGVALUE;
+        bboxGlobal[i] = std::numeric_limits<double>::max();
     }
     for (i = 0; i < 3 * maxtag; i++) {
-        bboxGlobal[i + 3 * maxtag] = -BIGVALUE;
+        bboxGlobal[i + 3 * maxtag] = std::numeric_limits<double>::lowest();
     }
 
     //
@@ -226,7 +226,7 @@ void tioga::getAdaptiveHoleMap()
     /* =========================== */
     /* A: count max number of tags */
     /* =========================== */
-    maxtagLocal = -BIGINT;
+    maxtagLocal = std::numeric_limits<int>::lowest();
     for (mbi = 0; mbi < nblocks; mbi++) {
         auto& mb = mblocks[mbi];
         int const mbtag = mb->getMeshTag();
@@ -312,10 +312,10 @@ void tioga::getAdaptiveHoleMap()
 
             // initialize global bounding box data
             for (i = 0; i < 3; i++) {
-                bboxGlobal[i] = BIGVALUE;
+                bboxGlobal[i] = std::numeric_limits<double>::max();
             }
             for (i = 0; i < 3; i++) {
-                bboxGlobal[3 + i] = -BIGVALUE;
+                bboxGlobal[3 + i] = std::numeric_limits<double>::lowest();
             }
 
             // get the global bounding box info for this body (note the

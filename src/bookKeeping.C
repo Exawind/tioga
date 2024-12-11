@@ -291,7 +291,7 @@ void MeshBlock::processDonors(
     }
     for (i = 0; i < nnodes; i++) {
         if ((mtag1[i] != 0) && (iblank[i] != 0)) {
-            nodeRes[i] = BIGVALUE;
+            nodeRes[i] = std::numeric_limits<double>::max();
         }
     }
     TIOGA_FREE(mtag);
@@ -525,7 +525,7 @@ void MeshBlock::processDonors(
 
     for (i = 0; i < nnodes; i++) {
         if ((mtag1[i] != 0) && (iblank[i] != 0)) {
-            nodeRes[i] = BIGVALUE;
+            nodeRes[i] = std::numeric_limits<double>::max();
         }
     }
 
@@ -690,7 +690,7 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
         if (verbose != 0) TRACED(nodeRes[inode[m]])
         i3 = 3 * inode[m];
         if (iblank[inode[m]] <= 0 && receptorRes2 > 0.0) {
-            if (nodeRes[inode[m]] == BIGVALUE) {
+            if (nodeRes[inode[m]] == std::numeric_limits<double>::max()) {
                 acceptFlag = 0;
             }
             if (abs(iblank[inode[m]]) == meshtagrecv) {
@@ -703,7 +703,8 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
     }
     //
     if (verbose != 0) TRACEI(acceptFlag);
-    if (receptorRes == BIGVALUE && resolutionScale == 1.0) {
+    if (receptorRes == std::numeric_limits<double>::max() &&
+        resolutionScale == 1.0) {
         clist = cancelList;
         //
         // go to the end of the list
@@ -729,7 +730,8 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
                 TRACEI(irecord);
                 TRACEI(donorId[irecord]);
             }
-            if (iblank[inode[m]] <= 0 && nodeRes[inode[m]] != BIGVALUE) {
+            if (iblank[inode[m]] <= 0 &&
+                nodeRes[inode[m]] != std::numeric_limits<double>::max()) {
                 if (iblank[inode[m]] < 0) {
                     iblank[inode[m]] = 1;
                 }
@@ -779,7 +781,7 @@ void MeshBlock::findInterpData(int* recid, int irecord, double receptorRes2)
     }
     interpList[*recid].inode[m] = donorId[irecord];
     interpList[*recid].weights[m] = 0.0;
-    if (acceptFlag == 0 && receptorRes != BIGVALUE) {
+    if (acceptFlag == 0 && receptorRes != std::numeric_limits<double>::max()) {
         interpList[*recid].cancel = 1;
     }
     (*recid)++;

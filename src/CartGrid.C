@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <numeric>
+#include <limits>
 
 #include "tioga_gpu.h"
 #include "TiogaMeshInfo.h"
@@ -153,7 +154,7 @@ void CartGrid::preprocess()
     //
     // find the global minimum coord location
     //
-    xlosup[0] = xlosup[1] = xlosup[2] = BIGVALUE;
+    xlosup[0] = xlosup[1] = xlosup[2] = std::numeric_limits<double>::max();
     maxlevel = -1;
     for (i = 0; i < ngrids; i++) {
         for (n = 0; n < 3; n++) {

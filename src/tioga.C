@@ -126,7 +126,7 @@ void tioga::assembleCompositeMap()
         /* 2. assemble composite body communicators */
         /* ======================================== */
         // calculate max number of mesh tags
-        int maxtagLocal = -BIGINT;
+        int maxtagLocal = std::numeric_limits<int>::lowest();
         for (int mbi = 0; mbi < nblocks; mbi++) {
             auto& mb = mblocks[mbi];
             int const mbtag = mb->getMeshTag();
@@ -188,7 +188,7 @@ void tioga::assembleCompositeComms()
     /* ================================ */
     /* Step A: count max number of tags */
     /* ================================ */
-    maxtagLocal = -BIGINT;
+    maxtagLocal = std::numeric_limits<int>::lowest();
     for (int mbi = 0; mbi < nblocks; mbi++) {
         auto& mb = mblocks[mbi];
         int const mbtag = mb->getMeshTag();
@@ -302,7 +302,7 @@ void tioga::assembleComplementComms()
     /* ================================ */
     /* Step A: count max number of tags */
     /* ================================ */
-    maxtagLocal = -BIGINT;
+    maxtagLocal = std::numeric_limits<int>::lowest();
     for (int mbi = 0; mbi < nblocks; mbi++) {
         auto& mb = mblocks[mbi];
         int const mbtag = mb->getMeshTag();

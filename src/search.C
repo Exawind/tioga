@@ -182,8 +182,8 @@ void MeshBlock::search()
             // find each cell that has
             // overlap with the bounding box
             //
-            xmin[0] = xmin[1] = xmin[2] = BIGVALUE;
-            xmax[0] = xmax[1] = xmax[2] = -BIGVALUE;
+            xmin[0] = xmin[1] = xmin[2] = std::numeric_limits<double>::max();
+            xmax[0] = xmax[1] = xmax[2] = std::numeric_limits<double>::lowest();
             for (m = 0; m < nvert; m++) {
                 i3 = 3 * (vconn[n][nvert * i + m] - BASE);
                 for (j = 0; j < 3; j++) {
@@ -241,8 +241,8 @@ void MeshBlock::search()
             }
         }
         nvert = nv[n];
-        xmin[0] = xmin[1] = xmin[2] = BIGVALUE;
-        xmax[0] = xmax[1] = xmax[2] = -BIGVALUE;
+        xmin[0] = xmin[1] = xmin[2] = std::numeric_limits<double>::max();
+        xmax[0] = xmax[1] = xmax[2] = std::numeric_limits<double>::lowest();
         for (m = 0; m < nvert; m++) {
             i3 = 3 * (vconn[n][nvert * i + m] - BASE);
             for (j = 0; j < 3; j++) {
@@ -421,9 +421,10 @@ void MeshBlock::search_uniform_hex()
                 }
                 dID[0] = uindx
                     [idx[2] * idims[1] * idims[0] + idx[1] * idims[0] + idx[0]];
-                dID[1] = (dID[0] > -1)
-                             ? static_cast<int>(cellRes[dID[0]] == BIGVALUE)
-                             : 1;
+                dID[1] = (dID[0] > -1) ? static_cast<int>(
+                                             cellRes[dID[0]] ==
+                                             std::numeric_limits<double>::max())
+                                       : 1;
                 for (int jj = 0; jj < 8 && (dId[0] == -1 || (dID[1] != 0));
                      jj++) {
                     for (int k = 0; k < 3; k++) {
@@ -437,7 +438,9 @@ void MeshBlock::search_uniform_hex()
                         [idx[2] * idims[1] * idims[0] + idx[1] * idims[0] +
                          idx[0]];
                     dID[1] = (dtest > -1)
-                                 ? static_cast<int>(cellRes[dtest] == BIGVALUE)
+                                 ? static_cast<int>(
+                                       cellRes[dtest] ==
+                                       std::numeric_limits<double>::max())
                                  : 1;
                     dID[0] =
                         (dID[0] == -1) ? dtest : (dID[1] == 0 ? dtest : dID[0]);

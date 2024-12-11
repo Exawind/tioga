@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <limits>
 /*====================================================================*/
 /*  Floating point definition                                         */
 /*====================================================================*/
@@ -53,8 +54,6 @@ typedef int32_t qcoord_t;
 // #define PI                 3.1415926535897932e+00
 // #define RAD2DEG            (180.0/PI)
 // #define DEG2RAD            (PI/180.0)
-#define BIGVALUE 1.0e+15
-#define BIGINT 2147483647
 #define TOL 1.0e-10
 #define HOLEMAPSIZE 192
 // #define NFRINGE            3

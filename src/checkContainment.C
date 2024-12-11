@@ -72,7 +72,8 @@ void MeshBlock::checkContainment(
                 cellIndex[0] = -1;
                 return;
             }
-            if (fabs(frac[m]) < searchTol && cellRes[icell] == BIGVALUE) {
+            if (fabs(frac[m]) < searchTol &&
+                cellRes[icell] == std::numeric_limits<double>::max()) {
                 cellIndex[1] = 1;
             }
         }

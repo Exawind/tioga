@@ -76,7 +76,8 @@ void MeshBlock::getUnresolvedMandatoryReceptors()
                 fcount = 0;
                 for (m = 0; m < nvert; m++) {
                     inode[m] = vconn[n][nvert * i + m] - BASE;
-                    if (nodeRes[inode[m]] >= BIGVALUE) {
+                    if (nodeRes[inode[m]] >=
+                        std::numeric_limits<double>::max()) {
                         fcount++;
                     }
                 }
@@ -131,7 +132,8 @@ void MeshBlock::getUnresolvedMandatoryReceptors()
 
         ntotalPointsCart = 0;
         for (i = 0; i < nnodes; i++) {
-            if (nodeRes[i] >= BIGVALUE && iblank[i] == 1) {
+            if (nodeRes[i] >= std::numeric_limits<double>::max() &&
+                iblank[i] == 1) {
                 pickedCart[i] = 1;
                 ntotalPointsCart++;
             }

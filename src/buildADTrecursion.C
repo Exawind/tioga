@@ -81,8 +81,10 @@ void buildADTrecursion(
         // contained in this leaf
         //
         for (i = 0; i < nd; i++) {
-            adtReals[ndim * (*adtCount) + i] = BIGVALUE;
-            adtReals[ndim * (*adtCount) + i + nd] = -BIGVALUE;
+            adtReals[ndim * (*adtCount) + i] =
+                std::numeric_limits<double>::max();
+            adtReals[ndim * (*adtCount) + i + nd] =
+                std::numeric_limits<double>::lowest();
         }
         //
         for (i = 0; i < nav; i++) {

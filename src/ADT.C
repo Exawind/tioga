@@ -26,6 +26,7 @@
 #include "codetypes.h"
 #include "ADT.h"
 #include "buildADTrecursion.h"
+#include <limits>
 
 void ADT::buildADT(int d, int nelements, double* elementBbox)
 {
@@ -62,8 +63,8 @@ void ADT::buildADT(int d, int nelements, double* elementBbox)
      */
     for (i = 0; i < ndim / 2; i++) {
         i2 = 2 * i;
-        adtExtents[i2] = BIGVALUE;
-        adtExtents[i2 + 1] = -BIGVALUE;
+        adtExtents[i2] = std::numeric_limits<double>::max();
+        adtExtents[i2 + 1] = std::numeric_limits<double>::lowest();
     }
     for (j = 0; j < nelem; j++) {
         j6 = 6 * j;
