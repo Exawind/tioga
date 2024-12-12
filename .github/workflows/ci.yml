@@ -19,18 +19,18 @@ jobs:
     - name: Clone
       uses: actions/checkout@v4
     - name: Check formatting
-      uses: DoozyX/clang-format-lint-action@v0.17
+      uses: DoozyX/clang-format-lint-action@v0.18.2
       with:
         source: './driver ./src'
         exclude: '.'
         extensions: 'h,H,cpp,C'
-        clangFormatVersion: 17
+        clangFormatVersion: 18
   CPU:
     needs: Formatting
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-22.04, macos-latest]
         build_type: [Release, Debug]
         include:
           - os: macos-latest
@@ -39,7 +39,7 @@ jobs:
             procs: $(sysctl -n hw.ncpu)
             ccache_cache: /Users/runner/Library/Caches/ccache
             ccache_size: 50M
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             install_deps: sudo apt-get install -y mpich libmpich-dev
             comp: gnu
             procs: $(nproc)
@@ -96,14 +96,14 @@ jobs:
       working-directory: ${{runner.workspace}}/build-ci-${{matrix.build_type}}
       run: |
         echo "::add-matcher::.github/problem-matchers/gcc.json"
-        egrep "warning:|error:" build-output.txt | egrep -v "submods" \
+        egrep "Warning:Error:warning:|error:" build-output.txt | egrep -v "submods" \
           | egrep -v "ld: warning:" | egrep -v "lto-wrapper: warning:" | sort | uniq \
           | awk 'BEGIN{i=0}{print $0}{i++}END{print "Warnings: "i}' > build-output-warnings.txt
         cat build-output-warnings.txt
         exit $(tail -n 1 build-output-warnings.txt | awk '{print $2}')
   Lint-clang-tidy:
     needs: Formatting
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Clone
         uses: actions/checkout@v4
@@ -162,7 +162,7 @@ jobs:
         working-directory: ${{runner.workspace}}/build-clang-tidy
         run: |
           cmake --build . --parallel ${{env.NPROCS}} 2>&1 | tee -a clang-tidy-full-report.txt
-          cat clang-tidy-full-report.txt | grep "warning:" | grep -v "submods" | sort | uniq | \
+          cat clang-tidy-full-report.txt | egrep "Warning:|Error:|warning:|error:" | grep -v "submods" | sort | uniq | \
             awk 'BEGIN{i=0}{print $0}{i++}END{print "Warnings: "i}' > clang-tidy-ci-report.txt
       - name: Ccache Report
         run: |
