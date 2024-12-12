@@ -29,7 +29,6 @@ using namespace TIOGA;
 
 void tioga::exchangeSearchData(int at_points)
 {
-    int i;
     int nsend, nrecv;
     PACKET *sndPack, *rcvPack;
     int* sndMap;
