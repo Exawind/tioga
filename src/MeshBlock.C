@@ -512,7 +512,7 @@ void MeshBlock::tagBoundaryFaces()
 
         auto node_found =
             WBC_nodes.insert(Node(nodei, &x[static_cast<int>(3 * nodei)]));
-        if (node_found.second == false) {
+        if (!node_found.second) {
             // duplicates exist
             const Node n = *node_found.first;
             WBC_unique_map[i] = n.id;
