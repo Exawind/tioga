@@ -1040,7 +1040,8 @@ void MeshBlock::getWallBounds(int* mtag, int* existWall, double wbox[6])
     }
 }
 
-void MeshBlock::markWallBoundary(int* sam, int nx[3], const double extents[6])
+void MeshBlock::markWallBoundary(
+    int* sam, const int nx[3], const double extents[6])
 {
     int i, j, k, m, n;
     int nvert;

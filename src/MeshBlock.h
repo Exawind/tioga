@@ -340,7 +340,7 @@ public:
 
     void getWallBounds(int* mtag, int* existWall, double wbox[6]);
 
-    void markWallBoundary(int* sam, int nx[3], const double extents[6]);
+    void markWallBoundary(int* sam, const int nx[3], const double extents[6]);
 
     void markBoundaryAdaptiveMap(
         char nodetype2tag,
