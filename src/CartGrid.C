@@ -159,7 +159,8 @@ void CartGrid::preprocess()
     for (i = 0; i < ngrids; i++) {
         for (n = 0; n < 3; n++) {
             xlosup[n] =
-                ((xlosup[n] <= xlo[3 * i + n]) ? xlosup[n] : xlo[3 * i + n]);
+                ((xlosup[n] <= xlo[(3 * i) + n]) ? xlosup[n]
+                                                 : xlo[(3 * i) + n]);
         }
         maxlevel = ((maxlevel >= level_num[i]) ? maxlevel : level_num[i]);
     }
@@ -172,7 +173,7 @@ void CartGrid::preprocess()
     for (i = 0; i < ngrids; i++) {
         lcount[level_num[i]]++;
         for (n = 0; n < 3; n++) {
-            dxlvl[3 * level_num[i] + n] = dx[3 * i + n];
+            dxlvl[(3 * level_num[i]) + n] = dx[(3 * i) + n];
         }
     }
 }
@@ -191,7 +192,8 @@ void CartGrid::search(double* x, int* donorid, int npts)
         donorid[i] = -1;
         for (l = maxlevel - 1; l >= 0 && static_cast<int>(flag) == 0; l--) {
             for (n = 0; n < 3; n++) {
-                il[n] = floor((x[3 * i + n] - xlosup[n]) / dxlvl[3 * l + n]);
+                il[n] =
+                    floor((x[(3 * i) + n] - xlosup[n]) / dxlvl[(3 * l) + n]);
             }
             for (j = 0; j < ngrids && static_cast<int>(flag) == 0; j++) {
                 if (level_num[j] == l) {
@@ -202,13 +204,15 @@ void CartGrid::search(double* x, int* donorid, int npts)
                     // for(n=0;n<3;n++) flag = flag && (il[n] >=ilo[3*j+n]);
                     // for(n=0;n<3;n++) flag = flag && (il[n] <=ihi[3*j+n]);
                     for (n = 0; n < 3; n++) {
-                        flag = flag && ((x[3 * i + n] - xlo[3 * j + n]) > -TOL);
+                        flag = flag &&
+                               ((x[(3 * i) + n] - xlo[(3 * j) + n]) > -TOL);
                     }
                     for (n = 0; n < 3; n++) {
-                        flag = flag &&
-                               ((x[3 * i + n] -
-                                 (xlo[3 * j + n] +
-                                  dx[3 * j + n] * (dims[3 * j + n]))) < TOL);
+                        flag =
+                            flag &&
+                            ((x[(3 * i) + n] -
+                              (xlo[(3 * j) + n] +
+                               dx[(3 * j) + n] * (dims[(3 * j) + n]))) < TOL);
                     }
                     if (flag) {
                         dcount++;
@@ -218,14 +222,16 @@ void CartGrid::search(double* x, int* donorid, int npts)
             }
         }
         if (myid == 2 && abs(x[3 * i] - 0.739573) < 1e-5 &&
-            abs(x[3 * i + 1] + 0.259310) < 1e-5 &&
-            abs(x[3 * i + 2] + 0.639614) < 1e-5) {
+            abs(x[(3 * i) + 1] + 0.259310) < 1e-5 &&
+            abs(x[(3 * i) + 2] + 0.639614) < 1e-5) {
             printf(
-                "%d %d %f %f %f %d\n", myid, i, x[3 * i], x[3 * i + 1],
-                x[3 * i + 2], donorid[i]);
+                "%d %d %f %f %f %d\n", myid, i, x[3 * i], x[(3 * i) + 1],
+                x[(3 * i) + 2], donorid[i]);
         }
         if (donorid[i] == -1) {
-            printf("%d %f %f %f\n", myid, x[3 * i], x[3 * i + 1], x[3 * i + 2]);
+            printf(
+                "%d %f %f %f\n", myid, x[3 * i], x[(3 * i) + 1],
+                x[(3 * i) + 2]);
         }
     }
     // printf("CartGrid::search Processor %d located %d of %d
