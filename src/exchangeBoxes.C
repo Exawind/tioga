@@ -85,7 +85,7 @@ void tioga::exchangeBoxes()
         displs[i] = displs[i - 1] + nbPerProc[i - 1] * 16;
     }
 
-    std::vector<double> myOBBdata(static_cast<int>(nblocks * 16));
+    std::vector<double> myOBBdata(nblocks * 16);
     std::vector<double> allOBBdata(static_cast<int>(ntotalblks * 16));
 
     int m = 0;

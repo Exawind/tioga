@@ -54,7 +54,6 @@ enum : uint8_t { BASE = 1 };
 // #define RAD2DEG            (180.0/PI)
 // #define DEG2RAD            (PI/180.0)
 #define TOL 1.0e-10
-// #define HOLEMAPSIZE 192
 enum : uint8_t { HOLEMAPSIZE = 192 };
 // #define NFRINGE            3
 // #define NVAR               6
@@ -107,12 +106,6 @@ enum : uint8_t { OUTSIDE_SB = 0, INSIDE_SB = 1, WALL_SB = 2 };
 /*===================================================================*/
 /* Code specific types                                               */
 /*===================================================================*/
-// #define XLO 0
-// #define XHI 1
-// #define YLO 2
-// #define YHI 3
-// #define ZLO 4
-// #define ZHI 5
 
 enum : uint8_t { XLO = 0, XHI = 1, YLO = 2, YHI = 3, ZLO = 4, ZHI = 5 };
 

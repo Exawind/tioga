@@ -25,8 +25,6 @@
 #include "codetypes.h"
 #include "MeshBlock.h"
 
-// #define ROW 0
-// #define COLUMN 1
 enum : uint8_t { ROW = 0, COLUMN = 1 };
 
 void MeshBlock::getInterpolatedSolution(
