@@ -21,14 +21,13 @@
 #include <cstdio>
 #include <cmath>
 #include <algorithm>
+#include <cstdint>
 #include "codetypes.h"
 #include "MeshBlock.h"
 #include "tioga_utils.h"
 #include "tioga_math.h"
 
-#define ROW 0
-#define COLUMN 1
-#define NFRAC 1331
+enum : uint16_t { ROW = 0, COLUMN = 1, NFRAC = 1331 };
 
 void MeshBlock::getCellIblanks2()
 {

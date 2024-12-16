@@ -21,11 +21,11 @@
 #include <cstdlib>
 #include <cassert>
 #include <algorithm>
+#include <cstdint>
 #include "codetypes.h"
 #include "MeshBlock.h"
 #include "tioga_math.h"
-#define ROW 0
-#define COLUMN 1
+enum : uint8_t { ROW = 0, COLUMN = 1 };
 
 void MeshBlock::setCartIblanks()
 {

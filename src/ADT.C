@@ -27,6 +27,7 @@
 #include "ADT.h"
 #include "buildADTrecursion.h"
 #include <limits>
+#include <cstddef>
 
 void ADT::buildADT(int d, int nelements, double* elementBbox)
 {
@@ -74,7 +75,8 @@ void ADT::buildADT(int d, int nelements, double* elementBbox)
         }
         for (i = 0; i < ndim / 2; i++) {
             i2 = 2 * i + 1;
-            adtExtents[i2] = std::max(adtExtents[i2], coord[j6 + i + ndim / 2]);
+            adtExtents[i2] =
+                std::max(adtExtents[i2], coord[j6 + i + (ndim / 2)]);
         }
     }
     //
@@ -112,7 +114,7 @@ void ADT::buildADT(int d, int nelements, double* elementBbox)
     // fp=fopen("adtReals.dat","w");
     // fp1=fopen("adtInts.dat","w");
     for (i = 0; i < nelem; i++) {
-        i4 = 4 * adtIntegers[static_cast<int>(4 * i)];
+        i4 = 4 * adtIntegers[static_cast<ptrdiff_t>(4 * i)];
         adtIntegers[i4 + 3] = i;
     }
     // for(i=0;i<nelem;i++)
