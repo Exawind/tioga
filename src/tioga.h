@@ -302,7 +302,7 @@ public:
         ihigh = 1;
     }
 
-    void const setp4estcallback(
+    void setp4estcallback(
         void (*f1)(double*, int*, int*, int*), void (*f2)(int*, int*))
     {
         for (int ib = 0; ib < nblocks; ib++) {
@@ -312,7 +312,7 @@ public:
         }
     }
 
-    void const set_p4est()
+    void set_p4est()
     {
         for (int ib = 0; ib < nblocks; ib++) {
             mytag[ib] = -mytag[ib];
