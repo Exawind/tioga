@@ -13,8 +13,8 @@ double scalarProduct(
     double c3)
 {
     return (
-        a1 * b2 * c3 - a1 * b3 * c2 + a2 * b3 * c1 - a2 * b1 * c3 +
-        a3 * b1 * c2 - a3 * b2 * c1);
+        (a1 * b2 * c3) - (a1 * b3 * c2) + (a2 * b3 * c1) - (a2 * b1 * c3) +
+        (a3 * b1 * c2) - (a3 * b2 * c1));
 }
 
 void cellVolume(

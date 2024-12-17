@@ -53,7 +53,7 @@ void buildADTrecursion(
         // collect coordinates along the dimension dimcut
         //
         for (i = 0; i < nav; i++) {
-            adtWork[i] = coord[ndim * elementsAvailable[i] + dimcut];
+            adtWork[i] = coord[(ndim * elementsAvailable[i]) + dimcut];
         }
         //
         // reorder elements with nleft elements to
@@ -81,9 +81,9 @@ void buildADTrecursion(
         // contained in this leaf
         //
         for (i = 0; i < nd; i++) {
-            adtReals[ndim * (*adtCount) + i] =
+            adtReals[(ndim * (*adtCount)) + i] =
                 std::numeric_limits<double>::max();
-            adtReals[ndim * (*adtCount) + i + nd] =
+            adtReals[(ndim * (*adtCount)) + i + nd] =
                 std::numeric_limits<double>::lowest();
         }
         //
@@ -103,7 +103,7 @@ void buildADTrecursion(
         // unless root
         //
         if (side > 0) {
-            adtIntegers[4 * parent + side] = elementsAvailable[nleft - 1];
+            adtIntegers[(4 * parent) + side] = elementsAvailable[nleft - 1];
         }
         parentToChild = *adtCount;
         //
@@ -129,10 +129,10 @@ void buildADTrecursion(
         adtIntegers[ii + 2] = -1;
         adtIntegers[ii + 3] = -1;
         for (j = 0; j < ndim; j++) {
-            adtReals[jj + j] = coord[ndim * elementsAvailable[0] + j];
+            adtReals[jj + j] = coord[(ndim * elementsAvailable[0]) + j];
         }
         if (side > 0) {
-            adtIntegers[4 * parent + side] = elementsAvailable[0];
+            adtIntegers[(4 * parent) + side] = elementsAvailable[0];
         }
     }
 }

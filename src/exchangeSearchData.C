@@ -231,7 +231,7 @@ void tioga::exchangeSearchData(int at_points)
                 mb->isearch[ioff++] = k;
                 mb->isearch[ioff++] = rcvPack[k].intData[m++];
                 mb->isearch[ioff++] = obblist[ii].iblk_remote;
-                mb->tagsearch[ioff / 3 - 1] = obblist[ii].tag_remote;
+                mb->tagsearch[(ioff / 3) - 1] = obblist[ii].tag_remote;
 
 #ifdef TIOGA_HAS_NODEGID
                 std::memcpy(

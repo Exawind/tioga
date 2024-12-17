@@ -52,7 +52,7 @@ void MeshBlock::checkContainment(
         //
         nvert = nv[n];
         for (m = 0; m < nvert; m++) {
-            i3 = 3 * (vconn[n][nvert * i + m] - BASE);
+            i3 = 3 * (vconn[n][(nvert * i) + m] - BASE);
             for (j = 0; j < 3; j++) {
                 xv[m][j] = x[i3 + j];
             }

@@ -136,9 +136,9 @@ void tioga::exchangeAMRDonors()
                     sndPack[procid].realData[realcount[procid]++] =
                         mb->rxyzCart[3 * i];
                     sndPack[procid].realData[realcount[procid]++] =
-                        mb->rxyzCart[3 * i + 1];
+                        mb->rxyzCart[(3 * i) + 1];
                     sndPack[procid].realData[realcount[procid]++] =
-                        mb->rxyzCart[3 * i + 2];
+                        mb->rxyzCart[(3 * i) + 2];
                 }
             }
         }
@@ -148,9 +148,9 @@ void tioga::exchangeAMRDonors()
                 if (mb->donorId[i] != -1) {
                     procid = imap[mb->isearch[3 * i]];
                     sndPack[procid].intData[intcount[procid]++] =
-                        mb->isearch[3 * i + 1];
+                        mb->isearch[(3 * i) + 1];
                     sndPack[procid].intData[intcount[procid]++] =
-                        mb->isearch[3 * i + 2];
+                        mb->isearch[(3 * i) + 2];
                     sndPack[procid].intData[intcount[procid]++] = mb->meshtag;
                     sndPack[procid].intData[intcount[procid]++] = i;
                     sndPack[procid].intData[intcount[procid]++] = ib;
@@ -258,9 +258,9 @@ void tioga::exchangeAMRDonors()
             cb[i].getCancellationData(cancelledData, &ncancel);
             for (j = 0; j < ncancel; j++) {
                 procid = cancelledData[4 * j];
-                ctype = cancelledData[4 * j + 1];
-                remoteid = cancelledData[4 * j + 2];
-                remoteblockid = cancelledData[4 * j + 3];
+                ctype = cancelledData[(4 * j) + 1];
+                remoteid = cancelledData[(4 * j) + 2];
+                remoteblockid = cancelledData[(4 * j) + 3];
                 sndPack[procid].intData[intcount[procid]++] = ctype;
                 sndPack[procid].intData[intcount[procid]++] = remoteid;
                 sndPack[procid].intData[intcount[procid]++] = remoteblockid;

@@ -75,7 +75,7 @@ void MeshBlock::getUnresolvedMandatoryReceptors()
             for (i = 0; i < nc[n]; i++) {
                 fcount = 0;
                 for (m = 0; m < nvert; m++) {
-                    inode[m] = vconn[n][nvert * i + m] - BASE;
+                    inode[m] = vconn[n][(nvert * i) + m] - BASE;
                     if (nodeRes[inode[m]] >=
                         std::numeric_limits<double>::max()) {
                         fcount++;
@@ -248,7 +248,7 @@ void MeshBlock::findInterpListCart()
             }
             nvert = nv[n];
             for (m = 0; m < nvert; m++) {
-                inode[m] = vconn[n][nvert * i + m] - BASE;
+                inode[m] = vconn[n][(nvert * i) + m] - BASE;
                 i3 = 3 * inode[m];
                 for (j = 0; j < 3; j++) {
                     xv[m][j] = x[i3 + j];
@@ -362,7 +362,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
                         printf("warning: weights are not convex 3\n");
                     }
                     for (k = 0; k < nvar; k++) {
-                        qq[k] += q[inode * nvar + k] * weight;
+                        qq[k] += q[(inode * nvar) + k] * weight;
                     }
                 }
                 (*intData)[icount++] = sndMap[interpList[i].receptorInfo[0]];
@@ -386,7 +386,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
                         printf("warning: weights are not convex 4\n");
                     }
                     for (k = 0; k < nvar; k++) {
-                        qq[k] += q[inode * nvar + k] * weight;
+                        qq[k] += q[(inode * nvar) + k] * weight;
                         // if (myid==0 && dcount==0) {
                         //   printf("nsu3d/interp: %d %d %f
                         //   %f\n",k,inode,weight,q[inode*nvar+k]);
@@ -412,7 +412,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
                     inode = interpList[i].inode[m];
                     weight = interpList[i].weights[m];
                     for (k = 0; k < nvar; k++) {
-                        qq[k] += q[k * nnodes + inode] * weight;
+                        qq[k] += q[(k * nnodes) + inode] * weight;
                     }
                 }
                 (*intData)[icount++] = sndMap[interpList[i].receptorInfo[0]];
@@ -432,7 +432,7 @@ void MeshBlock::getInterpolatedSolutionAMR(
                     inode = interpListCart[i].inode[m];
                     weight = interpListCart[i].weights[m];
                     for (k = 0; k < nvar; k++) {
-                        qq[k] += q[k * nnodes + inode] * weight;
+                        qq[k] += q[(k * nnodes) + inode] * weight;
                     }
                 }
                 (*intData)[icount++] = interpListCart[i].receptorInfo[0];
