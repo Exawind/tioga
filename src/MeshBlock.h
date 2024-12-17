@@ -515,8 +515,8 @@ public:
     void setCartIblanks();
 
     // Getters
-    inline int getMeshTag() const { return meshtag + (1 - BASE); }
-    inline int getWallFlag() const { return static_cast<int>(nwbc > 0); }
+    int getMeshTag() const { return meshtag + (1 - BASE); }
+    int getWallFlag() const { return static_cast<int>(nwbc > 0); }
 
     /**
      * Get donor packet for multi-block/partition setups
