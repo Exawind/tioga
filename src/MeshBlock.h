@@ -493,8 +493,8 @@ public:
     void outputOrphan(FILE* fp, int i)
     {
         fprintf(
-            fp, "%f %f %f\n", rxyz[3 * i], rxyz[(3 * i) + 1],
-            rxyz[(3 * i) + 2]);
+            fp, "%f %f %f\n", rxyz[static_cast<ptrdiff_t>(3 * i)],
+            rxyz[(3 * i) + 1], rxyz[(3 * i) + 2]);
     }
     void clearOrphans(HOLEMAP* holemap, int nmesh, const int* itmp);
     void clearOrphans(ADAPTIVE_HOLEMAP* holemap, int nmesh, int* itmp);

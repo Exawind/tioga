@@ -260,10 +260,12 @@ void CartBlock::insertInInterpList(
     }
     if (donor_frac == nullptr) {
         listptr->nweights = 8;
-        listptr->weights =
-            (double*)malloc(sizeof(double) * (listptr->nweights * 2));
-        listptr->inode =
-            (int*)malloc(sizeof(int) * (listptr->nweights * 2 * 3));
+        listptr->weights = (double*)malloc(
+            sizeof(double) *
+            (static_cast<unsigned long>(listptr->nweights * 2)));
+        listptr->inode = (int*)malloc(
+            sizeof(int) *
+            (static_cast<unsigned long>(listptr->nweights * 2 * 3)));
 
         cart_interp::linear_interpolation(
             nf, ix, dims, rst, &(listptr->nweights), listptr->inode,
