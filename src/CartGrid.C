@@ -23,6 +23,7 @@
 #include <cmath>
 #include <numeric>
 #include <limits>
+#include <cstddef>
 
 #include "tioga_gpu.h"
 #include "TiogaMeshInfo.h"
@@ -221,17 +222,19 @@ void CartGrid::search(double* x, int* donorid, int npts)
                 }
             }
         }
-        if (myid == 2 && abs(x[3 * i] - 0.739573) < 1e-5 &&
+        if (myid == 2 &&
+            abs(x[static_cast<ptrdiff_t>(3 * i)] - 0.739573) < 1e-5 &&
             abs(x[(3 * i) + 1] + 0.259310) < 1e-5 &&
             abs(x[(3 * i) + 2] + 0.639614) < 1e-5) {
             printf(
-                "%d %d %f %f %f %d\n", myid, i, x[3 * i], x[(3 * i) + 1],
+                "%d %d %f %f %f %d\n", myid, i,
+                x[static_cast<ptrdiff_t>(3 * i)], x[(3 * i) + 1],
                 x[(3 * i) + 2], donorid[i]);
         }
         if (donorid[i] == -1) {
             printf(
-                "%d %f %f %f\n", myid, x[3 * i], x[(3 * i) + 1],
-                x[(3 * i) + 2]);
+                "%d %f %f %f\n", myid, x[static_cast<ptrdiff_t>(3 * i)],
+                x[(3 * i) + 1], x[(3 * i) + 2]);
         }
     }
     // printf("CartGrid::search Processor %d located %d of %d

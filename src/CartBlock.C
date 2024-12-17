@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstddef>
+#include <limits>
 #include "TiogaMeshInfo.h"
 #include "codetypes.h"
 #include "CartBlock.h"
@@ -30,7 +32,6 @@
 #include "linCartInterp.h"
 #include "linklist.h"
 #include "tioga_utils.h"
-#include <limits>
 
 void CartBlock::registerData(int lid, TIOGA::AMRMeshInfo* minfo)
 {
@@ -112,7 +113,8 @@ void CartBlock::getInterpolatedData(
 
             for (i = 0; i < listptr->nweights; i++) {
                 int const cell_index = (cart_utils::get_cell_index(
-                    dims[0], dims[1], nf, listptr->inode[3 * i],
+                    dims[0], dims[1], nf,
+                    listptr->inode[static_cast<ptrdiff_t>(3 * i)],
                     listptr->inode[(3 * i) + 1], listptr->inode[(3 * i) + 2]));
                 for (n = 0; n < nvar_cell; n++) {
                     weight = listptr->weights[i];
@@ -169,7 +171,8 @@ void CartBlock::preprocess(CartGrid* cg)
     for (int n = 0; n < 3; n++) {
         dx[n] = cg->dx[(3 * global_id) + n];
     }
-    dims[0] = cg->ihi[3 * global_id] - cg->ilo[3 * global_id] + 1;
+    dims[0] = cg->ihi[static_cast<ptrdiff_t>(3 * global_id)] -
+              cg->ilo[static_cast<ptrdiff_t>(3 * global_id)] + 1;
     dims[1] = cg->ihi[(3 * global_id) + 1] - cg->ilo[(3 * global_id) + 1] + 1;
     dims[2] = cg->ihi[(3 * global_id) + 2] - cg->ilo[(3 * global_id) + 2] + 1;
     nf = cg->nf;

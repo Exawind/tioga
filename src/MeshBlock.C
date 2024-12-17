@@ -988,7 +988,8 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
         for (i = 0; i < nc[n]; i++) {
             if (nvert == 4) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<ptrdiff_t>(nvert * i)] + ba,
                     vconn[n][(nvert * i) + 1] + ba,
                     vconn[n][(nvert * i) + 2] + ba,
                     vconn[n][(nvert * i) + 2] + ba,
@@ -1008,7 +1009,8 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
                     vconn[n][(nvert * i) + 4] + ba);
             } else if (nvert == 6) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<ptrdiff_t>(nvert * i)] + ba,
                     vconn[n][(nvert * i) + 1] + ba,
                     vconn[n][(nvert * i) + 2] + ba,
                     vconn[n][(nvert * i) + 2] + ba,
@@ -1018,7 +1020,8 @@ void MeshBlock::writeFlowFile(int bid, double* q, int nvar, int type)
                     vconn[n][(nvert * i) + 5] + ba);
             } else if (nvert == 8) {
                 fprintf(
-                    fp, "%d %d %d %d %d %d %d %d\n", vconn[n][nvert * i] + ba,
+                    fp, "%d %d %d %d %d %d %d %d\n",
+                    vconn[n][static_cast<ptrdiff_t>(nvert * i)] + ba,
                     vconn[n][(nvert * i) + 1] + ba,
                     vconn[n][(nvert * i) + 2] + ba,
                     vconn[n][(nvert * i) + 3] + ba,
