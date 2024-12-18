@@ -149,6 +149,7 @@ void tioga::exchangeBoxes()
     //
     // Check for intersection of OBBs
     //
+    nsend = nrecv = numprocs;
     for (int ob = 0; ob < nobb; ob++) {
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
