@@ -69,7 +69,7 @@ enum : uint8_t { INTERSECT_ALG = 1 };
 
 //    1 // [0] wbc nodes are NOT listed as obc nodes
 //      // [1] wbc nodes may also be listed as obc nodes
-enum : uint8_t { NON_UNIQUE_NODES };
+enum : uint8_t { NON_UNIQUE_NODES = 1 };
 /* Fixed Octree Constraints: Do Not Change */
 #define OCTANT_MAXLEVEL 30 // 32-bit integer
 #define OCTANT_CHILDREN 8
