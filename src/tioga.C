@@ -524,8 +524,8 @@ void tioga::profile()
     this->myTimer("tioga::profile", 0);
     for (int ib = 0; ib < nblocks; ib++) {
         auto& mb = mblocks[ib];
-        mb->mexclude = mexclude;
-        mb->nfringe = nfringe;
+        mb->set_mexclude(mexclude);
+        mb->set_nfringe(nfringe);
         mb->preprocess(USE_ADAPTIVE_HOLEMAP);
         // mb->writeGridFile(myid);
     }
@@ -644,8 +644,8 @@ void tioga::performConnectivityAMR()
         this->myTimer("tioga::cgSearch", 0);
         if (ib < nblocks) {
             cg->search(
-                mblocks[ib]->rxyzCart, mblocks[ib]->donorIdCart,
-                mblocks[ib]->ntotalPointsCart);
+                mblocks[ib]->get_rxyzCart(), mblocks[ib]->get_donorIdCart(),
+                mblocks[ib]->get_ntotalPointsCart());
         }
         this->myTimer("tioga::cgSearch", 1);
     }

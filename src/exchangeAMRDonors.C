@@ -84,9 +84,9 @@ void tioga::exchangeAMRDonors()
         //
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
-            for (i = 0; i < mb->ntotalPointsCart; i++) {
-                if (mb->donorIdCart[i] != -1) {
-                    gid = mb->donorIdCart[i];
+            for (i = 0; i < mb->get_ntotalPointsCart(); i++) {
+                if ((mb->get_donorIdCart())[i] != -1) {
+                    gid = (mb->get_donorIdCart())[i];
                     assert(
                         (cg->get_proc_id(gid) < nsend &&
                          cg->get_proc_id(gid) >= 0));
@@ -127,9 +127,9 @@ void tioga::exchangeAMRDonors()
     if (nblocks > 0) {
         for (int ib = 0; ib < nblocks; ib++) {
             auto& mb = mblocks[ib];
-            for (i = 0; i < mb->ntotalPointsCart; i++) {
-                if (mb->donorIdCart[i] != -1) {
-                    gid = mb->donorIdCart[i];
+            for (i = 0; i < mb->get_ntotalPointsCart(); i++) {
+                if ((mb->get_donorIdCart())[i] != -1) {
+                    gid = (mb->get_donorIdCart())[i];
                     procid = imap[cg->get_proc_id(gid)];
                     localid = cg->get_local_id(gid);
                     sndPack[procid].intData[intcount[procid]++] = localid;
@@ -137,11 +137,11 @@ void tioga::exchangeAMRDonors()
                         mb->receptorIdCart[i];
                     sndPack[procid].intData[intcount[procid]++] = ib;
                     sndPack[procid].realData[realcount[procid]++] =
-                        mb->rxyzCart[3 * i];
+                        (mb->get_rxyzCart())[3 * i];
                     sndPack[procid].realData[realcount[procid]++] =
-                        mb->rxyzCart[(3 * i) + 1];
+                        (mb->get_rxyzCart())[(3 * i) + 1];
                     sndPack[procid].realData[realcount[procid]++] =
-                        mb->rxyzCart[(3 * i) + 2];
+                        (mb->get_rxyzCart())[(3 * i) + 2];
                 }
             }
         }
@@ -286,7 +286,7 @@ void tioga::exchangeAMRDonors()
                 id = rcvPack[i].intData[m++];
                 int const ib = rcvPack[i].intData[m++];
                 if (ctype == 0) {
-                    mblocks[ib]->donorIdCart[id] = -1;
+                    mblocks[ib]->set_donorIdCart(id, -1);
                 } else {
                     mblocks[ib]->donorId[id] = -1;
                 }
