@@ -154,7 +154,8 @@ void tioga::exchangeAMRDonors()
                         mb->isearch[(3 * i) + 1];
                     sndPack[procid].intData[intcount[procid]++] =
                         mb->isearch[(3 * i) + 2];
-                    sndPack[procid].intData[intcount[procid]++] = mb->meshtag;
+                    sndPack[procid].intData[intcount[procid]++] =
+                        mb->getMeshTag();
                     sndPack[procid].intData[intcount[procid]++] = i;
                     sndPack[procid].intData[intcount[procid]++] = ib;
                     sndPack[procid].realData[realcount[procid]++] =

@@ -48,12 +48,12 @@ void ADT::searchADT(MeshBlock* mb, int* cellIndex, double* xsearch)
     for (i = 0; i < ndim / 2; i++) {
         flag = static_cast<int>(
             (flag != 0) && (xsearch[i] >= adtExtents[static_cast<int>(2 * i)] -
-                                              mb->searchTol));
+                                              mb->get_searchTol()));
     }
     for (i = 0; i < ndim / 2; i++) {
         flag = static_cast<int>(
             (flag != 0) &&
-            (xsearch[i] <= adtExtents[2 * i + 1] + mb->searchTol));
+            (xsearch[i] <= adtExtents[2 * i + 1] + mb->get_searchTol()));
     }
     //
     // call recursive routine to check intersections with
@@ -90,10 +90,12 @@ void searchIntersections(
     //
     flag = true;
     for (i = 0; i < ndim / 2; i++) {
-        flag = (flag && (xsearch[i] >= element[i] - mb->searchTol));
+        flag = (flag && (xsearch[i] >= element[i] - mb->get_searchTol()));
     }
     for (i = ndim / 2; i < ndim; i++) {
-        flag = (flag && (xsearch[i - ndim / 2] <= element[i] + mb->searchTol));
+        flag =
+            (flag &&
+             (xsearch[i - ndim / 2] <= element[i] + mb->get_searchTol()));
     }
     //
     if (flag) {
@@ -117,12 +119,13 @@ void searchIntersections(
 
             flag = true;
             for (i = 0; i < ndim / 2; i++) {
-                flag = (flag && (xsearch[i] >= element[i] - mb->searchTol));
+                flag =
+                    (flag && (xsearch[i] >= element[i] - mb->get_searchTol()));
             }
             for (i = ndim / 2; i < ndim; i++) {
                 flag =
-                    (flag &&
-                     (xsearch[i - ndim / 2] <= element[i] + mb->searchTol));
+                    (flag && (xsearch[i - ndim / 2] <=
+                              element[i] + mb->get_searchTol()));
             }
             if (flag) {
                 searchIntersections(
