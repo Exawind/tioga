@@ -599,6 +599,7 @@ void writePoints(double* x, int nsearch, int bid)
     fp = fopen(fname, "w");
     fprintf(fp, "TITLE =\"Box file\"\n");
     fprintf(fp, "VARIABLES=\"X\",\"Y\",\"Z\"\n");
+    fprintf(fp, "ZONE T=\"POINTDATA\",I=%d,J=3, DATAPACKING=POINT\n", nsearch);
     for (i = 0; i < nsearch; i++) {
         fprintf(
             fp, "%f %f %f\n", x[static_cast<ptrdiff_t>(3 * i)], x[3 * i + 1],
