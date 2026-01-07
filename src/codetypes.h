@@ -112,8 +112,9 @@ enum : uint8_t { XLO = 0, XHI = 1, YLO = 2, YHI = 3, ZLO = 4, ZHI = 5 };
 /* Mesh Block Complement/Composite Rank Data */
 class meshblockCompInfo
 {
-public:
     int nreq;
+
+public:
     int id;
     int nrank;
     int masterID;  /* master rank for distributing mesh block data */
@@ -141,6 +142,12 @@ public:
             }
         };
     };
+
+    void set_rank() { MPI_Comm_rank(comm, &id); }
+    void set_comm_size() { MPI_Comm_size(comm, &nrank); }
+    MPI_Comm get_comm() { return comm; }
+    int get_id() { return id; }
+    int get_nrank() { return nrank; }
 };
 
 typedef struct

@@ -389,7 +389,7 @@ void tioga::assembleComplementComms()
             MPI_Comm_rank(MBC.comm, &(MBC.id));
             MPI_Comm_size(MBC.comm, &(MBC.nrank));
 
-            MBC.masterID = (myid == meshMasterId) ? MBC.id : -1;
+            MBC.masterID = (myid == meshMasterId) ? MBC.get_id() : -1;
             MPI_Allreduce(
                 MPI_IN_PLACE, &(MBC.masterID), 1, MPI_INT, MPI_MAX, MBC.comm);
 
