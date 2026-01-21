@@ -94,24 +94,27 @@ void parallelComm::sendRecvPacketsAll(PACKET* sndPack, PACKET* rcvPack) const
         all_rcv_realData, rreal, rcv_real_displs.data(), MPI_DOUBLE, scomm,
         &real_request);
 
-    MPI_Wait(&int_request, MPI_STATUS_IGNORE);
     for (i = 0; i < numprocs; i++) {
         if (rcvPack[i].nints > 0) {
             rcvPack[i].intData = (int*)malloc(sizeof(int) * rcvPack[i].nints);
         }
+    }
+    for (i = 0; i < numprocs; i++) {
         if (rcvPack[i].nreals > 0) {
             rcvPack[i].realData =
                 (REAL*)malloc(sizeof(REAL) * rcvPack[i].nreals);
         }
     }
 
-    MPI_Wait(&real_request, MPI_STATUS_IGNORE);
+    MPI_Wait(&int_request, MPI_STATUS_IGNORE);
     for (int i = 0; i < numprocs; i++) {
         int const displ = rcv_int_displs[i];
         for (int j = 0; j < rint[i]; j++) {
             rcvPack[i].intData[j] = all_rcv_intData[displ + j];
         }
     }
+
+    MPI_Wait(&real_request, MPI_STATUS_IGNORE);
     for (int i = 0; i < numprocs; i++) {
         int const displ = rcv_real_displs[i];
         for (int j = 0; j < rreal[i]; j++) {
