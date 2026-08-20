@@ -36,7 +36,7 @@ void solvec(double** a, double* b, int* iflag, int n)
         if (fabs(a[i][i]) < eps) {
             flag = 1;
             for (k = i + 1; k < n && (flag != 0); k++) {
-                if (a[k][i] != 0) {
+                if (fabs(a[k][i]) > eps) {
                     flag = 0;
                     for (l = 0; l < n; l++) {
                         temp = a[k][l];
@@ -53,6 +53,10 @@ void solvec(double** a, double* b, int* iflag, int n)
                 return;
             }
         }
+        if (fabs(a[i][i]) < eps) {
+            *iflag = 0;
+            return;
+        }
         for (k = i + 1; k < n; k++) {
             if (i != k) {
                 fact = -a[k][i] / a[i][i];
@@ -68,6 +72,10 @@ void solvec(double** a, double* b, int* iflag, int n)
         sum = 0;
         for (j = i + 1; j < n; j++) {
             sum += a[i][j] * b[j];
+        }
+        if (fabs(a[i][i]) < eps) {
+            *iflag = 0;
+            return;
         }
         b[i] = (b[i] - sum) / a[i][i];
     }
