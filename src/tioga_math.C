@@ -26,33 +26,38 @@
 
 void solvec(double** a, double* b, int* iflag, int n)
 {
-    int i, j, k, l, flag, temp1;
+    int i, j, k, l, pivot;
     double fact;
-    double temp;
+    double maxpivot, temp;
     double sum;
     double const eps = 1e-8;
 
     for (i = 0; i < n; i++) {
-        if (fabs(a[i][i]) < eps) {
-            flag = 1;
-            for (k = i + 1; k < n && (flag != 0); k++) {
-                if (a[k][i] != 0) {
-                    flag = 0;
-                    for (l = 0; l < n; l++) {
-                        temp = a[k][l];
-                        a[k][l] = a[i][l];
-                        a[i][l] = temp;
-                    }
-                    temp = b[k];
-                    b[k] = b[i];
-                    b[i] = temp;
-                }
-            }
-            if (flag != 0) {
-                *iflag = 0;
-                return;
+        pivot = i;
+        maxpivot = fabs(a[i][i]);
+        for (k = i + 1; k < n; k++) {
+            if (fabs(a[k][i]) > maxpivot) {
+                maxpivot = fabs(a[k][i]);
+                pivot = k;
             }
         }
+
+        if (pivot != i) {
+            for (l = 0; l < n; l++) {
+                temp = a[pivot][l];
+                a[pivot][l] = a[i][l];
+                a[i][l] = temp;
+            }
+            temp = b[pivot];
+            b[pivot] = b[i];
+            b[i] = temp;
+        }
+
+        if (fabs(a[i][i]) < eps) {
+            *iflag = 0;
+            return;
+        }
+
         for (k = i + 1; k < n; k++) {
             if (i != k) {
                 fact = -a[k][i] / a[i][i];
@@ -68,6 +73,10 @@ void solvec(double** a, double* b, int* iflag, int n)
         sum = 0;
         for (j = i + 1; j < n; j++) {
             sum += a[i][j] * b[j];
+        }
+        if (fabs(a[i][i]) < eps) {
+            *iflag = 0;
+            return;
         }
         b[i] = (b[i] - sum) / a[i][i];
     }
