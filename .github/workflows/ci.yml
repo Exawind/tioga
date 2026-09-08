@@ -3,10 +3,10 @@ name: TIOGA-CI
 on:
   push:
     branches:
-      - exawind
+      - main
   pull_request:
     branches:
-      - exawind
+      - main
 
 concurrency:
   group: ${{github.ref}}-${{github.head_ref}}-ci
@@ -14,23 +14,23 @@ concurrency:
 
 jobs:
   Formatting:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - name: Clone
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Check formatting
-      uses: DoozyX/clang-format-lint-action@v0.18.2
+      uses: DoozyX/clang-format-lint-action@v0.20
       with:
         source: './driver ./src'
         exclude: '.'
         extensions: 'h,H,cpp,C'
-        clangFormatVersion: 18
+        clangFormatVersion: 20
   CPU:
     needs: Formatting
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-latest]
+        os: [ubuntu-24.04, macos-latest]
         build_type: [Release, Debug]
         include:
           - os: macos-latest
@@ -39,7 +39,7 @@ jobs:
             procs: $(sysctl -n hw.ncpu)
             ccache_cache: /Users/runner/Library/Caches/ccache
             ccache_size: 50M
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             install_deps: sudo apt-get install -y mpich libmpich-dev
             comp: gnu
             procs: $(nproc)
@@ -103,10 +103,10 @@ jobs:
         exit $(tail -n 1 build-output-warnings.txt | awk '{print $2}')
   Lint-clang-tidy:
     needs: Formatting
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Clone
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: true
       - name: Setup
@@ -186,7 +186,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: true
       - name: Initialize CodeQL
@@ -234,7 +234,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: false
       - name: Python
