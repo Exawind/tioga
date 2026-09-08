@@ -83,7 +83,7 @@ void solvec(double** a, double* b, int* iflag, int n)
     return;
 }
 
-void newtonSolve(double f[7][3], double* u1, double* v1, double* w1)
+void newtonSolve(double f[8][3], double* u1, double* v1, double* w1)
 {
     int i, j, k;
     int iter, itmax, isolflag;
@@ -93,7 +93,7 @@ void newtonSolve(double f[7][3], double* u1, double* v1, double* w1)
     double** lhs;
     double alph;
     //
-    lhs = (double**)malloc(sizeof(double) * 3);
+    lhs = (double**)malloc(sizeof(double*) * 3);
     for (i = 0; i < 3; i++) {
         lhs[i] = (double*)malloc(sizeof(double) * 3);
     }
