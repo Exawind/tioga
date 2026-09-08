@@ -146,9 +146,11 @@ void tioga::getHoleMap()
             for (j = 0; j < 3; j++) {
                 holeMap[i].extents[j] -= (2 * dsbox);
                 holeMap[i].extents[j + 3] += (2 * dsbox);
-                holeMap[i].nx[j] = floor(std::max(
-                    (holeMap[i].extents[j + 3] - holeMap[i].extents[j]) / dsbox,
-                    1.0));
+                holeMap[i].nx[j] = floor(
+                    std::max(
+                        (holeMap[i].extents[j + 3] - holeMap[i].extents[j]) /
+                            dsbox,
+                        1.0));
             }
             bufferSize = holeMap[i].nx[0] * holeMap[i].nx[1] * holeMap[i].nx[2];
             holeMap[i].sam = (int*)malloc(sizeof(int) * bufferSize);
