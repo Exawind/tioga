@@ -318,9 +318,10 @@ void MeshBlock::search()
             if (xtag[i] == i) {
                 if (last_pass) {
                     queries_non_compact(update) = ArborX::attach(
-                        QueryType(ArborX::Point{
-                            xsearch[3 * i], xsearch[3 * i + 1],
-                            xsearch[3 * i + 2]}),
+                        QueryType(
+                            ArborX::Point{
+                                xsearch[3 * i], xsearch[3 * i + 1],
+                                xsearch[3 * i + 2]}),
                         i);
                 }
                 ++update;
