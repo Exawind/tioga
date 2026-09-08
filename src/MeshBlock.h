@@ -137,9 +137,9 @@ private:
     int* icft;       // frequency table for nodal containment
     int mapdims[3];  // dimensions of the map
     double mapdx[3]; // sides of the map
-public:
-    int* iblank; /** < iblank value for each grid node */
+    int* iblank;     /** < iblank value for each grid node */
     int* iblank_reduced;
+
     int ntotalPointsCart;
     double* rxyzCart;
     int* donorIdCart;
@@ -147,11 +147,14 @@ public:
 
     int nfringe;
     int mexclude;
+
     int meshtag; /** < tag of the mesh that this block belongs to */
     int check_uniform_hex_flag;
     double resolutionScale;
     double searchTol;
     int dominanceFlag; /**< if dominanceflag=1: set noderes to tiny number */
+
+public:
     //
     // oriented bounding box of this partition
     //
@@ -571,6 +574,18 @@ public:
     {
         return static_cast<char>((box1.hi >= box2.lo) && (box2.hi >= box1.lo));
     }
+
+    int get_ntotalPointsCart() { return ntotalPointsCart; }
+
+    void set_nfringe(int num_fringe) { nfringe = num_fringe; }
+    void set_mexclude(int num_exclude) { mexclude = num_exclude; }
+
+    double* get_rxyzCart() { return rxyzCart; }
+    int* get_donorIdCart() { return donorIdCart; }
+    void set_donorIdCart(int id, int val) { donorIdCart[id] = val; }
+    void set_check_uniform_hex_flag(int flag) { check_uniform_hex_flag = flag; }
+    void set_resolutionScale(double res) { resolutionScale = res; }
+    double get_searchTol() { return searchTol; }
 };
 
 /* Mesh Block Complement Rank Data */

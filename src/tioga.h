@@ -278,7 +278,7 @@ public:
         auto idxit = tag_iblk_map.find(btag);
         int const iblk = idxit->second;
         auto& mb = mblocks[iblk];
-        mb->check_uniform_hex_flag = flag;
+        mb->set_check_uniform_hex_flag(flag);
     }
 
     void set_cell_iblank(int btag, int* ib_cell)
@@ -318,7 +318,7 @@ public:
         for (int ib = 0; ib < nblocks; ib++) {
             mytag[ib] = -mytag[ib];
             auto& mb = mblocks[ib]; // TODO
-            mb->resolutionScale = 1000.0;
+            mb->set_resolutionScale(1000.0);
         }
     }
 
