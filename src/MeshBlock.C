@@ -1648,6 +1648,16 @@ void MeshBlock::getReducedOBB(OBB* obc, double* realData)
             }
         }
     }
+    bool const empty = (realData[0] > realData[3]) ||
+                       (realData[1] > realData[4]) ||
+                       (realData[2] > realData[5]);
+    if (empty) {
+        for (j = 0; j < 3; j++) {
+            realData[j] = obb->xc[j];
+            realData[j + 3] = 0.0;
+        }
+        return;
+    }
     for (j = 0; j < 6; j++) {
         bbox[j] = realData[j];
     }
