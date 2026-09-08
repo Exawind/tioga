@@ -36,7 +36,7 @@ void solvec(double** a, double* b, int* iflag, int n)
         if (fabs(a[i][i]) < eps) {
             flag = 1;
             for (k = i + 1; k < n && (flag != 0); k++) {
-                if (fabs(a[k][i]) > eps) {
+                if (fabs(a[k][i]) >= eps) {
                     flag = 0;
                     for (l = 0; l < n; l++) {
                         temp = a[k][l];
